@@ -16,11 +16,13 @@ services:
       - laravel
 
   mysql:
-    image: mysql:5.7
+    build:
+      context: .
+      dockerfile: docker/mysql-dockerfile/Dockerfile
     container_name: mysql
     restart: unless-stopped
     tty: true
-    ports: 
+    ports:
       - 3306:3306
     volumes:
       - ./docker/mysql:/var/lib/mysql
@@ -45,7 +47,7 @@ services:
       - 9000:80
     networks:
       - laravel
-    user: "1000"
+    user: ${USER_ID}
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin

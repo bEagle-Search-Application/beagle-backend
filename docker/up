@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+userId=$(id -u)
+
+USER_ID=$userId docker-compose -f ./docker-compose.yml up -d
