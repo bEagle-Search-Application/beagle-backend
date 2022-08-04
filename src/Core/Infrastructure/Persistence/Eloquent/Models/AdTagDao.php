@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 final class AdTagDao extends Model
 {
-    public $incrementing = false;
-
+    protected $table = 'ads_tags';
     protected $keyType = 'string';
     protected $fillable = [
         'tag_id',
         'ad_id',
     ];
+
+    public $incrementing = false;
 }

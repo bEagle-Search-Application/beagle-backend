@@ -6,8 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 final class ReviewDao extends Model
 {
-    public $incrementing = false;
-
+    protected $table = 'reviews';
     protected $keyType = 'string';
     protected $fillable = [
         'user_id',
@@ -16,4 +15,6 @@ final class ReviewDao extends Model
         'text',
         'rating',
     ];
+
+    public $incrementing = false;
 }

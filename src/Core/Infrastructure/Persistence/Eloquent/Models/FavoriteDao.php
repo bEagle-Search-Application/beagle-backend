@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 final class FavoriteDao extends Model
 {
-    public $incrementing = false;
-
+    protected $table = 'favorites';
     protected $keyType = 'string';
     protected $fillable = [
         'user_id',
         'ad_id',
     ];
+
+    public $incrementing = false;
 }

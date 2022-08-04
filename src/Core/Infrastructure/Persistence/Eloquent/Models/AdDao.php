@@ -6,8 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 final class AdDao extends Model
 {
-    public $incrementing = false;
-
+    protected $table = 'ads';
     protected $keyType = 'string';
     protected $fillable = [
         'user_id',
@@ -18,4 +17,6 @@ final class AdDao extends Model
         'description',
         'reward',
     ];
+
+    public $incrementing = false;
 }

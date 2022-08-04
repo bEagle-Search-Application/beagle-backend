@@ -13,6 +13,7 @@ class UserDao extends Authenticatable
 
     public $incrementing = false;
 
+    protected $table = 'users';
     protected $keyType = 'string';
 
     /**
