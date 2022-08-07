@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 final class SearchDao extends Model
 {
-    public $incrementing = false;
-
+    protected $table = 'searches';
     protected $keyType = 'string';
     protected $fillable = [
         'user_id',
         'text',
     ];
+
+    public $incrementing = false;
 }
