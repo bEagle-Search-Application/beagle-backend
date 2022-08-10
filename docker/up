@@ -3,3 +3,7 @@
 userId=$(id -u)
 
 USER_ID=$userId docker-compose -f ./docker-compose.yml up -d
+
+docker exec -it php php artisan migrate
+docker exec -it php php artisan db:seed
+
