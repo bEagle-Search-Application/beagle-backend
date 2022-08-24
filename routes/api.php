@@ -1,6 +1,5 @@
 <?php
 
-use Beagle\Core\Infrastructure\Http\Api\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//    return $request->user();
-//});
+Route::prefix('auth')->group(function () {
+    Route::get('/login',
+        [
+            \Beagle\Core\Infrastructure\Http\Api\Controllers\LoginController::class,
+            'execute'
+        ]
+    )->name('api.login');
+});

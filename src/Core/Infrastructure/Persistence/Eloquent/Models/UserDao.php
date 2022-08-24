@@ -23,6 +23,7 @@ class UserDao extends Authenticatable implements JWTSubject
      * @var array<int, string>
      */
     protected $fillable = [
+        'id',
         'email',
         'password',
         'name',
