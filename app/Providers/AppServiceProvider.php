@@ -13,7 +13,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind(
+            \Beagle\Core\Domain\User\UserRepository::class,
+            \Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserRepository::class
+        );
+
+        $this->app->bind(
+            \Beagle\Shared\Application\Auth\AuthService::class,
+            \Beagle\Shared\Infrastructure\Auth\JwtAuthService::class
+        );
     }
 
     /**
