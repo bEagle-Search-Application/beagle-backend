@@ -2,6 +2,7 @@
 
 namespace Beagle\Core\Domain\User;
 
+use Beagle\Core\Domain\User\Errors\CannotSaveUser;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
 use Beagle\Shared\Domain\Errors\InvalidEmail;
@@ -17,5 +18,6 @@ interface UserRepository
      */
     public function findByEmailAndPassword(UserEmail $userEmail, UserPassword $userPassword):User;
 
+    /** @throws CannotSaveUser */
     public function save(User $user):void;
 }
