@@ -50,7 +50,8 @@ final class RegisterUser
             $command->userPhone(),
             null,
             true,
-            0
+            0,
+            null
         );
     }
 }

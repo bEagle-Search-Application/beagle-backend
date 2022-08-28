@@ -6,10 +6,7 @@ use Beagle\Core\Domain\User\User;
 
 final class LoginResponse
 {
-    public function __construct(
-        private User $user,
-        private array $auth
-    )
+    public function __construct(private User $user)
     {
     }
 
@@ -28,7 +25,10 @@ final class LoginResponse
                 "show_reviews" => $this->user->showReviews(),
                 "rating" => $this->user->rating(),
             ],
-            "auth" => $this->auth,
+            "auth" => [
+                "token" => $this->user->authToken()->value(),
+                "type" => $this->user->authToken()->type()
+            ],
         ];
     }
 }

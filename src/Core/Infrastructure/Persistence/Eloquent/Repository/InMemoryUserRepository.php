@@ -7,6 +7,7 @@ use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
+use Beagle\Core\Domain\User\ValueObjects\UserToken;
 use Beagle\Shared\Domain\Errors\UserNotFound;
 
 final class InMemoryUserRepository implements UserRepository
@@ -44,6 +45,11 @@ final class InMemoryUserRepository implements UserRepository
                 throw CannotSaveUser::byEmail($user->email());
             }
         }
+    }
+
+    public function findByToken(UserToken $token):bool
+    {
+        return true;
     }
 
     private function emailBelongsToAnotherUser(User $registeredUser, User $user):bool

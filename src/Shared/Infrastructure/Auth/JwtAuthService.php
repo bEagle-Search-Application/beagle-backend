@@ -3,6 +3,7 @@
 namespace Beagle\Shared\Infrastructure\Auth;
 
 use Beagle\Core\Domain\User\User;
+use Beagle\Core\Domain\User\ValueObjects\UserToken;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\DataTransformers\UserDataTransformer;
 use Beagle\Shared\Application\Auth\AuthService;
 use Beagle\Shared\Domain\Errors\UserNotFound;
@@ -15,19 +16,17 @@ final class JwtAuthService implements AuthService
     }
 
     /** @throws UserNotFound */
-    public function generateTokenByUser(User $user):array
+    public function generateTokenByUser(User $user):UserToken
     {
         $userDao = $this->userDataTransformer->fromUser($user);
-        $token = Auth::login($userDao);
+        $token = UserToken::fromString(Auth::login($userDao));
+
 
         if (!$token)
         {
             throw UserNotFound::byCredentials($user->email());
         }
 
-        return [
-            "token" => $token,
-            "type" => "bearer",
-        ];
+        return $token;
     }
 }

@@ -34,6 +34,7 @@ class UserDao extends Authenticatable implements JWTSubject
         'picture',
         'show_reviews',
         'rating',
+        'auth_token'
     ];
 
     /**

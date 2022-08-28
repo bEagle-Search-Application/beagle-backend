@@ -7,6 +7,7 @@ use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
+use Beagle\Core\Domain\User\ValueObjects\UserToken;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\DataTransformers\UserDataTransformer;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\UserDao;
 use Beagle\Shared\Domain\Errors\InvalidEmail;
@@ -64,5 +65,17 @@ final class EloquentUserRepository implements UserRepository
         {
             throw CannotSaveUser::byEmail($user->email());
         }
+    }
+
+    /** @throws UserNotFound */
+    public function findByToken(UserToken $token):bool
+    {
+        $userDao = UserDao::where('auth_token', $token->clearValue())->first();
+
+        if ($userDao === null) {
+            throw UserNotFound::byToken();
+        }
+
+        return true;
     }
 }

@@ -5,6 +5,7 @@ namespace Beagle\Core\Domain\User;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
+use Beagle\Core\Domain\User\ValueObjects\UserToken;
 
 final class User
 {
@@ -19,10 +20,12 @@ final class User
         private ?string $phone,
         private ?string $picture,
         private bool $showReviews,
-        private int $rating
+        private int $rating,
+        private ?UserToken $authToken
     )
     {
     }
+
 
     public function id():UserId
     {
@@ -77,5 +80,15 @@ final class User
     public function rating():int
     {
         return $this->rating;
+    }
+
+    public function authToken():?UserToken
+    {
+        return $this->authToken;
+    }
+
+    public function updateToken(UserToken $token):void
+    {
+        $this->authToken = $token;
     }
 }

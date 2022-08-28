@@ -5,6 +5,7 @@ namespace Beagle\Core\Application\Query\User\Login;
 use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
+use Beagle\Core\Domain\User\ValueObjects\UserToken;
 use Beagle\Shared\Application\Auth\AuthService;
 use Beagle\Shared\Domain\Errors\InvalidEmail;
 use Beagle\Shared\Domain\Errors\InvalidPassword;
@@ -30,8 +31,13 @@ final class Login
         $userPassword = UserPassword::fromString($query->password());
 
         $user = $this->userRepository->findByEmailAndPassword($userEmail, $userPassword);
-        $auth = $this->authService->generateTokenByUser($user);
+        $token = $this->authService->generateTokenByUser($user);
 
-        return new LoginResponse($user, $auth);
+        $user->updateToken(
+            UserToken::fromString($token->value())
+        );
+        $this->userRepository->save($user);
+
+        return new LoginResponse($user);
     }
 }

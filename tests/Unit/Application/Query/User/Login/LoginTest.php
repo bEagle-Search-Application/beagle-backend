@@ -41,7 +41,7 @@ final class LoginTest extends TestCase
     {
         $this->userPassword = "1234";
 
-        $this->user = UserMotherObject::create(
+        $this->user = UserMotherObject::createWithoutToken(
             userPassword: UserPassword::fromString(
                 \md5($this->userPassword)
             )
@@ -99,7 +99,7 @@ final class LoginTest extends TestCase
                 ],
                 "auth" => [
                     "token" => "jhdguferf87er6g87reg68er",
-                    "type" => "bearer",
+                    "type" => "Bearer",
                 ],
             ]
         );

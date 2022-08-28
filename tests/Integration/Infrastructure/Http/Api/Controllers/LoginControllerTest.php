@@ -30,7 +30,7 @@ final class LoginControllerTest extends TestCase
     {
         $this->userPassword = "1234";
 
-        $this->user = UserMotherObject::create(
+        $this->user = UserMotherObject::createWithoutToken(
             userPassword: UserPassword::fromString(
                 \md5($this->userPassword)
             )

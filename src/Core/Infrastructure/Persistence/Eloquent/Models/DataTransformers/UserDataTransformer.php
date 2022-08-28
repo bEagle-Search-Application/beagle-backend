@@ -6,6 +6,7 @@ use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
+use Beagle\Core\Domain\User\ValueObjects\UserToken;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\UserDao;
 use Beagle\Shared\Domain\Errors\InvalidEmail;
 use Beagle\Shared\Domain\Errors\InvalidPassword;
@@ -18,6 +19,8 @@ final class UserDataTransformer
      */
     public function fromDao(UserDao $userDao): User
     {
+        $auth_token = $userDao->auth_token;
+
         return new User(
             UserId::fromString($userDao->id),
             UserEmail::fromString($userDao->email),
@@ -30,6 +33,7 @@ final class UserDataTransformer
             $userDao->picture,
             (bool) $userDao->show_reviews,
             $userDao->rating,
+            empty($auth_token) ? null :UserToken::fromString($auth_token)
         );
     }
 
@@ -48,6 +52,7 @@ final class UserDataTransformer
         $userDao->picture = $user->picture();
         $userDao->show_reviews = $user->showReviews();
         $userDao->rating = $user->rating();
+        $userDao->auth_token = $user->authToken();
 
         return $userDao;
     }

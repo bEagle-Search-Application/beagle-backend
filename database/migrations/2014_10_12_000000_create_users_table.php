@@ -27,6 +27,7 @@ return new class extends Migration
             $table->integer('rating');
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
+            $table->string('auth_token', 360)->nullable();
             $table->timestamps();
         });
     }
