@@ -60,12 +60,9 @@ final class EloquentUserRepository implements UserRepository
                     'rating' => $user->rating(),
                 ]
             );
-        } catch (QueryException $e)
+        } catch (QueryException)
         {
-            if($e->getCode() === 1062)
-            {
-                throw CannotSaveUser::byEmail($user->email());
-            }
+            throw CannotSaveUser::byEmail($user->email());
         }
     }
 }

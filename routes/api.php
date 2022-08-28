@@ -21,3 +21,10 @@ Route::prefix('auth')->group(function () {
         ]
     )->name('api.login');
 });
+
+Route::post('/register',
+    [
+        \Beagle\Core\Infrastructure\Http\Api\Controllers\RegisterUserController::class,
+        'execute'
+    ]
+)->name('api.register');
