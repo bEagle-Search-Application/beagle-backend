@@ -1,0 +1,176 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Beagle API
+  description: Documentation endpoints for Beagle Application
+servers:
+  - url: http://localhost:8080/api
+    description: Main (dev) server
+security:
+  - bearerAuth: []
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      description: Create new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "dani@beagle.com"
+                password:
+                  type: string
+                  example: "12345678"
+                name:
+                  type: string
+                  example: "Dani"
+                surname:
+                  type: string
+                  example: "González"
+                bio:
+                  type: string
+                  example: "Lorem ipsum is a simply dummy text."
+                location:
+                  type: string
+                  example: "ES"
+                phone:
+                  type: string
+                  example: "666777888"
+      responses:
+        '204':
+          description: Successfully created a new user
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#components/responses/500'
+  /auth/login:
+    get:
+      tags:
+        - Auth
+      description: Login with an existing user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "dani@beagle.com"
+                password:
+                  type: string
+                  example: "12345678"
+      responses:
+        '200':
+          description: Successfully user login
+          content:
+            application/json:
+              schema:
+               type: object
+               properties:
+                 response:
+                   type: object
+                   properties:
+                     user:
+                       $ref: '#/components/schemas/User'
+                     auth:
+                       type: object
+                       properties:
+                         token:
+                           type: string
+                           example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2NjE4ODkwOTQsImV4cCI6MTY2MTg5MjY5NCwibmJmIjoxNjYxODg5MDk0LCJqdGkiOiJ2N2JvNkQ3aFVNNGZ6bUxIIiwic3ViIjoiTjlwQm5Ud1lock45dEhKUHJnRHZzYiIsInBydiI6Ijc4YTA0Zjg0YzY1ZTE5Y2VkOWUwNTliOThhNGZhNWQxMGIxYzNiMzUifQ.OZlHByjBTAm"
+                         type:
+                           type: string
+                           example: "Bearer"
+                 status:
+                   type: number
+                   example: 200
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#components/responses/500'
+  /logout:
+    post:
+      tags:
+        - Auth
+      description: Logout with your user
+      parameters:
+        - in: header
+          name: "Authorization"
+          schema:
+            type: string
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2NjE3ODQ2ODAsImV4cCI6MTY2MTc4ODI4MCwibmJmIjoxNjYxNzg0NjgwLCJqdGkiOiJzNTQyc0FDNW5MUlg3SURSIiwic3ViIjoiTjlwQm5Ud1lock45dEhKUHJnRHZzYiIsInBydiI6Ijc4YTA0Zjg0YzY1ZTE5Y2VkOWUwNTliOThhNGZhNWQxMGIxYzNiMzUifQ.cP8GIRFgrPHvV7VfI_Vaw4QpIvPeTfIwNXRC4mB8224"
+      responses:
+        '204':
+          description: Successfully user logout
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#components/responses/500'
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "N9pBnTwYhrN9tHJPrgDvsb"
+        email:
+          type: string
+          example: "dani@beagle.com"
+        name:
+          type: string
+          example: "Dani"
+        surname:
+          type: string
+          example: "González"
+        bio:
+          type: string
+          example: "Voluptatum maxime quidem et ut consequatur. Rerum aspernatur aut delectus qui aspernatur."
+        location:
+          type: string
+          example: "ES"
+        phone:
+          type: string
+          example: "666777888"
+        picture:
+          type: string
+          example: "/tmp/fakerbDcfCD"
+        show_reviews:
+          type: boolean
+          example: true
+        rating:
+          type: number
+          example: 4
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    400:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              response:
+                type: string
+                example: "Invalid request reponse"
+              status:
+                type: number
+                example: 400
+    500:
+      description: Internal Server Error
