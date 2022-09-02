@@ -19,14 +19,15 @@ return new class extends Migration
             $table->string('password');
             $table->string('name');
             $table->string('surname');
-            $table->string('bio');
+            $table->string('bio')->nullable();
             $table->string('location');
-            $table->string('phone');
-            $table->string('picture');
+            $table->string('phone')->nullable();
+            $table->string('picture')->nullable();
             $table->boolean('show_reviews');
             $table->integer('rating');
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
+            $table->string('auth_token', 360)->nullable();
             $table->timestamps();
         });
     }
