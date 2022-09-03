@@ -3,11 +3,20 @@
 namespace Beagle\Shared\Infrastructure\Http\Api\Controllers;
 
 use App\Http\Controllers\Controller;
+use Beagle\Shared\Bus\CommandBus;
+use Beagle\Shared\Bus\QueryBus;
 use Beagle\Shared\Infrastructure\Http\Api\HttpErrorCode;
 use Illuminate\Http\JsonResponse;
 
 class BaseController extends Controller
 {
+    public function __construct(
+        protected CommandBus $commandBus,
+        protected QueryBus $queryBus
+    )
+    {
+    }
+
     protected function generateNotFoundResponse(string $response):JsonResponse
     {
         return $this->generateJsonResponse($response, HttpErrorCode::NOT_FOUND);
