@@ -13,7 +13,7 @@ return [
     'query_bus'   => [
         'router' => [
             'routes' => [
-
+                \Beagle\Core\Application\Query\User\Login\LoginQuery::class => \Beagle\Core\Application\Query\User\Login\Login::class
             ],
         ],
     ],

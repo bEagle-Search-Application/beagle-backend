@@ -53,7 +53,7 @@ final class LoginTest extends TestCase
     {
         $this->expectException(UserNotFound::class);
 
-        $this->sut->handler(
+        $this->sut->__invoke(
             new LoginQuery(
                 UserEmailMotherObject::create()->value(),
                 UserPasswordMotherObject::createWithHash()->value()
@@ -65,7 +65,7 @@ final class LoginTest extends TestCase
     {
         $this->expectException(InvalidEmail::class);
 
-        $this->sut->handler(
+        $this->sut->__invoke(
             new LoginQuery(
                 "dani@nomail",
                 UserPasswordMotherObject::createWithHash()->value()
@@ -75,7 +75,7 @@ final class LoginTest extends TestCase
 
     public function testItUserLogin():void
     {
-        $response = $this->sut->handler(
+        $response = $this->sut->__invoke(
             new LoginQuery(
                 $this->user->email()->value(),
                 \md5($this->userPassword)

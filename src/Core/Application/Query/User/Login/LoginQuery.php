@@ -2,7 +2,9 @@
 
 namespace Beagle\Core\Application\Query\User\Login;
 
-final class LoginQuery
+use Beagle\Shared\Bus\Query;
+
+final class LoginQuery implements Query
 {
     public function __construct(
         private string $email,

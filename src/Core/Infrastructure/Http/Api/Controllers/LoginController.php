@@ -13,11 +13,11 @@ use Illuminate\Http\Request;
 
 final class LoginController extends BaseController
 {
-    public function execute(Request $request, Login $login):JsonResponse
+    public function execute(Request $request):JsonResponse
     {
         try
         {
-            $response = $login->handler(
+            $response = $this->queryBus->dispatch(
                 new LoginQuery(
                     $request->get('email'),
                     \md5($request->get('password')),

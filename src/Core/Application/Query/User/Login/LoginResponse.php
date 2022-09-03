@@ -3,8 +3,9 @@
 namespace Beagle\Core\Application\Query\User\Login;
 
 use Beagle\Core\Domain\User\User;
+use Beagle\Shared\Bus\QueryResponse;
 
-final class LoginResponse
+final class LoginResponse implements QueryResponse
 {
     public function __construct(private User $user)
     {
