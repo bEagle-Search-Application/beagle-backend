@@ -36,7 +36,7 @@ final class RegisterUserTest extends TestCase
     {
         $this->expectException(InvalidEmail::class);
 
-        $this->sut->handler(
+        $this->sut->__invoke(
             new RegisterUserCommand(
                 $this->user->id()->value(),
                 "dani@nbo",
@@ -57,7 +57,7 @@ final class RegisterUserTest extends TestCase
 
         $this->expectException(CannotSaveUser::class);
 
-        $this->sut->handler(
+        $this->sut->__invoke(
             new RegisterUserCommand(
                 $this->user->id()->value(),
                 $registeredUser->email()->value(),
@@ -73,7 +73,7 @@ final class RegisterUserTest extends TestCase
 
     public function testItRegistersUser():void
     {
-        $this->sut->handler(
+        $this->sut->__invoke(
             new RegisterUserCommand(
                 $this->user->id()->value(),
                 $this->user->email()->value(),

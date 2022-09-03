@@ -15,7 +15,7 @@ use Symfony\Component\Uid\Uuid;
 
 final class RegisterUserController extends BaseController
 {
-    public function execute(Request $request, RegisterUser $registerUser):JsonResponse
+    public function execute(Request $request):JsonResponse
     {
         try
         {
@@ -24,7 +24,7 @@ final class RegisterUserController extends BaseController
                 "password" => 'required|min:8'
             ]);
 
-            $registerUser->handler(
+            $this->commandBus->dispatch(
                 new RegisterUserCommand(
                     Uuid::v4()->toBase58(),
                     $request->get('email'),
