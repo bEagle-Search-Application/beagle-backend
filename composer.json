@@ -10,6 +10,8 @@
         "laravel/framework": "^9.2",
         "laravel/sanctum": "^2.14.1",
         "laravel/tinker": "^2.7",
+        "league/tactician": "^1.1",
+        "league/tactician-container": "^3.0",
         "php-open-source-saver/jwt-auth": "^1.4",
         "symfony/uid": "^6.1"
     },
@@ -57,7 +59,10 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "phpro/grumphp": true
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true

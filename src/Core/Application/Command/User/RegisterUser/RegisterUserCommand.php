@@ -2,7 +2,9 @@
 
 namespace Beagle\Core\Application\Command\User\RegisterUser;
 
-final class RegisterUserCommand
+use Beagle\Shared\Bus\Command;
+
+final class RegisterUserCommand implements Command
 {
     public function __construct(
         private string $userId,

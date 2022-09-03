@@ -8,21 +8,26 @@ use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
+use Beagle\Shared\Bus\Command;
+use Beagle\Shared\Bus\CommandHandler;
+use Beagle\Shared\Bus\QueryHandler;
 use Beagle\Shared\Domain\Errors\InvalidEmail;
 use Beagle\Shared\Domain\Errors\InvalidPassword;
 
-final class RegisterUser
+final class RegisterUser extends CommandHandler
 {
     public function __construct(private UserRepository $userRepository)
     {
     }
 
     /**
+     * @param RegisterUserCommand $command
+     *
      * @throws InvalidEmail
      * @throws InvalidPassword
      * @throws CannotSaveUser
      */
-    public function handler(RegisterUserCommand $command):void
+    public function handle(Command $command):void
     {
         $this->userRepository->save(
             $this->createUser($command)
