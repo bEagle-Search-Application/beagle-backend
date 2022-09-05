@@ -5,8 +5,8 @@ namespace Beagle\Shared\Infrastructure\Http\Api\Controllers;
 use App\Http\Controllers\Controller;
 use Beagle\Shared\Bus\CommandBus;
 use Beagle\Shared\Bus\QueryBus;
-use Beagle\Shared\Infrastructure\Http\Api\HttpErrorCode;
 use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class BaseController extends Controller
 {
@@ -19,12 +19,12 @@ class BaseController extends Controller
 
     protected function generateNotFoundResponse(string $response):JsonResponse
     {
-        return $this->generateJsonResponse($response, HttpErrorCode::NOT_FOUND);
+        return $this->generateJsonResponse($response, Response::HTTP_NOT_FOUND);
     }
 
     protected function generateBadRequestResponse(string $response):JsonResponse
     {
-        return $this->generateJsonResponse($response, HttpErrorCode::BAD_REQUEST);
+        return $this->generateJsonResponse($response, Response::HTTP_BAD_REQUEST);
     }
 
     protected function generateSuccessfulResponse(array $response):JsonResponse
@@ -32,16 +32,16 @@ class BaseController extends Controller
         return new JsonResponse(
             [
                 "response" => $response,
-                "status" => HttpErrorCode::OK,
+                "status" => Response::HTTP_OK,
             ],
-            HttpErrorCode::OK
+            Response::HTTP_OK
         );
     }
 
     protected function generateNoContentResponse():JsonResponse
     {
         return new JsonResponse(
-            status: HttpErrorCode::NO_CONTENT
+            status: Response::HTTP_NO_CONTENT
         );
     }
 

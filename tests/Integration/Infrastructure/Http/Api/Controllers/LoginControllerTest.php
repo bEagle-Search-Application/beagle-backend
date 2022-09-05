@@ -6,7 +6,7 @@ use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserRepository;
-use Beagle\Shared\Infrastructure\Http\Api\HttpErrorCode;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\MotherObjects\User\UserMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserEmailMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserPasswordMotherObject;
@@ -54,7 +54,7 @@ final class LoginControllerTest extends TestCase
 
         $decodedResponse = $this->decodeResponse($response->getContent());
 
-        $this->assertSame(HttpErrorCode::BAD_REQUEST, $response->status());
+        $this->assertSame(Response::HTTP_BAD_REQUEST, $response->status());
         $this->assertSame(
             \sprintf("The credentials for %s are invalid", $userEmail),
             $decodedResponse["response"]
@@ -73,6 +73,6 @@ final class LoginControllerTest extends TestCase
             )
         );
 
-        $this->assertSame(HttpErrorCode::OK, $response->status());
+        $this->assertSame(Response::HTTP_OK, $response->status());
     }
 }
