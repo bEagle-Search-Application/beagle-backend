@@ -6,7 +6,7 @@ use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserRepository;
-use Beagle\Shared\Infrastructure\Http\Api\HttpErrorCode;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\MotherObjects\User\UserMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserEmailMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserPasswordMotherObject;
@@ -60,7 +60,7 @@ final class RegisterUserControllerTest extends TestCase
 
         $decodedResponse = $this->decodeResponse($response->getContent());
 
-        $this->assertSame(HttpErrorCode::BAD_REQUEST, $response->status());
+        $this->assertSame(Response::HTTP_BAD_REQUEST, $response->status());
         $this->assertSame(
             $errorMessage,
             $decodedResponse["response"]
@@ -105,7 +105,7 @@ final class RegisterUserControllerTest extends TestCase
 
         $decodedResponse = $this->decodeResponse($response->getContent());
 
-        $this->assertSame(HttpErrorCode::BAD_REQUEST, $response->status());
+        $this->assertSame(Response::HTTP_BAD_REQUEST, $response->status());
         $this->assertSame(
             \sprintf("The email %s already exists", $userRegistered->email()->value()),
             $decodedResponse["response"]
@@ -136,7 +136,7 @@ final class RegisterUserControllerTest extends TestCase
             )
         );
 
-        $this->assertSame(HttpErrorCode::NO_CONTENT, $response->status());
+        $this->assertSame(Response::HTTP_NO_CONTENT, $response->status());
         $this->assertTrue($this->user->email()->equals($expectedUser->email()));
         $this->assertTrue($expectedUser->password()->equals(
             UserPassword::fromString(

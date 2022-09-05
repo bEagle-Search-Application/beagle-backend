@@ -5,10 +5,10 @@ namespace App\Http\Middleware;
 use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserToken;
 use Beagle\Shared\Domain\Errors\UserNotFound;
-use Beagle\Shared\Infrastructure\Http\Api\HttpErrorCode;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class VerifyAuthToken
 {
@@ -28,7 +28,7 @@ class VerifyAuthToken
         {
             return new JsonResponse([
                 "message" => $e->getMessage(),
-                "status" => HttpErrorCode::BAD_REQUEST,
+                "status" => Response::HTTP_BAD_REQUEST,
             ]);
         }
     }
