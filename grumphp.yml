@@ -1,0 +1,37 @@
+grumphp:
+  hooks_dir: .git/hooks
+  stop_on_failure: true
+  ignore_unstaged_changes: true
+  ascii:
+    failed: config/grumphp/beagle-fail.txt
+    succeeded: config/grumphp/beagle-success.txt
+  tasks:
+    phpunit:
+      testsuite: Unit
+    phpcs:
+      standard: ['PSR2']
+    phpcsfixer2:
+      verbose: true
+      config: .php-cs-fixer.php
+      config_contains_finder: false
+    git_commit_message:
+      allow_empty_message: false
+      enforce_capitalized_subject: true
+      enforce_no_subject_trailing_period: true
+      enforce_single_lined_subject: false
+      max_body_width: 120
+      max_subject_width: 72
+      case_insensitive: true
+      multiline: true
+      additional_modifiers: ''
+    git_branch_name:
+      whitelist:
+        - "/CU-[a-z0-9]{7}_/"
+      blacklist:
+        - "master"
+        - "main"
+        - "develop"
+    yamllint:
+      ignore_patterns: []
+      object_support: false
+      exception_on_invalid_type: true
