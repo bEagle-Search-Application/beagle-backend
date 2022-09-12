@@ -43,8 +43,6 @@ final class RegisterUserTest extends TestCase
                 $this->user->password()->value(),
                 $this->user->name(),
                 $this->user->surname(),
-                $this->user->bio(),
-                $this->user->location(),
                 $this->user->phone(),
             )
         );
@@ -64,8 +62,6 @@ final class RegisterUserTest extends TestCase
                 $this->user->password()->value(),
                 $this->user->name(),
                 $this->user->surname(),
-                $this->user->bio(),
-                $this->user->location(),
                 $this->user->phone(),
             )
         );
@@ -80,8 +76,6 @@ final class RegisterUserTest extends TestCase
                 $this->user->password()->value(),
                 $this->user->name(),
                 $this->user->surname(),
-                $this->user->bio(),
-                $this->user->location(),
                 $this->user->phone(),
             )
         );

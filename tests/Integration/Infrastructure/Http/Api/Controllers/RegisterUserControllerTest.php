@@ -41,8 +41,7 @@ final class RegisterUserControllerTest extends TestCase
         string $errorMessage,
         string $email,
         string $password
-    ):void
-    {
+    ):void {
         $response = $this->post(
             \route(
                 'api.register',
@@ -51,8 +50,6 @@ final class RegisterUserControllerTest extends TestCase
                     "password" => $password,
                     "name" => $this->user->name(),
                     "surname" => $this->user->surname(),
-                    "bio" => $this->user->bio(),
-                    "location" => $this->user->location(),
                     "phone" => $this->user->phone(),
                 ]
             )
@@ -96,8 +93,6 @@ final class RegisterUserControllerTest extends TestCase
                     "password" => $this->user->password()->value(),
                     "name" => $this->user->name(),
                     "surname" => $this->user->surname(),
-                    "bio" => $this->user->bio(),
-                    "location" => $this->user->location(),
                     "phone" => $this->user->phone(),
                 ]
             )
@@ -122,8 +117,6 @@ final class RegisterUserControllerTest extends TestCase
                     "password" => $this->user->password()->value(),
                     "name" => $this->user->name(),
                     "surname" => $this->user->surname(),
-                    "bio" => $this->user->bio(),
-                    "location" => $this->user->location(),
                     "phone" => $this->user->phone(),
                 ]
             )

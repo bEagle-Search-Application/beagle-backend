@@ -10,7 +10,6 @@ use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
 use Beagle\Shared\Bus\Command;
 use Beagle\Shared\Bus\CommandHandler;
-use Beagle\Shared\Bus\QueryHandler;
 use Beagle\Shared\Domain\Errors\InvalidEmail;
 use Beagle\Shared\Domain\Errors\InvalidPassword;
 
@@ -50,8 +49,8 @@ final class RegisterUser extends CommandHandler
             $userPassword,
             $command->userName(),
             $command->userSurname(),
-            $command->userBio(),
-            $command->userLocation(),
+            null,
+            null,
             $command->userPhone(),
             null,
             true,

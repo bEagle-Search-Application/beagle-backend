@@ -25,24 +25,23 @@ paths:
                 email:
                   type: string
                   example: "dani@beagle.com"
+                  required: true
                 password:
                   type: string
                   example: "12345678"
+                  required: true
                 name:
                   type: string
                   example: "Dani"
+                  required: true
                 surname:
                   type: string
                   example: "González"
-                bio:
-                  type: string
-                  example: "Lorem ipsum is a simply dummy text."
-                location:
-                  type: string
-                  example: "ES"
+                  required: true
                 phone:
                   type: string
                   example: "666777888"
+                  required: true
       responses:
         '204':
           description: Successfully created a new user
@@ -65,9 +64,11 @@ paths:
                 email:
                   type: string
                   example: "dani@beagle.com"
+                  required: true
                 password:
                   type: string
                   example: "12345678"
+                  required: true
       responses:
         '200':
           description: Successfully user login

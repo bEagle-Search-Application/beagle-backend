@@ -30,8 +30,7 @@ final class UserMotherObject
         ?bool $showReviews = null,
         ?int $rating = null,
         ?UserToken $userToken = null
-    ):User
-    {
+    ):User {
         return new User(
             empty($userId) ? UserIdMotherObject::create() : $userId,
             empty($userEmail) ? UserEmailMotherObject::create() : $userEmail,
@@ -61,8 +60,7 @@ final class UserMotherObject
         ?bool $showReviews = null,
         ?int $rating = null,
         ?UserToken $userToken = null
-    ):User
-    {
+    ):User {
         return new User(
             empty($userId) ? UserIdMotherObject::create() : $userId,
             empty($userEmail) ? UserEmailMotherObject::create() : $userEmail,
@@ -85,19 +83,16 @@ final class UserMotherObject
         ?UserPassword $userPassword = null,
         ?string $name = null,
         ?string $surname = null,
-        ?string $bio = null,
-        ?string $location = null,
         ?string $phone = null
-    ):User
-    {
+    ):User {
         return new User(
             empty($userId) ? UserIdMotherObject::create() : $userId,
             empty($userEmail) ? UserEmailMotherObject::create() : $userEmail,
             empty($userPassword) ? UserPasswordMotherObject::createWithHash() : $userPassword,
             empty($name) ? StringMotherObject::createName() : $name,
             empty($surname) ? StringMotherObject::createSurname() : $surname,
-            empty($bio) ? StringMotherObject::create() : $bio,
-            empty($location) ? StringMotherObject::createLocation() : $location,
+            null,
+            null,
             empty($phone) ? StringMotherObject::createPhone() : $phone,
             null,
             true,
@@ -118,8 +113,7 @@ final class UserMotherObject
         ?string $picture = null,
         ?bool $showReviews = null,
         ?int $rating = null,
-    ):User
-    {
+    ):User {
         return new User(
             empty($userId) ? UserIdMotherObject::create() : $userId,
             empty($userEmail) ? UserEmailMotherObject::create() : $userEmail,

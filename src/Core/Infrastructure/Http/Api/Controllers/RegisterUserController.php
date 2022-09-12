@@ -2,7 +2,6 @@
 
 namespace Beagle\Core\Infrastructure\Http\Api\Controllers;
 
-use Beagle\Core\Application\Command\User\RegisterUser\RegisterUser;
 use Beagle\Core\Application\Command\User\RegisterUser\RegisterUserCommand;
 use Beagle\Core\Domain\User\Errors\CannotSaveUser;
 use Beagle\Shared\Domain\Errors\InvalidEmail;
@@ -17,11 +16,13 @@ final class RegisterUserController extends BaseController
 {
     public function execute(Request $request):JsonResponse
     {
-        try
-        {
+        try {
             $request->validate([
                 "email" => 'required|email',
-                "password" => 'required|min:8'
+                "password" => 'required|min:8',
+                "name" => 'required',
+                "surname" => 'required',
+                "phone" => 'required'
             ]);
 
             $this->commandBus->dispatch(
@@ -31,15 +32,12 @@ final class RegisterUserController extends BaseController
                     \md5($request->get('password')),
                     $request->get('name'),
                     $request->get('surname'),
-                    $request->get('bio'),
-                    $request->get('location'),
                     $request->get('phone'),
                 )
             );
 
             return $this->generateNoContentResponse();
-        } catch (CannotSaveUser|InvalidEmail|InvalidPassword|ValidationException $invalidParameters)
-        {
+        } catch (CannotSaveUser|InvalidEmail|InvalidPassword|ValidationException $invalidParameters) {
             return $this->generateBadRequestResponse($invalidParameters->getMessage());
         }
     }
