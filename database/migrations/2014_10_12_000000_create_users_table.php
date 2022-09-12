@@ -20,8 +20,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('surname');
             $table->string('bio')->nullable();
-            $table->string('location');
-            $table->string('phone')->nullable();
+            $table->string('location')->nullable();
+            $table->string('phone');
             $table->string('picture')->nullable();
             $table->boolean('show_reviews');
             $table->integer('rating');
