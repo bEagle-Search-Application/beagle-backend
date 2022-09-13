@@ -13,6 +13,7 @@ use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\UserDao;
 use Faker\Factory;
 use Illuminate\Database\Seeder;
 use Symfony\Component\Uid\Uuid;
+use Tests\MotherObjects\PhonePrefixMotherObject;
 
 class DatabaseSeeder extends Seeder
 {
@@ -108,7 +109,7 @@ class DatabaseSeeder extends Seeder
                 "surname" => Factory::create()->lastName,
                 "bio" => Factory::create()->text,
                 "location" => Factory::create()->locale,
-                "phone_prefix" => (string) Factory::create()->randomNumber(2),
+                "phone_prefix" => PhonePrefixMotherObject::create()->value(),
                 "phone" => Factory::create()->phoneNumber,
                 "picture" => Factory::create()->filePath(),
                 "show_reviews" => Factory::create()->boolean,

@@ -10,8 +10,7 @@ use Beagle\Core\Domain\User\ValueObjects\UserPassword;
 use Beagle\Core\Domain\User\ValueObjects\UserToken;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\DataTransformers\UserDataTransformer;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\UserDao;
-use Beagle\Shared\Domain\Errors\InvalidEmail;
-use Beagle\Shared\Domain\Errors\InvalidPassword;
+use Beagle\Shared\Domain\Errors\InvalidValueObject;
 use Beagle\Shared\Domain\Errors\UserNotFound;
 use Illuminate\Database\QueryException;
 
@@ -23,8 +22,7 @@ final class EloquentUserRepository implements UserRepository
 
     /**
      * @throws UserNotFound
-     * @throws InvalidEmail
-     * @throws InvalidPassword
+     * @throws InvalidValueObject
      */
     public function findByEmailAndPassword(UserEmail $userEmail, UserPassword $userPassword):User
     {
@@ -33,8 +31,7 @@ final class EloquentUserRepository implements UserRepository
             ['password', $userPassword->value()],
         ])->first();
 
-        if ($userDao === null)
-        {
+        if ($userDao === null) {
             throw UserNotFound::byCredentials($userEmail);
         }
 
@@ -44,8 +41,9 @@ final class EloquentUserRepository implements UserRepository
     /** @throws CannotSaveUser */
     public function save(User $user):void
     {
-        try
-        {
+        try {
+            $userToken = $user->authToken();
+
             UserDao::updateOrCreate(
                 ['id' => $user->id()->value()],
                 [
@@ -55,14 +53,15 @@ final class EloquentUserRepository implements UserRepository
                     'surname' => $user->surname(),
                     'bio' => $user->bio(),
                     'location' => $user->location(),
-                    'phone' => $user->phone(),
+                    'phone_prefix' => $user->phone()->phonePrefixAsString(),
+                    'phone' => $user->phone()->phoneAsString(),
                     'picture' => $user->picture(),
                     'show_reviews' => $user->showReviews(),
                     'rating' => $user->rating(),
+                    'auth_token' => empty($userToken) ? null : $userToken->clearValue()
                 ]
             );
-        } catch (QueryException)
-        {
+        } catch (QueryException) {
             throw CannotSaveUser::byEmail($user->email());
         }
     }

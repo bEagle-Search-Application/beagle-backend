@@ -30,6 +30,7 @@ class UserDao extends Authenticatable implements JWTSubject
         'surname',
         'bio',
         'location',
+        'phone_prefix',
         'phone',
         'picture',
         'show_reviews',

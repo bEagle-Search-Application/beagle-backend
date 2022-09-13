@@ -11,6 +11,7 @@ use Tests\MotherObjects\StringMotherObject;
 use Tests\MotherObjects\User\UserMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserEmailMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserPasswordMotherObject;
+use Tests\MotherObjects\User\ValueObjects\UserPhoneMotherObject;
 use Tests\TestCase;
 
 final class RegisterUserControllerTest extends TestCase
@@ -44,7 +45,8 @@ final class RegisterUserControllerTest extends TestCase
         string $password,
         string $name,
         string $surname,
-        string $phone
+        string $phone_prefix,
+        string $phone,
     ):void {
         $response = $this->post(
             \route(
@@ -54,6 +56,7 @@ final class RegisterUserControllerTest extends TestCase
                     "password" => $password,
                     "name" => $name,
                     "surname" => $surname,
+                    "phone_prefix" => $phone_prefix,
                     "phone" => $phone,
                 ]
             )
@@ -77,7 +80,8 @@ final class RegisterUserControllerTest extends TestCase
                 "password" => UserPasswordMotherObject::create()->value(),
                 "name" => StringMotherObject::createName(),
                 "surname" => StringMotherObject::createSurname(),
-                "phone" => StringMotherObject::createPhone(),
+                "phone_prefix" => UserPhoneMotherObject::create()->phonePrefixAsString(),
+                "phone" => UserPhoneMotherObject::create()->phoneAsString(),
             ],
             "Invalid password" => [
                 "errorMessage" => "The password must be at least 8 characters.",
@@ -85,7 +89,8 @@ final class RegisterUserControllerTest extends TestCase
                 "password" => "1234",
                 "name" => StringMotherObject::createName(),
                 "surname" => StringMotherObject::createSurname(),
-                "phone" => StringMotherObject::createPhone(),
+                "phone_prefix" => UserPhoneMotherObject::create()->phonePrefixAsString(),
+                "phone" => UserPhoneMotherObject::create()->phoneAsString(),
             ],
             "Empty name" => [
                 "errorMessage" => "The name field is required.",
@@ -93,7 +98,8 @@ final class RegisterUserControllerTest extends TestCase
                 "password" => UserPasswordMotherObject::create()->value(),
                 "name" => "",
                 "surname" => StringMotherObject::createSurname(),
-                "phone" => StringMotherObject::createPhone(),
+                "phone_prefix" => UserPhoneMotherObject::create()->phonePrefixAsString(),
+                "phone" => UserPhoneMotherObject::create()->phoneAsString(),
             ],
             "Empty surname" => [
                 "errorMessage" => "The surname field is required.",
@@ -101,7 +107,17 @@ final class RegisterUserControllerTest extends TestCase
                 "password" => UserPasswordMotherObject::create()->value(),
                 "name" => StringMotherObject::createName(),
                 "surname" => "",
-                "phone" => StringMotherObject::createPhone(),
+                "phone_prefix" => UserPhoneMotherObject::create()->phonePrefixAsString(),
+                "phone" => UserPhoneMotherObject::create()->phoneAsString(),
+            ],
+            "Empty phone_prefix" => [
+                "errorMessage" => "The phone prefix field is required.",
+                "email" => UserEmailMotherObject::create()->value(),
+                "password" => UserPasswordMotherObject::create()->value(),
+                "name" => StringMotherObject::createName(),
+                "surname" => StringMotherObject::createSurname(),
+                "phone_prefix" => "",
+                "phone" => UserPhoneMotherObject::create()->phoneAsString(),
             ],
             "Empty phone" => [
                 "errorMessage" => "The phone field is required.",
@@ -109,7 +125,26 @@ final class RegisterUserControllerTest extends TestCase
                 "password" => UserPasswordMotherObject::create()->value(),
                 "name" => StringMotherObject::createName(),
                 "surname" => StringMotherObject::createSurname(),
+                "phone_prefix" => UserPhoneMotherObject::create()->phonePrefixAsString(),
                 "phone" => "",
+            ],
+            "Invalid phone_prefix" => [
+                "errorMessage" => "The phone code 4444 is invalid",
+                "email" => UserEmailMotherObject::create()->value(),
+                "password" => UserPasswordMotherObject::create()->value(),
+                "name" => StringMotherObject::createName(),
+                "surname" => StringMotherObject::createSurname(),
+                "phone_prefix" => "4444",
+                "phone" => UserPhoneMotherObject::create()->phoneAsString(),
+            ],
+            "Invalid phone" => [
+                "errorMessage" => "The number dwadad has an invalid format",
+                "email" => UserEmailMotherObject::create()->value(),
+                "password" => UserPasswordMotherObject::create()->value(),
+                "name" => StringMotherObject::createName(),
+                "surname" => StringMotherObject::createSurname(),
+                "phone_prefix" => UserPhoneMotherObject::create()->phonePrefixAsString(),
+                "phone" => "dwadad",
             ],
         ];
     }
@@ -127,7 +162,8 @@ final class RegisterUserControllerTest extends TestCase
                     "password" => $this->user->password()->value(),
                     "name" => $this->user->name(),
                     "surname" => $this->user->surname(),
-                    "phone" => $this->user->phone(),
+                    "phone_prefix" => $this->user->phone()->phonePrefixAsString(),
+                    "phone" => $this->user->phone()->phoneAsString(),
                 ]
             )
         );
@@ -151,7 +187,8 @@ final class RegisterUserControllerTest extends TestCase
                     "password" => $this->user->password()->value(),
                     "name" => $this->user->name(),
                     "surname" => $this->user->surname(),
-                    "phone" => $this->user->phone(),
+                    "phone_prefix" => $this->user->phone()->phonePrefixAsString(),
+                    "phone" => $this->user->phone()->phoneAsString(),
                 ]
             )
         );

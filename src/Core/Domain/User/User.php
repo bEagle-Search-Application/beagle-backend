@@ -5,6 +5,7 @@ namespace Beagle\Core\Domain\User;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
+use Beagle\Core\Domain\User\ValueObjects\UserPhone;
 use Beagle\Core\Domain\User\ValueObjects\UserToken;
 
 final class User
@@ -17,7 +18,7 @@ final class User
         private string $surname,
         private ?string $bio,
         private ?string $location,
-        private string $phone,
+        private UserPhone $phone,
         private ?string $picture,
         private bool $showReviews,
         private int $rating,
@@ -61,7 +62,7 @@ final class User
         return $this->location;
     }
 
-    public function phone():string
+    public function phone():UserPhone
     {
         return $this->phone;
     }

@@ -6,16 +6,14 @@ use Beagle\Core\Domain\User\Errors\CannotSaveUser;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
 use Beagle\Core\Domain\User\ValueObjects\UserToken;
-use Beagle\Shared\Domain\Errors\InvalidEmail;
-use Beagle\Shared\Domain\Errors\InvalidPassword;
+use Beagle\Shared\Domain\Errors\InvalidValueObject;
 use Beagle\Shared\Domain\Errors\UserNotFound;
 
 interface UserRepository
 {
     /**
      * @throws UserNotFound
-     * @throws InvalidEmail
-     * @throws InvalidPassword
+     * @throws InvalidValueObject
      */
     public function findByEmailAndPassword(UserEmail $userEmail, UserPassword $userPassword):User;
 

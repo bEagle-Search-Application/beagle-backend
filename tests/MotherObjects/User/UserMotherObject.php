@@ -7,16 +7,19 @@ use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
 use Beagle\Core\Domain\User\ValueObjects\UserToken;
+use Beagle\Shared\Domain\Errors\InvalidValueObject;
 use Tests\MotherObjects\BooleanMotherObject;
 use Tests\MotherObjects\IntegerMotherObject;
 use Tests\MotherObjects\StringMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserEmailMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserIdMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserPasswordMotherObject;
+use Tests\MotherObjects\User\ValueObjects\UserPhoneMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserTokenMotherObject;
 
 final class UserMotherObject
 {
+    /** @throws InvalidValueObject */
     public static function create(
         ?UserId $userId = null,
         ?UserEmail $userEmail = null,
@@ -39,7 +42,7 @@ final class UserMotherObject
             empty($surname) ? StringMotherObject::createSurname() : $surname,
             empty($bio) ? StringMotherObject::create() : $bio,
             empty($location) ? StringMotherObject::createLocation() : $location,
-            empty($phone) ? StringMotherObject::createPhone() : $phone,
+            empty($phone) ? UserPhoneMotherObject::create() : $phone,
             empty($picture) ? StringMotherObject::createPath() : $picture,
             empty($showReviews) ? BooleanMotherObject::create() : $showReviews,
             empty($rating) ? IntegerMotherObject::createRating() : $rating,
@@ -47,6 +50,7 @@ final class UserMotherObject
         );
     }
 
+    /** @throws InvalidValueObject */
     public static function createWithHashedPassword(
         ?UserId $userId = null,
         ?UserEmail $userEmail = null,
@@ -69,7 +73,7 @@ final class UserMotherObject
             empty($surname) ? StringMotherObject::createSurname() : $surname,
             empty($bio) ? StringMotherObject::create() : $bio,
             empty($location) ? StringMotherObject::createLocation() : $location,
-            empty($phone) ? StringMotherObject::createPhone() : $phone,
+            empty($phone) ? UserPhoneMotherObject::create() : $phone,
             empty($picture) ? StringMotherObject::createPath() : $picture,
             empty($showReviews) ? BooleanMotherObject::create() : $showReviews,
             empty($rating) ? IntegerMotherObject::createRating() : $rating,
@@ -77,6 +81,7 @@ final class UserMotherObject
         );
     }
 
+    /** @throws InvalidValueObject */
     public static function createForRegister(
         ?UserId $userId = null,
         ?UserEmail $userEmail = null,
@@ -93,7 +98,7 @@ final class UserMotherObject
             empty($surname) ? StringMotherObject::createSurname() : $surname,
             null,
             null,
-            empty($phone) ? StringMotherObject::createPhone() : $phone,
+            empty($phone) ? UserPhoneMotherObject::create() : $phone,
             null,
             true,
             0,
@@ -101,6 +106,7 @@ final class UserMotherObject
         );
     }
 
+    /** @throws InvalidValueObject */
     public static function createWithoutToken(
         ?UserId $userId = null,
         ?UserEmail $userEmail = null,
@@ -122,7 +128,7 @@ final class UserMotherObject
             empty($surname) ? StringMotherObject::createSurname() : $surname,
             empty($bio) ? StringMotherObject::create() : $bio,
             empty($location) ? StringMotherObject::createLocation() : $location,
-            empty($phone) ? StringMotherObject::createPhone() : $phone,
+            empty($phone) ? UserPhoneMotherObject::create() : $phone,
             empty($picture) ? StringMotherObject::createPath() : $picture,
             empty($showReviews) ? BooleanMotherObject::create() : $showReviews,
             empty($rating) ? IntegerMotherObject::createRating() : $rating,

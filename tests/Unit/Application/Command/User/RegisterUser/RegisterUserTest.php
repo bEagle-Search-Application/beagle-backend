@@ -9,7 +9,11 @@ use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\InMemoryUserRepository;
 use Beagle\Shared\Domain\Errors\InvalidEmail;
+use Beagle\Shared\Domain\Errors\InvalidPhone;
+use Beagle\Shared\Domain\Errors\InvalidPhonePrefix;
 use PHPUnit\Framework\TestCase;
+use Tests\MotherObjects\PhoneMotherObject;
+use Tests\MotherObjects\PhonePrefixMotherObject;
 use Tests\MotherObjects\User\UserMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserPasswordMotherObject;
 
@@ -43,9 +47,47 @@ final class RegisterUserTest extends TestCase
                 $this->user->password()->value(),
                 $this->user->name(),
                 $this->user->surname(),
-                $this->user->phone(),
+                $this->user->phone()->phonePrefixAsString(),
+                $this->user->phone()->phoneAsString(),
             )
         );
+    }
+
+    /** @dataProvider invalidPhonesProvider */
+    public function testItThrowsExceptionWhenPhoneIsInvalid(
+        string $phoneNumber,
+        string $phonePrefix,
+        string $exception
+    ):void {
+        $this->expectException($exception);
+
+        $this->sut->__invoke(
+            new RegisterUserCommand(
+                $this->user->id()->value(),
+                $this->user->email()->value(),
+                $this->user->password()->value(),
+                $this->user->name(),
+                $this->user->surname(),
+                $phonePrefix,
+                $phoneNumber,
+            )
+        );
+    }
+
+    public function invalidPhonesProvider():array
+    {
+        return [
+            "Invalid phone number" => [
+                "phoneNumber" => "a",
+                "phonePrefix" => PhonePrefixMotherObject::create()->value(),
+                "exception" => InvalidPhone::class
+            ],
+            "Invalid phone prefix" => [
+                "phoneNumber" => PhoneMotherObject::create()->value(),
+                "phonePrefix" => "4654676",
+                "exception" => InvalidPhonePrefix::class
+            ]
+        ];
     }
 
     public function testItThrowsCannotSaveUserException():void
@@ -62,7 +104,8 @@ final class RegisterUserTest extends TestCase
                 $this->user->password()->value(),
                 $this->user->name(),
                 $this->user->surname(),
-                $this->user->phone(),
+                $this->user->phone()->phonePrefixAsString(),
+                $this->user->phone()->phoneAsString(),
             )
         );
     }
@@ -76,7 +119,8 @@ final class RegisterUserTest extends TestCase
                 $this->user->password()->value(),
                 $this->user->name(),
                 $this->user->surname(),
-                $this->user->phone(),
+                $this->user->phone()->phonePrefixAsString(),
+                $this->user->phone()->phoneAsString(),
             )
         );
 
