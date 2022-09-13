@@ -80,12 +80,12 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        if(empty(TagDao::count())) {
+        if (empty(TagDao::count())) {
             $this->createTagDao($tagId1);
             $this->createTagDao($tagId2);
         }
 
-        if(empty(AdTagDao::count())) {
+        if (empty(AdTagDao::count())) {
             $this->createAdTagDao(
                 $tagId1,
                 $adId1
@@ -108,6 +108,7 @@ class DatabaseSeeder extends Seeder
                 "surname" => Factory::create()->lastName,
                 "bio" => Factory::create()->text,
                 "location" => Factory::create()->locale,
+                "phone_prefix" => (string) Factory::create()->randomNumber(2),
                 "phone" => Factory::create()->phoneNumber,
                 "picture" => Factory::create()->filePath(),
                 "show_reviews" => Factory::create()->boolean,
@@ -142,8 +143,7 @@ class DatabaseSeeder extends Seeder
     private function createAdDao(
         string $userId,
         string $adId
-    ):void
-    {
+    ):void {
         AdDao::updateOrCreate(
             ["id" => $adId],
             [
@@ -162,8 +162,7 @@ class DatabaseSeeder extends Seeder
         string $userId,
         string $authorId,
         string $adId
-    ):void
-    {
+    ):void {
         ReviewDao::updateOrCreate(
             ["id" => Uuid::v4()->toBase58()],
             [
@@ -179,8 +178,7 @@ class DatabaseSeeder extends Seeder
     private function createFavoriteDao(
         string $userId,
         string $adId
-    ):void
-    {
+    ):void {
         FavoriteDao::updateOrCreate(
             ["id" => Uuid::v4()->toBase58()],
             [
@@ -203,8 +201,7 @@ class DatabaseSeeder extends Seeder
     private function createAdTagDao(
         string $tagId,
         string $adId,
-    ):void
-    {
+    ):void {
         AdTagDao::updateOrCreate(
             ["id" => Uuid::v4()->toBase58()],
             [
