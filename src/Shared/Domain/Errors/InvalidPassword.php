@@ -2,7 +2,7 @@
 
 namespace Beagle\Shared\Domain\Errors;
 
-final class InvalidPassword extends \Exception
+final class InvalidPassword extends InvalidValueObject
 {
     private const INVALID_LENGTH = "The password must have %s characters";
 
