@@ -7,6 +7,7 @@ use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserRepository;
 use Symfony\Component\HttpFoundation\Response;
+use Tests\MotherObjects\StringMotherObject;
 use Tests\MotherObjects\User\UserMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserEmailMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserPasswordMotherObject;
@@ -40,20 +41,20 @@ final class RegisterUserControllerTest extends TestCase
     public function testItReturnsBadRequestResponse(
         string $errorMessage,
         string $email,
-        string $password
-    ):void
-    {
+        string $password,
+        string $name,
+        string $surname,
+        string $phone
+    ):void {
         $response = $this->post(
             \route(
                 'api.register',
                 [
                     "email" => $email,
                     "password" => $password,
-                    "name" => $this->user->name(),
-                    "surname" => $this->user->surname(),
-                    "bio" => $this->user->bio(),
-                    "location" => $this->user->location(),
-                    "phone" => $this->user->phone(),
+                    "name" => $name,
+                    "surname" => $surname,
+                    "phone" => $phone,
                 ]
             )
         );
@@ -73,12 +74,42 @@ final class RegisterUserControllerTest extends TestCase
             "Invalid email" => [
                 "errorMessage" => "The email dani@noid has an invalid format",
                 "email" => "dani@noid",
-                "password" => UserPasswordMotherObject::create()->value()
+                "password" => UserPasswordMotherObject::create()->value(),
+                "name" => StringMotherObject::createName(),
+                "surname" => StringMotherObject::createSurname(),
+                "phone" => StringMotherObject::createPhone(),
             ],
             "Invalid password" => [
                 "errorMessage" => "The password must be at least 8 characters.",
                 "email" => UserEmailMotherObject::create()->value(),
-                "password" => "1234"
+                "password" => "1234",
+                "name" => StringMotherObject::createName(),
+                "surname" => StringMotherObject::createSurname(),
+                "phone" => StringMotherObject::createPhone(),
+            ],
+            "Empty name" => [
+                "errorMessage" => "The name field is required.",
+                "email" => UserEmailMotherObject::create()->value(),
+                "password" => UserPasswordMotherObject::create()->value(),
+                "name" => "",
+                "surname" => StringMotherObject::createSurname(),
+                "phone" => StringMotherObject::createPhone(),
+            ],
+            "Empty surname" => [
+                "errorMessage" => "The surname field is required.",
+                "email" => UserEmailMotherObject::create()->value(),
+                "password" => UserPasswordMotherObject::create()->value(),
+                "name" => StringMotherObject::createName(),
+                "surname" => "",
+                "phone" => StringMotherObject::createPhone(),
+            ],
+            "Empty phone" => [
+                "errorMessage" => "The phone field is required.",
+                "email" => UserEmailMotherObject::create()->value(),
+                "password" => UserPasswordMotherObject::create()->value(),
+                "name" => StringMotherObject::createName(),
+                "surname" => StringMotherObject::createSurname(),
+                "phone" => "",
             ],
         ];
     }
@@ -96,8 +127,6 @@ final class RegisterUserControllerTest extends TestCase
                     "password" => $this->user->password()->value(),
                     "name" => $this->user->name(),
                     "surname" => $this->user->surname(),
-                    "bio" => $this->user->bio(),
-                    "location" => $this->user->location(),
                     "phone" => $this->user->phone(),
                 ]
             )
@@ -122,8 +151,6 @@ final class RegisterUserControllerTest extends TestCase
                     "password" => $this->user->password()->value(),
                     "name" => $this->user->name(),
                     "surname" => $this->user->surname(),
-                    "bio" => $this->user->bio(),
-                    "location" => $this->user->location(),
                     "phone" => $this->user->phone(),
                 ]
             )

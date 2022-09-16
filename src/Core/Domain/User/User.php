@@ -16,14 +16,13 @@ final class User
         private string $name,
         private string $surname,
         private ?string $bio,
-        private string $location,
-        private ?string $phone,
+        private ?string $location,
+        private string $phone,
         private ?string $picture,
         private bool $showReviews,
         private int $rating,
         private ?UserToken $authToken
-    )
-    {
+    ) {
     }
 
 
@@ -57,12 +56,12 @@ final class User
         return $this->bio;
     }
 
-    public function location():string
+    public function location():?string
     {
         return $this->location;
     }
 
-    public function phone():?string
+    public function phone():string
     {
         return $this->phone;
     }
