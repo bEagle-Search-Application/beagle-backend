@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('surname');
             $table->string('bio')->nullable();
             $table->string('location')->nullable();
+            $table->string('phone_prefix');
             $table->string('phone');
             $table->string('picture')->nullable();
             $table->boolean('show_reviews');

@@ -12,6 +12,7 @@ final class RegisterUserCommand implements Command
         private string $userPassword,
         private string $userName,
         private string $userSurname,
+        private string $userPhonePrefix,
         private string $userPhone,
     ) {
     }
@@ -44,5 +45,10 @@ final class RegisterUserCommand implements Command
     public function userPhone():string
     {
         return $this->userPhone;
+    }
+
+    public function userPhonePrefix():string
+    {
+        return $this->userPhonePrefix;
     }
 }

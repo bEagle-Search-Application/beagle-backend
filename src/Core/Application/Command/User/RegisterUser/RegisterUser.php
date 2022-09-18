@@ -8,10 +8,12 @@ use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
+use Beagle\Core\Domain\User\ValueObjects\UserPhone;
 use Beagle\Shared\Bus\Command;
 use Beagle\Shared\Bus\CommandHandler;
-use Beagle\Shared\Domain\Errors\InvalidEmail;
-use Beagle\Shared\Domain\Errors\InvalidPassword;
+use Beagle\Shared\Domain\Errors\InvalidValueObject;
+use Beagle\Shared\Domain\ValueObjects\Phone;
+use Beagle\Shared\Domain\ValueObjects\PhonePrefix;
 
 final class RegisterUser extends CommandHandler
 {
@@ -22,8 +24,7 @@ final class RegisterUser extends CommandHandler
     /**
      * @param RegisterUserCommand $command
      *
-     * @throws InvalidEmail
-     * @throws InvalidPassword
+     * @throws InvalidValueObject
      * @throws CannotSaveUser
      */
     public function handle(Command $command):void
@@ -33,15 +34,16 @@ final class RegisterUser extends CommandHandler
         );
     }
 
-    /**
-     * @throws InvalidEmail
-     * @throws InvalidPassword
-     */
+    /** @throws InvalidValueObject */
     public function createUser(RegisterUserCommand $command):User
     {
         $userId = UserId::fromString($command->userId());
         $userEmail = UserEmail::fromString($command->userEmail());
         $userPassword = UserPassword::fromString($command->userPassword());
+        $userPhone = UserPhone::create(
+            PhonePrefix::fromString($command->userPhonePrefix()),
+            Phone::fromString($command->userPhone()),
+        );
 
         return new User(
             $userId,
@@ -51,7 +53,7 @@ final class RegisterUser extends CommandHandler
             $command->userSurname(),
             null,
             null,
-            $command->userPhone(),
+            $userPhone,
             null,
             true,
             0,

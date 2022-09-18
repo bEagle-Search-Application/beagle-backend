@@ -6,17 +6,16 @@ use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
+use Beagle\Core\Domain\User\ValueObjects\UserPhone;
 use Beagle\Core\Domain\User\ValueObjects\UserToken;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\UserDao;
-use Beagle\Shared\Domain\Errors\InvalidEmail;
-use Beagle\Shared\Domain\Errors\InvalidPassword;
+use Beagle\Shared\Domain\Errors\InvalidValueObject;
+use Beagle\Shared\Domain\ValueObjects\Phone;
+use Beagle\Shared\Domain\ValueObjects\PhonePrefix;
 
 final class UserDataTransformer
 {
-    /**
-     * @throws InvalidEmail
-     * @throws InvalidPassword
-     */
+    /** @throws InvalidValueObject */
     public function fromDao(UserDao $userDao): User
     {
         $auth_token = $userDao->auth_token;
@@ -29,7 +28,10 @@ final class UserDataTransformer
             $userDao->surname,
             $userDao->bio,
             $userDao->location,
-            $userDao->phone,
+            UserPhone::create(
+                PhonePrefix::fromString($userDao->phone_prefix),
+                Phone::fromString($userDao->phone),
+            ),
             $userDao->picture,
             (bool) $userDao->show_reviews,
             $userDao->rating,
@@ -48,7 +50,8 @@ final class UserDataTransformer
         $userDao->surname = $user->surname();
         $userDao->bio = $user->bio();
         $userDao->location = $user->location();
-        $userDao->phone = $user->phone();
+        $userDao->phone_prefix = $user->phone()->phonePrefixAsString();
+        $userDao->phone = $user->phone()->phoneAsString();
         $userDao->picture = $user->picture();
         $userDao->show_reviews = $user->showReviews();
         $userDao->rating = $user->rating();

@@ -16,14 +16,15 @@ final class LoginControllerTest extends TestCase
 {
     private User $user;
     private string $userPassword;
+    private UserRepository $userRepository;
 
     protected function setUp():void
     {
         parent::setUp();
 
-        $userRepository = $this->app->make(EloquentUserRepository::class);
+        $this->userRepository = $this->app->make(EloquentUserRepository::class);
 
-        $this->prepareSavedUser($userRepository);
+        $this->prepareSavedUser($this->userRepository);
     }
 
     private function prepareSavedUser(UserRepository $userRepository):void
@@ -73,6 +74,37 @@ final class LoginControllerTest extends TestCase
             )
         );
 
+        $decodedResponse = $this->decodeResponse($response->getContent());
+        $userLogged = $this->userRepository->findByEmailAndPassword(
+            $this->user->email(),
+            $this->user->password()
+        );
+
         $this->assertSame(Response::HTTP_OK, $response->status());
+        $this->assertSame(
+            [
+                "response" => [
+                    "user" => [
+                        "id" => $userLogged->id()->value(),
+                        "email" => $userLogged->email()->value(),
+                        "name" => $userLogged->name(),
+                        "surname" => $userLogged->surname(),
+                        "bio" => $userLogged->bio(),
+                        "location" => $userLogged->location(),
+                        "phone_prefix" => $userLogged->phone()->phonePrefixAsString(),
+                        "phone" => $userLogged->phone()->phoneAsString(),
+                        "picture" => $userLogged->picture(),
+                        "show_reviews" => $userLogged->showReviews(),
+                        "rating" => $userLogged->rating(),
+                    ],
+                    "auth" => [
+                        "token" => $userLogged->authToken()->value(),
+                        "type" => $userLogged->authToken()->type()
+                    ],
+                ],
+                "status" => Response::HTTP_OK
+            ],
+            $decodedResponse
+        );
     }
 }

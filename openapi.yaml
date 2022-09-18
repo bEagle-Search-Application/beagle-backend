@@ -38,6 +38,10 @@ paths:
                   type: string
                   example: "González"
                   required: true
+                phone_prefix:
+                  type: string
+                  example: "34"
+                  required: true
                 phone:
                   type: string
                   example: "666777888"
@@ -125,33 +129,47 @@ components:
         id:
           type: string
           example: "N9pBnTwYhrN9tHJPrgDvsb"
+          required: true
         email:
           type: string
           example: "dani@beagle.com"
+          required: true
         name:
           type: string
           example: "Dani"
+          required: true
         surname:
           type: string
           example: "González"
+          required: true
         bio:
           type: string
           example: "Voluptatum maxime quidem et ut consequatur. Rerum aspernatur aut delectus qui aspernatur."
+          required: false
         location:
           type: string
           example: "ES"
+          required: false
+        phone_prefix:
+          type: string
+          example: "34"
+          required: true
         phone:
           type: string
           example: "666777888"
+          required: true
         picture:
           type: string
           example: "/tmp/fakerbDcfCD"
+          required: false
         show_reviews:
           type: boolean
           example: true
+          required: true
         rating:
           type: number
           example: 4
+          required: true
 
   securitySchemes:
     bearerAuth:
