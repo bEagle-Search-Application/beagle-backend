@@ -10,7 +10,7 @@ security:
   - bearerAuth: []
 
 paths:
-  /auth/register:
+  /register:
     post:
       tags:
         - Auth
