@@ -75,7 +75,7 @@ final class RegisterUserControllerTest extends TestCase
     {
         return [
             "Invalid email" => [
-                "errorMessage" => "The email dani@noid has an invalid format",
+                "errorMessage" => "El email dani@noid tiene un formato inválido",
                 "email" => "dani@noid",
                 "password" => UserPasswordMotherObject::create()->value(),
                 "name" => StringMotherObject::createName(),
@@ -84,7 +84,7 @@ final class RegisterUserControllerTest extends TestCase
                 "phone" => UserPhoneMotherObject::create()->phoneAsString(),
             ],
             "Invalid password" => [
-                "errorMessage" => "The password must be at least 8 characters.",
+                "errorMessage" => "El campo password debe contener al menos 8 caracteres.",
                 "email" => UserEmailMotherObject::create()->value(),
                 "password" => "1234",
                 "name" => StringMotherObject::createName(),
@@ -93,7 +93,7 @@ final class RegisterUserControllerTest extends TestCase
                 "phone" => UserPhoneMotherObject::create()->phoneAsString(),
             ],
             "Empty name" => [
-                "errorMessage" => "The name field is required.",
+                "errorMessage" => "El campo name es obligatorio.",
                 "email" => UserEmailMotherObject::create()->value(),
                 "password" => UserPasswordMotherObject::create()->value(),
                 "name" => "",
@@ -102,7 +102,7 @@ final class RegisterUserControllerTest extends TestCase
                 "phone" => UserPhoneMotherObject::create()->phoneAsString(),
             ],
             "Empty surname" => [
-                "errorMessage" => "The surname field is required.",
+                "errorMessage" => "El campo surname es obligatorio.",
                 "email" => UserEmailMotherObject::create()->value(),
                 "password" => UserPasswordMotherObject::create()->value(),
                 "name" => StringMotherObject::createName(),
@@ -111,7 +111,7 @@ final class RegisterUserControllerTest extends TestCase
                 "phone" => UserPhoneMotherObject::create()->phoneAsString(),
             ],
             "Empty phone_prefix" => [
-                "errorMessage" => "The phone prefix field is required.",
+                "errorMessage" => "El campo phone prefix es obligatorio.",
                 "email" => UserEmailMotherObject::create()->value(),
                 "password" => UserPasswordMotherObject::create()->value(),
                 "name" => StringMotherObject::createName(),
@@ -120,7 +120,7 @@ final class RegisterUserControllerTest extends TestCase
                 "phone" => UserPhoneMotherObject::create()->phoneAsString(),
             ],
             "Empty phone" => [
-                "errorMessage" => "The phone field is required.",
+                "errorMessage" => "El campo phone es obligatorio.",
                 "email" => UserEmailMotherObject::create()->value(),
                 "password" => UserPasswordMotherObject::create()->value(),
                 "name" => StringMotherObject::createName(),
@@ -129,7 +129,7 @@ final class RegisterUserControllerTest extends TestCase
                 "phone" => "",
             ],
             "Invalid phone_prefix" => [
-                "errorMessage" => "The phone code 4444 is invalid",
+                "errorMessage" => "El prefijo telefónico 4444 es inválido",
                 "email" => UserEmailMotherObject::create()->value(),
                 "password" => UserPasswordMotherObject::create()->value(),
                 "name" => StringMotherObject::createName(),
@@ -138,7 +138,7 @@ final class RegisterUserControllerTest extends TestCase
                 "phone" => UserPhoneMotherObject::create()->phoneAsString(),
             ],
             "Invalid phone" => [
-                "errorMessage" => "The number dwadad has an invalid format",
+                "errorMessage" => "El teléfono dwadad tiene un formato inválido",
                 "email" => UserEmailMotherObject::create()->value(),
                 "password" => UserPasswordMotherObject::create()->value(),
                 "name" => StringMotherObject::createName(),
@@ -172,7 +172,7 @@ final class RegisterUserControllerTest extends TestCase
 
         $this->assertSame(Response::HTTP_BAD_REQUEST, $response->status());
         $this->assertSame(
-            \sprintf("The email %s already exists", $userRegistered->email()->value()),
+            \sprintf("El email %s ya existe", $userRegistered->email()->value()),
             $decodedResponse["response"]
         );
     }
