@@ -118,6 +118,8 @@ paths:
           description: Successfully user logout
         '400':
           $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
         '500':
           $ref: '#components/responses/500'
 
@@ -187,9 +189,22 @@ components:
             properties:
               response:
                 type: string
-                example: "Invalid request reponse"
+                example: "Invalid request response"
               status:
                 type: number
                 example: 400
+    403:
+      description: Forbidden request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              response:
+                type: string
+                example: "You don't have enough permissions"
+              status:
+                type: number
+                example: 403
     500:
       description: Internal Server Error

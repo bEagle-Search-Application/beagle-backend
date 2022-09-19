@@ -18,18 +18,19 @@ class VerifyAuthToken
 
     public function handle(Request $request, Closure $next)
     {
-        try
-        {
+        try {
             $token = UserToken::fromString($request->header('authorization'));
             $this->userRepository->findByToken($token);
 
             return $next($request);
-        } catch (UserNotFound $e)
-        {
-            return new JsonResponse([
-                "message" => $e->getMessage(),
-                "status" => Response::HTTP_BAD_REQUEST,
-            ]);
+        } catch (UserNotFound $e) {
+            return new JsonResponse(
+                [
+                    "message" => $e->getMessage(),
+                    "status" => Response::HTTP_FORBIDDEN,
+                ],
+                Response::HTTP_FORBIDDEN
+            );
         }
     }
 }
