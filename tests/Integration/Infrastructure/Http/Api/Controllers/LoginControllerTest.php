@@ -57,7 +57,7 @@ final class LoginControllerTest extends TestCase
 
         $this->assertSame(Response::HTTP_BAD_REQUEST, $response->status());
         $this->assertSame(
-            \sprintf("The credentials for %s are invalid", $userEmail),
+            \sprintf("Las credenciales de %s son incorrectas", $userEmail),
             $decodedResponse["response"]
         );
     }

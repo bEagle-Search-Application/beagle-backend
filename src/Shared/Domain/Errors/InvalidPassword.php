@@ -4,7 +4,7 @@ namespace Beagle\Shared\Domain\Errors;
 
 final class InvalidPassword extends InvalidValueObject
 {
-    private const INVALID_LENGTH = "The password must have %s characters";
+    private const INVALID_LENGTH = "La contraseña debe tener %s caracteres";
 
     public static function byLength(int $length): self
     {

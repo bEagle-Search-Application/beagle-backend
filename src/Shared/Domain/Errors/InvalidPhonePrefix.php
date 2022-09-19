@@ -4,7 +4,7 @@ namespace Beagle\Shared\Domain\Errors;
 
 final class InvalidPhonePrefix extends InvalidValueObject
 {
-    private const INVALID_CODE = "The phone code %s is invalid";
+    private const INVALID_CODE = "El prefijo telefónico %s es inválido";
 
     public static function byCode(string $prefixPhone):self
     {

@@ -6,10 +6,12 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "friendsofphp/php-cs-fixer": "^3.11",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^9.2",
         "laravel/sanctum": "^2.14.1",
         "laravel/tinker": "^2.7",
+        "laraveles/spanish": "^1.5",
         "league/tactician": "^1.1",
         "league/tactician-container": "^3.0",
         "php-open-source-saver/jwt-auth": "^1.4",

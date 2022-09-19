@@ -6,8 +6,8 @@ use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 
 final class UserNotFound extends \Exception
 {
-    private const INVALID_CREDENTIALS = "The credentials for %s are invalid";
-    private const INVALID_TOKEN = "The token is invalid";
+    private const INVALID_CREDENTIALS = "Las credenciales de %s son incorrectas";
+    private const INVALID_TOKEN = "El token es inválido";
 
     public static function byCredentials(UserEmail $userEmail): self
     {

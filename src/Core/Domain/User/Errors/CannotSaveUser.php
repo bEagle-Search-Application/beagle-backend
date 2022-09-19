@@ -6,7 +6,7 @@ use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 
 final class CannotSaveUser extends \Exception
 {
-    private const DUPLICATE_EMAIL = "The email %s already exists";
+    private const DUPLICATE_EMAIL = "El email %s ya existe";
 
     public static function byEmail(UserEmail $email):self
     {
