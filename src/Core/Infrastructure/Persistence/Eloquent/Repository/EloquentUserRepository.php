@@ -61,8 +61,12 @@ final class EloquentUserRepository implements UserRepository
                     'auth_token' => empty($userToken) ? null : $userToken->clearValue()
                 ]
             );
-        } catch (QueryException) {
-            throw CannotSaveUser::byEmail($user->email());
+        } catch (QueryException $e) {
+            if ($e->getCode() === "23000") {
+                throw CannotSaveUser::byEmail($user->email());
+            }
+
+            throw new CannotSaveUser($e->getMessage());
         }
     }
 
