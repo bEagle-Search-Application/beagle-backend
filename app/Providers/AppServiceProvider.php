@@ -24,6 +24,25 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
+            \Beagle\Shared\Bus\EventBus::class,
+            static function () {
+                $containerLocator = new \Beagle\Shared\Bus\Tactician\LaravelLazyHandlerLocator(
+                    config('bus.event_bus.router.routes')
+                );
+
+                $commandHandlerMiddleware = new \League\Tactician\Handler\CommandHandlerMiddleware(
+                    new \League\Tactician\Handler\CommandNameExtractor\ClassNameExtractor(),
+                    $containerLocator,
+                    new \League\Tactician\Handler\MethodNameInflector\InvokeInflector()
+                );
+
+                return new \Beagle\Shared\Bus\Tactician\TacticianSyncEventBus(
+                    $commandHandlerMiddleware
+                );
+            }
+        );
+
+        $this->app->bind(
             \Beagle\Shared\Bus\CommandBus::class,
             static function () {
                 $containerLocator = new \Beagle\Shared\Bus\Tactician\LaravelLazyHandlerLocator(
@@ -60,7 +79,6 @@ class AppServiceProvider extends ServiceProvider
                 );
             }
         );
-
     }
 
     /**
