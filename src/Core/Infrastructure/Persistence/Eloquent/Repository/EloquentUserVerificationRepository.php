@@ -18,9 +18,9 @@ final class EloquentUserVerificationRepository implements UserVerificationReposi
     public function save(UserVerification $userVerification):void
     {
         UserVerificationDao::updateOrCreate(
-            ['id' => $userVerification->id()->value()],
+            ['email' => $userVerification->email()->value()],
             [
-                'email' => $userVerification->email()->value(),
+                'id' => $userVerification->id()->value(),
                 'token' => $userVerification->token()->value(),
                 'expired_at' => $userVerification->expiredAt()->toDateTimeString()
             ]

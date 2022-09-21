@@ -9,20 +9,24 @@ use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\InMemoryUserVerif
 use Beagle\Shared\Domain\Errors\InvalidEmail;
 use PHPUnit\Framework\TestCase;
 use Tests\MotherObjects\User\ValueObjects\UserEmailMotherObject;
+use Tests\TestDoubles\Infrastructure\Email\Verification\SpyUserVerificationEmailSender;
 
 final class SendEmailVerificationEmailTest extends TestCase
 {
     private SendEmailVerificationEmail $sut;
     private UserVerificationRepository $userVerificationRepository;
+    private SpyUserVerificationEmailSender $spyUserVerificationRepository;
 
     protected function setUp():void
     {
         parent::setUp();
 
         $this->userVerificationRepository = new InMemoryUserVerificationRepository();
+        $this->spyUserVerificationRepository = new SpyUserVerificationEmailSender();
 
         $this->sut = new SendEmailVerificationEmail(
             $this->userVerificationRepository,
+            $this->spyUserVerificationRepository
         );
     }
 
@@ -48,5 +52,6 @@ final class SendEmailVerificationEmailTest extends TestCase
         $userVerification = $this->userVerificationRepository->findByEmail($userEmail);
 
         $this->assertTrue($userVerification->email()->equals($userEmail));
+        $this->assertTrue($this->spyUserVerificationRepository->isSent());
     }
 }

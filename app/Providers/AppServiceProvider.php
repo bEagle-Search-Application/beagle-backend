@@ -24,6 +24,21 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
+            \Beagle\Core\Infrastructure\Email\EmailSender::class,
+            function () {
+                return new \Beagle\Core\Infrastructure\Email\LaravelEmailSender(
+                    env('MAIL_FROM_ADDRESS'),
+                    env('MAIL_FROM_NAME'),
+                );
+            }
+        );
+
+        $this->app->bind(
+            \Beagle\Core\Infrastructure\Email\Verification\UserVerificationEmailSender::class,
+            \Beagle\Core\Infrastructure\Email\Verification\LaravelUserUserVerificationEmailSender::class
+        );
+
+        $this->app->bind(
             \Beagle\Shared\Application\Auth\AuthService::class,
             \Beagle\Shared\Infrastructure\Auth\JwtAuthService::class
         );
