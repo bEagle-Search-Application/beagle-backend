@@ -24,6 +24,7 @@ final class User extends Entity
         private ?string $picture,
         private bool $showReviews,
         private int $rating,
+        private bool $isVerified,
         private ?UserToken $authToken
     ) {
     }
@@ -48,6 +49,7 @@ final class User extends Entity
             null,
             true,
             0,
+            false,
             null
         );
 
@@ -111,6 +113,16 @@ final class User extends Entity
     public function rating():int
     {
         return $this->rating;
+    }
+
+    public function isVerified():bool
+    {
+        return $this->isVerified;
+    }
+
+    public function verify():void
+    {
+        $this->isVerified = true;
     }
 
     public function authToken():?UserToken

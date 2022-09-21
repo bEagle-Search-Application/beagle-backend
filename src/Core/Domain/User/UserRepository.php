@@ -22,4 +22,7 @@ interface UserRepository
 
     /** @throws UserNotFound */
     public function findByToken(UserToken $token):bool;
+
+    /** @throws UserNotFound */
+    public function findByEmail(UserEmail $email):User;
 }

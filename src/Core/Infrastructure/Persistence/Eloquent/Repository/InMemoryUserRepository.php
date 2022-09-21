@@ -52,4 +52,15 @@ final class InMemoryUserRepository implements UserRepository
     {
         return $registeredUser->email()->equals($user->email()) && !$registeredUser->id()->equals($user->id());
     }
+
+    public function findByEmail(UserEmail $email):User
+    {
+        foreach ($this->users as $user) {
+            if ($user->email()->equals($email)) {
+                return $user;
+            }
+        }
+
+        throw UserNotFound::byEmail($email);
+    }
 }

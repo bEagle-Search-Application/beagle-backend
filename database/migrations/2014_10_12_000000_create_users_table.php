@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('picture')->nullable();
             $table->boolean('show_reviews');
             $table->integer('rating');
-            $table->timestamp('email_verified_at')->nullable();
+            $table->boolean('is_verified');
             $table->rememberToken();
             $table->string('auth_token', 360)->nullable();
             $table->timestamps();

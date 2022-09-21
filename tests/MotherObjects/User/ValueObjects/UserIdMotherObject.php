@@ -2,10 +2,7 @@
 
 namespace Tests\MotherObjects\User\ValueObjects;
 
-use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
-use Faker\Factory;
-use Tests\MotherObjects\IdMotherObject;
 
 final class UserIdMotherObject
 {
@@ -13,7 +10,7 @@ final class UserIdMotherObject
     {
         return empty($userId)
             ? UserId::fromString(
-                IdMotherObject::create()->toBase58()
+                UserId::v4()->toBase58()
             )
             : UserId::fromString($userId);
     }

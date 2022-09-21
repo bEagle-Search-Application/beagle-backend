@@ -58,6 +58,7 @@ final class EloquentUserRepository implements UserRepository
                     'picture' => $user->picture(),
                     'show_reviews' => $user->showReviews(),
                     'rating' => $user->rating(),
+                    'is_verified' => $user->isVerified(),
                     'auth_token' => empty($userToken) ? null : $userToken->clearValue()
                 ]
             );
@@ -80,5 +81,20 @@ final class EloquentUserRepository implements UserRepository
         }
 
         return true;
+    }
+
+    /**
+     * @throws InvalidValueObject
+     * @throws UserNotFound
+     */
+    public function findByEmail(UserEmail $email):User
+    {
+        $userDao = UserDao::where('email', $email->value())->first();
+
+        if ($userDao === null) {
+            throw UserNotFound::byEmail($email);
+        }
+
+        return $this->userDataTransformer->fromDao($userDao);
     }
 }

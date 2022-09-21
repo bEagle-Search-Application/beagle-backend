@@ -35,6 +35,7 @@ final class UserDataTransformer
             $userDao->picture,
             (bool) $userDao->show_reviews,
             $userDao->rating,
+            (bool) $userDao->is_verified,
             empty($auth_token) ? null :UserToken::fromString($auth_token)
         );
     }
@@ -55,6 +56,7 @@ final class UserDataTransformer
         $userDao->picture = $user->picture();
         $userDao->show_reviews = $user->showReviews();
         $userDao->rating = $user->rating();
+        $userDao->is_verified = $user->isVerified();
         $userDao->auth_token = $user->authToken();
 
         return $userDao;

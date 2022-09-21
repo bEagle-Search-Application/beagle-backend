@@ -2,6 +2,7 @@
 
 namespace Beagle\Core\Domain\User;
 
+use Beagle\Core\Domain\User\Errors\InvalidUserVerification;
 use Beagle\Shared\Domain\ValueObjects\DateTime;
 use Beagle\Shared\Domain\ValueObjects\Email;
 use Beagle\Shared\Domain\ValueObjects\Guid;
@@ -45,5 +46,21 @@ final class UserVerification
     public function expiredAt():DateTime
     {
         return $this->expiredAt;
+    }
+
+    /** @throws InvalidUserVerification */
+    public function checkIfExpired():void
+    {
+        if (DateTime::now()->greaterThan($this->expiredAt)) {
+            throw InvalidUserVerification::byExpiredAt($this->expiredAt);
+        }
+    }
+
+    /** @throws InvalidUserVerification */
+    public function ensureIfEmailToVerifyIsCorrect(Email $email):void
+    {
+        if (!$this->email->equals($email)) {
+            throw InvalidUserVerification::byEmail($email);
+        }
     }
 }
