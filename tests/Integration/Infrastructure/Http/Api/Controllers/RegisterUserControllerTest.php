@@ -4,8 +4,10 @@ namespace Tests\Integration\Infrastructure\Http\Api\Controllers;
 
 use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
+use Beagle\Core\Domain\User\UserVerificationRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserRepository;
+use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserVerificationRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\MotherObjects\StringMotherObject;
 use Tests\MotherObjects\User\UserMotherObject;
@@ -19,12 +21,14 @@ final class RegisterUserControllerTest extends TestCase
     private User $user;
     private UserRepository $userRepository;
     private UserPassword $userPassword;
+    private UserVerificationRepository $userVerificationRepository;
 
     protected function setUp():void
     {
         parent::setUp();
 
         $this->userRepository = $this->app->make(EloquentUserRepository::class);
+        $this->userVerificationRepository = $this->app->make(EloquentUserVerificationRepository::class);
 
         $this->prepareUserForRegister();
     }
@@ -179,11 +183,13 @@ final class RegisterUserControllerTest extends TestCase
 
     public function testItRegistersUser():void
     {
+        $userEmail = $this->user->email();
+
         $response = $this->post(
             \route(
                 'api.register',
                 [
-                    "email" => $this->user->email()->value(),
+                    "email" => $userEmail->value(),
                     "password" => $this->user->password()->value(),
                     "name" => $this->user->name(),
                     "surname" => $this->user->surname(),
@@ -194,18 +200,23 @@ final class RegisterUserControllerTest extends TestCase
         );
 
         $expectedUser = $this->userRepository->findByEmailAndPassword(
-            $this->user->email(),
+            $userEmail,
             UserPasswordMotherObject::create(
                 \md5($this->user->password()->value())
             )
         );
 
+        $expectedUserValidation = $this->userVerificationRepository->findByEmail($userEmail);
+
         $this->assertSame(Response::HTTP_NO_CONTENT, $response->status());
-        $this->assertTrue($this->user->email()->equals($expectedUser->email()));
+
+        $this->assertTrue($userEmail->equals($expectedUser->email()));
         $this->assertTrue($expectedUser->password()->equals(
             UserPassword::fromString(
                 \md5($this->userPassword->value())
             )
         ));
+
+        $this->assertTrue($expectedUserValidation->email()->equals($userEmail));
     }
 }

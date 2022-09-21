@@ -19,6 +19,11 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
+            \Beagle\Core\Domain\User\UserVerificationRepository::class,
+            \Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserVerificationRepository::class
+        );
+
+        $this->app->bind(
             \Beagle\Shared\Application\Auth\AuthService::class,
             \Beagle\Shared\Infrastructure\Auth\JwtAuthService::class
         );

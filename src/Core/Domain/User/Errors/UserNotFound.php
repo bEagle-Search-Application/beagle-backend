@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Beagle\Shared\Domain\Errors;
+namespace Beagle\Core\Domain\User\Errors;
 
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 

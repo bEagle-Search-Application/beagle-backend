@@ -7,6 +7,7 @@ return [
         'router' => [
             'routes' => [
                 \Beagle\Core\Application\Command\User\RegisterUser\RegisterUserCommand::class => \Beagle\Core\Application\Command\User\RegisterUser\RegisterUser::class,
+                \Beagle\Core\Application\Command\User\SendEmailVerificationEmail\SendEmailVerificationEmailCommand::class => \Beagle\Core\Application\Command\User\SendEmailVerificationEmail\SendEmailVerificationEmail::class,
             ],
         ],
     ],
@@ -20,7 +21,9 @@ return [
     'event_bus' => [
         'router' => [
             'routes' => [
-
+                \Beagle\Core\Domain\User\Event\UserCreated::class => [
+                    \Beagle\Core\Application\Listener\User\SendEmailVerificationEmail\SendEmailVerificationEmail::class
+                ]
             ],
         ],
     ],

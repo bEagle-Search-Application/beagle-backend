@@ -2,12 +2,8 @@
 
 namespace Beagle\Core\Domain\User\ValueObjects;
 
-use Symfony\Component\Uid\Uuid;
+use Beagle\Shared\Domain\ValueObjects\Guid;
 
-final class UserId extends Uuid
+final class UserId extends Guid
 {
-    public function value():string
-    {
-        return $this->toBase58();
-    }
 }

@@ -2,13 +2,12 @@
 
 namespace Tests\TestDoubles\Infrastructure\Auth;
 
+use Beagle\Core\Domain\User\Errors\UserNotFound;
 use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserToken;
 use Beagle\Shared\Application\Auth\AuthService;
-use Beagle\Shared\Domain\Errors\InvalidEmail;
-use Beagle\Shared\Domain\Errors\InvalidPassword;
-use Beagle\Shared\Domain\Errors\UserNotFound;
+use Beagle\Shared\Domain\Errors\InvalidValueObject;
 
 final class AuthServiceMock implements AuthService
 {
@@ -17,22 +16,19 @@ final class AuthServiceMock implements AuthService
     }
 
     /**
-     * @throws InvalidEmail
      * @throws UserNotFound
-     * @throws InvalidPassword
+     * @throws InvalidValueObject
      */
     public function generateTokenByUser(User $user):UserToken
     {
-        try
-        {
+        try {
             $this->userRepository->findByEmailAndPassword(
                 $user->email(),
                 $user->password(),
             );
 
             return UserToken::fromString("jhdguferf87er6g87reg68er");
-        } catch (UserNotFound $e)
-        {
+        } catch (UserNotFound $e) {
             throw $e;
         }
     }

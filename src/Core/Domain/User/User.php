@@ -2,13 +2,15 @@
 
 namespace Beagle\Core\Domain\User;
 
+use Beagle\Core\Domain\User\Event\UserCreated;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
 use Beagle\Core\Domain\User\ValueObjects\UserPhone;
 use Beagle\Core\Domain\User\ValueObjects\UserToken;
+use Beagle\Shared\Domain\Entity;
 
-final class User
+final class User extends Entity
 {
     public function __construct(
         private UserId $id,
@@ -26,6 +28,35 @@ final class User
     ) {
     }
 
+    public static function createWithBasicInformation(
+        UserId $id,
+        UserEmail $email,
+        UserPassword $password,
+        string $name,
+        string $surname,
+        UserPhone $phone
+    ):self {
+        $user = new self(
+            $id,
+            $email,
+            $password,
+            $name,
+            $surname,
+            null,
+            null,
+            $phone,
+            null,
+            true,
+            0,
+            null
+        );
+
+        $user->recordThat(
+            new UserCreated($user->email())
+        );
+
+        return $user;
+    }
 
     public function id():UserId
     {

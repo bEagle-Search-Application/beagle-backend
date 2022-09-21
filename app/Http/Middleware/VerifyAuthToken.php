@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use Beagle\Core\Domain\User\Errors\UserNotFound;
 use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserToken;
-use Beagle\Shared\Domain\Errors\UserNotFound;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

@@ -3,12 +3,12 @@
 namespace Beagle\Core\Infrastructure\Persistence\Eloquent\Repository;
 
 use Beagle\Core\Domain\User\Errors\CannotSaveUser;
+use Beagle\Core\Domain\User\Errors\UserNotFound;
 use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
 use Beagle\Core\Domain\User\ValueObjects\UserToken;
-use Beagle\Shared\Domain\Errors\UserNotFound;
 
 final class InMemoryUserRepository implements UserRepository
 {
@@ -24,10 +24,8 @@ final class InMemoryUserRepository implements UserRepository
     /** @throws UserNotFound */
     public function findByEmailAndPassword(UserEmail $userEmail, UserPassword $userPassword):User
     {
-        foreach ($this->users as $user)
-        {
-            if ($user->email()->equals($userEmail) && $user->password()->equals($userPassword))
-            {
+        foreach ($this->users as $user) {
+            if ($user->email()->equals($userEmail) && $user->password()->equals($userPassword)) {
                 return $user;
             }
         }
@@ -38,10 +36,8 @@ final class InMemoryUserRepository implements UserRepository
     /** @throws CannotSaveUser */
     private function ensureIfEmailAlreadyExists(User $user)
     {
-        foreach ($this->users as $registeredUser)
-        {
-            if($this->emailBelongsToAnotherUser($registeredUser, $user))
-            {
+        foreach ($this->users as $registeredUser) {
+            if ($this->emailBelongsToAnotherUser($registeredUser, $user)) {
                 throw CannotSaveUser::byEmail($user->email());
             }
         }

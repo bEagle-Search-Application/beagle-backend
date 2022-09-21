@@ -3,6 +3,7 @@
 namespace Beagle\Core\Infrastructure\Persistence\Eloquent\Repository;
 
 use Beagle\Core\Domain\User\Errors\CannotSaveUser;
+use Beagle\Core\Domain\User\Errors\UserNotFound;
 use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
@@ -11,7 +12,6 @@ use Beagle\Core\Domain\User\ValueObjects\UserToken;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\DataTransformers\UserDataTransformer;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\UserDao;
 use Beagle\Shared\Domain\Errors\InvalidValueObject;
-use Beagle\Shared\Domain\Errors\UserNotFound;
 use Illuminate\Database\QueryException;
 
 final class EloquentUserRepository implements UserRepository
