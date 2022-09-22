@@ -13,6 +13,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::middleware(['api'])->group(function(){
+    Route::prefix('users')->group(function () {
+        Route::post('/verify/{token}',
+            [
+                \Beagle\Core\Infrastructure\Http\Api\Controllers\AcceptUserVerificationEmailController::class,
+                'execute'
+            ]
+        )->name('api.users-verify');
+    });
+
     Route::prefix('auth')->group(function () {
         Route::get('/login',
             [
@@ -28,13 +37,12 @@ Route::middleware(['api'])->group(function(){
             'execute'
         ]
     )->name('api.register');
-});
 
-Route::middleware(['auth.jwt'])->group(function(){
     Route::post('/logout',
         [
             \Beagle\Core\Infrastructure\Http\Api\Controllers\LogoutController::class,
             'execute'
         ]
-    )->name('api.logout');
+    )->name('api.logout')
+     ->middleware(['auth.jwt']);
 });

@@ -114,6 +114,7 @@ class DatabaseSeeder extends Seeder
                 "picture" => Factory::create()->filePath(),
                 "show_reviews" => Factory::create()->boolean,
                 "rating" => Factory::create()->numberBetween(0, 5),
+                "is_verified" => Factory::create()->boolean
             ]
         );
     }

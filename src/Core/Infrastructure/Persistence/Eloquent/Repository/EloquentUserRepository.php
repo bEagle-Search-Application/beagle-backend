@@ -67,7 +67,7 @@ final class EloquentUserRepository implements UserRepository
                 throw CannotSaveUser::byEmail($user->email());
             }
 
-            throw new CannotSaveUser($e->getMessage());
+            throw $e;
         }
     }
 
