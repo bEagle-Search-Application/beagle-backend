@@ -3,6 +3,7 @@
 namespace Beagle\Core\Application\Query\User\Login;
 
 use Beagle\Core\Domain\User\Errors\CannotSaveUser;
+use Beagle\Core\Domain\User\Errors\UserNotFound;
 use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
@@ -11,7 +12,6 @@ use Beagle\Shared\Bus\Query;
 use Beagle\Shared\Bus\QueryHandler;
 use Beagle\Shared\Bus\QueryResponse;
 use Beagle\Shared\Domain\Errors\InvalidValueObject;
-use Beagle\Shared\Domain\Errors\UserNotFound;
 
 final class Login extends QueryHandler
 {

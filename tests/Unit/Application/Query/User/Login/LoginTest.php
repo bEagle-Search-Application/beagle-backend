@@ -4,12 +4,12 @@ namespace Tests\Unit\Application\Query\User\Login;
 
 use Beagle\Core\Application\Query\User\Login\Login;
 use Beagle\Core\Application\Query\User\Login\LoginQuery;
+use Beagle\Core\Domain\User\Errors\UserNotFound;
 use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\InMemoryUserRepository;
 use Beagle\Shared\Domain\Errors\InvalidEmail;
-use Beagle\Shared\Domain\Errors\UserNotFound;
 use PHPUnit\Framework\TestCase;
 use Tests\MotherObjects\User\UserMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserEmailMotherObject;

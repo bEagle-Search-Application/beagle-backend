@@ -11,14 +11,17 @@ use Beagle\Core\Domain\User\ValueObjects\UserPassword;
 use Beagle\Core\Domain\User\ValueObjects\UserPhone;
 use Beagle\Shared\Bus\Command;
 use Beagle\Shared\Bus\CommandHandler;
+use Beagle\Shared\Bus\EventBus;
 use Beagle\Shared\Domain\Errors\InvalidValueObject;
 use Beagle\Shared\Domain\ValueObjects\Phone;
 use Beagle\Shared\Domain\ValueObjects\PhonePrefix;
 
 final class RegisterUser extends CommandHandler
 {
-    public function __construct(private UserRepository $userRepository)
-    {
+    public function __construct(
+        private UserRepository $userRepository,
+        private EventBus $eventBus
+    ) {
     }
 
     /**
@@ -29,9 +32,10 @@ final class RegisterUser extends CommandHandler
      */
     public function handle(Command $command):void
     {
-        $this->userRepository->save(
-            $this->createUser($command)
-        );
+        $user = $this->createUser($command);
+        $this->userRepository->save($user);
+
+        $this->eventBus->dispatch(...$user->pullEvents());
     }
 
     /** @throws InvalidValueObject */
@@ -45,19 +49,13 @@ final class RegisterUser extends CommandHandler
             Phone::fromString($command->userPhone()),
         );
 
-        return new User(
+        return User::createWithBasicInformation(
             $userId,
             $userEmail,
             $userPassword,
             $command->userName(),
             $command->userSurname(),
-            null,
-            null,
-            $userPhone,
-            null,
-            true,
-            0,
-            null
+            $userPhone
         );
     }
 }

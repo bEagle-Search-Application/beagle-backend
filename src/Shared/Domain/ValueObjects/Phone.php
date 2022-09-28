@@ -4,10 +4,10 @@ namespace Beagle\Shared\Domain\ValueObjects;
 
 use Beagle\Shared\Domain\Errors\InvalidPhone;
 
-final class Phone
+class Phone
 {
     /** @throws InvalidPhone */
-    private function __construct(private string $value)
+    protected function __construct(private string $value)
     {
         if (!\filter_var($this->value, FILTER_SANITIZE_NUMBER_INT)) {
             throw InvalidPhone::byFormat($this->value);
@@ -15,9 +15,9 @@ final class Phone
     }
 
     /** @throws InvalidPhone */
-    public static function fromString(string $phone):self
+    public static function fromString(string $phone):static
     {
-        return new self($phone);
+        return new static($phone);
     }
 
     public function value():string

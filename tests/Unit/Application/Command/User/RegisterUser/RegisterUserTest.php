@@ -5,6 +5,7 @@ namespace Tests\Unit\Application\Command\User\RegisterUser;
 use Beagle\Core\Application\Command\User\RegisterUser\RegisterUser;
 use Beagle\Core\Application\Command\User\RegisterUser\RegisterUserCommand;
 use Beagle\Core\Domain\User\Errors\CannotSaveUser;
+use Beagle\Core\Domain\User\Event\UserCreated;
 use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\InMemoryUserRepository;
@@ -16,24 +17,30 @@ use Tests\MotherObjects\PhoneMotherObject;
 use Tests\MotherObjects\PhonePrefixMotherObject;
 use Tests\MotherObjects\User\UserMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserPasswordMotherObject;
+use Tests\TestDoubles\Bus\EventBusSpy;
 
 final class RegisterUserTest extends TestCase
 {
     private RegisterUser $sut;
     private User $user;
     private UserRepository $userRepository;
+    private EventBusSpy $eventBus;
 
     protected function setUp():void
     {
         parent::setUp();
 
         $this->userRepository = new InMemoryUserRepository();
+        $this->eventBus = new EventBusSpy();
 
         $this->user = UserMotherObject::createForRegister(
             userPassword: UserPasswordMotherObject::createWithHash()
         );
 
-        $this->sut = new RegisterUser($this->userRepository);
+        $this->sut = new RegisterUser(
+            $this->userRepository,
+            $this->eventBus
+        );
     }
 
     public function testItThrowsInvalidEmailException():void
@@ -130,5 +137,6 @@ final class RegisterUserTest extends TestCase
         );
 
         $this->assertEquals($expectedUser, $this->user);
+        $this->assertTrue($this->eventBus->eventDispatched(UserCreated::class));
     }
 }

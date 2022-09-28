@@ -4,7 +4,7 @@ namespace Beagle\Shared\Domain\ValueObjects;
 
 use Beagle\Shared\Domain\Errors\InvalidPhonePrefix;
 
-final class PhonePrefix
+class PhonePrefix
 {
     private const COUNTRY_PREFIXES = [
         '44' => 'UK (+44)',
@@ -215,7 +215,7 @@ final class PhonePrefix
     ];
 
     /** @throws InvalidPhonePrefix */
-    private function __construct(private string $value)
+    protected function __construct(private string $value)
     {
         if (!\array_key_exists($this->value, self::COUNTRY_PREFIXES)) {
             throw InvalidPhonePrefix::byCode($this->value);
@@ -223,9 +223,9 @@ final class PhonePrefix
     }
 
     /** @throws InvalidPhonePrefix */
-    public static function fromString(string $prefixPhone):self
+    public static function fromString(string $prefixPhone):static
     {
-        return new self($prefixPhone);
+        return new static($prefixPhone);
     }
 
     public function value():string

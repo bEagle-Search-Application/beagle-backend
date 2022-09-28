@@ -10,6 +10,36 @@ security:
   - bearerAuth: []
 
 paths:
+  /users/verify/{token}:
+    post:
+      tags:
+        - User
+      description: Verify user email
+      parameters:
+        - in: path
+          name: token
+          required: true
+          schema:
+            type: string
+            example: isKAjFUreIJKXFOObqXEWrinRaFsMJYupLHHBAEGpFPhYkMN4QRBLQtYPPjgNbMD
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "dani@beagle.com"
+                  required: true
+      responses:
+        '204':
+          description: User verified successfully
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#components/responses/500'
   /register:
     post:
       tags:

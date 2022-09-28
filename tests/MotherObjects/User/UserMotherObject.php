@@ -32,6 +32,7 @@ final class UserMotherObject
         ?string $picture = null,
         ?bool $showReviews = null,
         ?int $rating = null,
+        ?bool $isVerified = null,
         ?UserToken $userToken = null
     ):User {
         return new User(
@@ -46,6 +47,69 @@ final class UserMotherObject
             empty($picture) ? StringMotherObject::createPath() : $picture,
             empty($showReviews) ? BooleanMotherObject::create() : $showReviews,
             empty($rating) ? IntegerMotherObject::createRating() : $rating,
+            empty($isVerified) ? BooleanMotherObject::create() : $isVerified,
+            empty($userToken) ? UserTokenMotherObject::create() : $userToken,
+        );
+    }
+
+    public static function createWithoutVerification(
+        ?UserId $userId = null,
+        ?UserEmail $userEmail = null,
+        ?UserPassword $userPassword = null,
+        ?string $name = null,
+        ?string $surname = null,
+        ?string $bio = null,
+        ?string $location = null,
+        ?string $phone = null,
+        ?string $picture = null,
+        ?bool $showReviews = null,
+        ?int $rating = null,
+        ?UserToken $userToken = null
+    ):User {
+        return new User(
+            empty($userId) ? UserIdMotherObject::create() : $userId,
+            empty($userEmail) ? UserEmailMotherObject::create() : $userEmail,
+            empty($userPassword) ? UserPasswordMotherObject::create() : $userPassword,
+            empty($name) ? StringMotherObject::createName() : $name,
+            empty($surname) ? StringMotherObject::createSurname() : $surname,
+            empty($bio) ? StringMotherObject::create() : $bio,
+            empty($location) ? StringMotherObject::createLocation() : $location,
+            empty($phone) ? UserPhoneMotherObject::create() : $phone,
+            empty($picture) ? StringMotherObject::createPath() : $picture,
+            empty($showReviews) ? BooleanMotherObject::create() : $showReviews,
+            empty($rating) ? IntegerMotherObject::createRating() : $rating,
+            false,
+            empty($userToken) ? UserTokenMotherObject::create() : $userToken,
+        );
+    }
+
+    public static function createWithVerification(
+        ?UserId $userId = null,
+        ?UserEmail $userEmail = null,
+        ?UserPassword $userPassword = null,
+        ?string $name = null,
+        ?string $surname = null,
+        ?string $bio = null,
+        ?string $location = null,
+        ?string $phone = null,
+        ?string $picture = null,
+        ?bool $showReviews = null,
+        ?int $rating = null,
+        ?UserToken $userToken = null
+    ):User {
+        return new User(
+            empty($userId) ? UserIdMotherObject::create() : $userId,
+            empty($userEmail) ? UserEmailMotherObject::create() : $userEmail,
+            empty($userPassword) ? UserPasswordMotherObject::create() : $userPassword,
+            empty($name) ? StringMotherObject::createName() : $name,
+            empty($surname) ? StringMotherObject::createSurname() : $surname,
+            empty($bio) ? StringMotherObject::create() : $bio,
+            empty($location) ? StringMotherObject::createLocation() : $location,
+            empty($phone) ? UserPhoneMotherObject::create() : $phone,
+            empty($picture) ? StringMotherObject::createPath() : $picture,
+            empty($showReviews) ? BooleanMotherObject::create() : $showReviews,
+            empty($rating) ? IntegerMotherObject::createRating() : $rating,
+            true,
             empty($userToken) ? UserTokenMotherObject::create() : $userToken,
         );
     }
@@ -63,6 +127,7 @@ final class UserMotherObject
         ?string $picture = null,
         ?bool $showReviews = null,
         ?int $rating = null,
+        ?bool $isVerified = null,
         ?UserToken $userToken = null
     ):User {
         return new User(
@@ -77,6 +142,7 @@ final class UserMotherObject
             empty($picture) ? StringMotherObject::createPath() : $picture,
             empty($showReviews) ? BooleanMotherObject::create() : $showReviews,
             empty($rating) ? IntegerMotherObject::createRating() : $rating,
+            empty($isVerified) ? BooleanMotherObject::create() : $isVerified,
             empty($userToken) ? UserTokenMotherObject::create() : $userToken,
         );
     }
@@ -102,6 +168,7 @@ final class UserMotherObject
             null,
             true,
             0,
+            false,
             null
         );
     }
@@ -119,6 +186,7 @@ final class UserMotherObject
         ?string $picture = null,
         ?bool $showReviews = null,
         ?int $rating = null,
+        ?bool $isVerified = null,
     ):User {
         return new User(
             empty($userId) ? UserIdMotherObject::create() : $userId,
@@ -132,6 +200,7 @@ final class UserMotherObject
             empty($picture) ? StringMotherObject::createPath() : $picture,
             empty($showReviews) ? BooleanMotherObject::create() : $showReviews,
             empty($rating) ? IntegerMotherObject::createRating() : $rating,
+            empty($isVerified) ? BooleanMotherObject::create() : $isVerified,
             null
         );
     }

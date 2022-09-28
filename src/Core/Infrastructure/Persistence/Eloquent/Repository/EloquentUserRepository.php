@@ -3,6 +3,7 @@
 namespace Beagle\Core\Infrastructure\Persistence\Eloquent\Repository;
 
 use Beagle\Core\Domain\User\Errors\CannotSaveUser;
+use Beagle\Core\Domain\User\Errors\UserNotFound;
 use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
@@ -11,7 +12,6 @@ use Beagle\Core\Domain\User\ValueObjects\UserToken;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\DataTransformers\UserDataTransformer;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\UserDao;
 use Beagle\Shared\Domain\Errors\InvalidValueObject;
-use Beagle\Shared\Domain\Errors\UserNotFound;
 use Illuminate\Database\QueryException;
 
 final class EloquentUserRepository implements UserRepository
@@ -58,6 +58,7 @@ final class EloquentUserRepository implements UserRepository
                     'picture' => $user->picture(),
                     'show_reviews' => $user->showReviews(),
                     'rating' => $user->rating(),
+                    'is_verified' => $user->isVerified(),
                     'auth_token' => empty($userToken) ? null : $userToken->clearValue()
                 ]
             );
@@ -66,7 +67,7 @@ final class EloquentUserRepository implements UserRepository
                 throw CannotSaveUser::byEmail($user->email());
             }
 
-            throw new CannotSaveUser($e->getMessage());
+            throw $e;
         }
     }
 
@@ -80,5 +81,20 @@ final class EloquentUserRepository implements UserRepository
         }
 
         return true;
+    }
+
+    /**
+     * @throws InvalidValueObject
+     * @throws UserNotFound
+     */
+    public function findByEmail(UserEmail $email):User
+    {
+        $userDao = UserDao::where('email', $email->value())->first();
+
+        if ($userDao === null) {
+            throw UserNotFound::byEmail($email);
+        }
+
+        return $this->userDataTransformer->fromDao($userDao);
     }
 }
