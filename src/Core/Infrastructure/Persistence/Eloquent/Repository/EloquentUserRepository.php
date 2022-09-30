@@ -7,8 +7,8 @@ use Beagle\Core\Domain\User\Errors\UserNotFound;
 use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
+use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
-use Beagle\Core\Domain\User\ValueObjects\UserToken;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\DataTransformers\UserDataTransformer;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\UserDao;
 use Beagle\Shared\Domain\Errors\InvalidValueObject;
@@ -42,8 +42,6 @@ final class EloquentUserRepository implements UserRepository
     public function save(User $user):void
     {
         try {
-            $userToken = $user->authToken();
-
             UserDao::updateOrCreate(
                 ['id' => $user->id()->value()],
                 [
@@ -59,7 +57,6 @@ final class EloquentUserRepository implements UserRepository
                     'show_reviews' => $user->showReviews(),
                     'rating' => $user->rating(),
                     'is_verified' => $user->isVerified(),
-                    'auth_token' => empty($userToken) ? null : $userToken->clearValue()
                 ]
             );
         } catch (QueryException $e) {
@@ -69,18 +66,6 @@ final class EloquentUserRepository implements UserRepository
 
             throw $e;
         }
-    }
-
-    /** @throws UserNotFound */
-    public function findByToken(UserToken $token):bool
-    {
-        $userDao = UserDao::where('auth_token', $token->clearValue())->first();
-
-        if ($userDao === null) {
-            throw UserNotFound::byToken();
-        }
-
-        return true;
     }
 
     /**
@@ -93,6 +78,21 @@ final class EloquentUserRepository implements UserRepository
 
         if ($userDao === null) {
             throw UserNotFound::byEmail($email);
+        }
+
+        return $this->userDataTransformer->fromDao($userDao);
+    }
+
+    /**
+     * @throws UserNotFound
+     * @throws InvalidValueObject
+     */
+    public function find(UserId $userId):User
+    {
+        $userDao = UserDao::where('id', $userId->value())->first();
+
+        if ($userDao === null) {
+            throw UserNotFound::byId($userId);
         }
 
         return $this->userDataTransformer->fromDao($userDao);

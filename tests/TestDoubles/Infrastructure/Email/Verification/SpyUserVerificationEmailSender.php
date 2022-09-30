@@ -2,14 +2,15 @@
 
 namespace Tests\TestDoubles\Infrastructure\Email\Verification;
 
-use Beagle\Core\Domain\User\UserVerification;
+use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Infrastructure\Email\Verification\UserVerificationEmailSender;
+use Beagle\Shared\Domain\ValueObjects\Token;
 
 final class SpyUserVerificationEmailSender implements UserVerificationEmailSender
 {
     private bool $isSent = false;
 
-    public function execute(UserVerification $userVerification):void
+    public function execute(Token $token, UserEmail $userEmail):void
     {
         $this->isSent = true;
     }

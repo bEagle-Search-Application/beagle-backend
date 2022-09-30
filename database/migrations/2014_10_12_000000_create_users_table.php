@@ -27,8 +27,6 @@ return new class extends Migration
             $table->boolean('show_reviews');
             $table->integer('rating');
             $table->boolean('is_verified');
-            $table->rememberToken();
-            $table->string('auth_token', 360)->nullable();
             $table->timestamps();
         });
     }

@@ -15,6 +15,7 @@
         "league/tactician": "^1.1",
         "league/tactician-container": "^3.0",
         "php-open-source-saver/jwt-auth": "^1.4",
+        "rbdwllr/reallysimplejwt": "^5.0",
         "symfony/uid": "^6.1"
     },
     "require-dev": {

@@ -7,8 +7,8 @@ use Beagle\Core\Domain\User\Errors\UserNotFound;
 use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
+use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
-use Beagle\Core\Domain\User\ValueObjects\UserToken;
 
 final class InMemoryUserRepository implements UserRepository
 {
@@ -43,11 +43,6 @@ final class InMemoryUserRepository implements UserRepository
         }
     }
 
-    public function findByToken(UserToken $token):bool
-    {
-        return true;
-    }
-
     private function emailBelongsToAnotherUser(User $registeredUser, User $user):bool
     {
         return $registeredUser->email()->equals($user->email()) && !$registeredUser->id()->equals($user->id());
@@ -62,5 +57,16 @@ final class InMemoryUserRepository implements UserRepository
         }
 
         throw UserNotFound::byEmail($email);
+    }
+
+    public function find(UserId $userId):User
+    {
+        foreach ($this->users as $user) {
+            if ($user->id()->equals($userId)) {
+                return $user;
+            }
+        }
+
+        throw UserNotFound::byId($userId);
     }
 }

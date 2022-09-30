@@ -6,7 +6,6 @@ use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
-use Beagle\Core\Domain\User\ValueObjects\UserToken;
 use Beagle\Shared\Domain\Errors\InvalidValueObject;
 use Tests\MotherObjects\BooleanMotherObject;
 use Tests\MotherObjects\IntegerMotherObject;
@@ -15,7 +14,6 @@ use Tests\MotherObjects\User\ValueObjects\UserEmailMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserIdMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserPasswordMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserPhoneMotherObject;
-use Tests\MotherObjects\User\ValueObjects\UserTokenMotherObject;
 
 final class UserMotherObject
 {
@@ -33,7 +31,6 @@ final class UserMotherObject
         ?bool $showReviews = null,
         ?int $rating = null,
         ?bool $isVerified = null,
-        ?UserToken $userToken = null
     ):User {
         return new User(
             empty($userId) ? UserIdMotherObject::create() : $userId,
@@ -48,7 +45,6 @@ final class UserMotherObject
             empty($showReviews) ? BooleanMotherObject::create() : $showReviews,
             empty($rating) ? IntegerMotherObject::createRating() : $rating,
             empty($isVerified) ? BooleanMotherObject::create() : $isVerified,
-            empty($userToken) ? UserTokenMotherObject::create() : $userToken,
         );
     }
 
@@ -64,7 +60,6 @@ final class UserMotherObject
         ?string $picture = null,
         ?bool $showReviews = null,
         ?int $rating = null,
-        ?UserToken $userToken = null
     ):User {
         return new User(
             empty($userId) ? UserIdMotherObject::create() : $userId,
@@ -79,7 +74,6 @@ final class UserMotherObject
             empty($showReviews) ? BooleanMotherObject::create() : $showReviews,
             empty($rating) ? IntegerMotherObject::createRating() : $rating,
             false,
-            empty($userToken) ? UserTokenMotherObject::create() : $userToken,
         );
     }
 
@@ -95,7 +89,6 @@ final class UserMotherObject
         ?string $picture = null,
         ?bool $showReviews = null,
         ?int $rating = null,
-        ?UserToken $userToken = null
     ):User {
         return new User(
             empty($userId) ? UserIdMotherObject::create() : $userId,
@@ -110,7 +103,6 @@ final class UserMotherObject
             empty($showReviews) ? BooleanMotherObject::create() : $showReviews,
             empty($rating) ? IntegerMotherObject::createRating() : $rating,
             true,
-            empty($userToken) ? UserTokenMotherObject::create() : $userToken,
         );
     }
 
@@ -128,7 +120,6 @@ final class UserMotherObject
         ?bool $showReviews = null,
         ?int $rating = null,
         ?bool $isVerified = null,
-        ?UserToken $userToken = null
     ):User {
         return new User(
             empty($userId) ? UserIdMotherObject::create() : $userId,
@@ -143,7 +134,6 @@ final class UserMotherObject
             empty($showReviews) ? BooleanMotherObject::create() : $showReviews,
             empty($rating) ? IntegerMotherObject::createRating() : $rating,
             empty($isVerified) ? BooleanMotherObject::create() : $isVerified,
-            empty($userToken) ? UserTokenMotherObject::create() : $userToken,
         );
     }
 
@@ -169,39 +159,6 @@ final class UserMotherObject
             true,
             0,
             false,
-            null
-        );
-    }
-
-    /** @throws InvalidValueObject */
-    public static function createWithoutToken(
-        ?UserId $userId = null,
-        ?UserEmail $userEmail = null,
-        ?UserPassword $userPassword = null,
-        ?string $name = null,
-        ?string $surname = null,
-        ?string $bio = null,
-        ?string $location = null,
-        ?string $phone = null,
-        ?string $picture = null,
-        ?bool $showReviews = null,
-        ?int $rating = null,
-        ?bool $isVerified = null,
-    ):User {
-        return new User(
-            empty($userId) ? UserIdMotherObject::create() : $userId,
-            empty($userEmail) ? UserEmailMotherObject::create() : $userEmail,
-            empty($userPassword) ? UserPasswordMotherObject::create() : $userPassword,
-            empty($name) ? StringMotherObject::createName() : $name,
-            empty($surname) ? StringMotherObject::createSurname() : $surname,
-            empty($bio) ? StringMotherObject::create() : $bio,
-            empty($location) ? StringMotherObject::createLocation() : $location,
-            empty($phone) ? UserPhoneMotherObject::create() : $phone,
-            empty($picture) ? StringMotherObject::createPath() : $picture,
-            empty($showReviews) ? BooleanMotherObject::create() : $showReviews,
-            empty($rating) ? IntegerMotherObject::createRating() : $rating,
-            empty($isVerified) ? BooleanMotherObject::create() : $isVerified,
-            null
         );
     }
 }

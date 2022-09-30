@@ -4,10 +4,10 @@ namespace Tests\Integration\Infrastructure\Http\Api\Controllers;
 
 use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
-use Beagle\Core\Domain\User\UserVerificationRepository;
+use Beagle\Core\Domain\User\UserVerificationTokenRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserRepository;
-use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserVerificationRepository;
+use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserVerificationTokenRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\MotherObjects\StringMotherObject;
 use Tests\MotherObjects\User\UserMotherObject;
@@ -21,14 +21,14 @@ final class RegisterUserControllerTest extends TestCase
     private User $user;
     private UserRepository $userRepository;
     private UserPassword $userPassword;
-    private UserVerificationRepository $userVerificationRepository;
+    private UserVerificationTokenRepository $userVerificationRepository;
 
     protected function setUp():void
     {
         parent::setUp();
 
         $this->userRepository = $this->app->make(EloquentUserRepository::class);
-        $this->userVerificationRepository = $this->app->make(EloquentUserVerificationRepository::class);
+        $this->userVerificationRepository = $this->app->make(EloquentUserVerificationTokenRepository::class);
 
         $this->prepareUserForRegister();
     }
@@ -206,7 +206,7 @@ final class RegisterUserControllerTest extends TestCase
             )
         );
 
-        $expectedUserValidation = $this->userVerificationRepository->findByEmail($userEmail);
+        $expectedUserValidation = $this->userVerificationRepository->findByUserId($expectedUser->id());
 
         $this->assertSame(Response::HTTP_NO_CONTENT, $response->status());
 
@@ -217,6 +217,6 @@ final class RegisterUserControllerTest extends TestCase
             )
         ));
 
-        $this->assertTrue($expectedUserValidation->email()->equals($userEmail));
+        $this->assertTrue($expectedUserValidation->userId()->equals($expectedUser->id()));
     }
 }

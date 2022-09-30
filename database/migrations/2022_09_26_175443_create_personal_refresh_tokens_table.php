@@ -13,12 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('verification_token', function (Blueprint $table) {
+        Schema::create('personal_refresh_tokens', function (Blueprint $table) {
             $table->string('id')->primary();
-            $table->string("email");
-            $table->string("token");
-            $table->timestamp("expired_at");
+            $table->string('user_id');
+            $table->string('token', 300)->unique();
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
@@ -29,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('verification_token');
+        Schema::dropIfExists('personal_refresh_tokens');
     }
 };

@@ -2,9 +2,10 @@
 
 namespace Beagle\Core\Infrastructure\Email\Verification;
 
-use Beagle\Core\Domain\User\UserVerification;
+use Beagle\Core\Domain\User\ValueObjects\UserEmail;
+use Beagle\Shared\Domain\ValueObjects\Token;
 
 interface UserVerificationEmailSender
 {
-    public function execute(UserVerification $userVerification):void;
+    public function execute(Token $token, UserEmail $userEmail):void;
 }

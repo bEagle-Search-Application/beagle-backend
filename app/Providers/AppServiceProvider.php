@@ -19,8 +19,18 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
-            \Beagle\Core\Domain\User\UserVerificationRepository::class,
-            \Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserVerificationRepository::class
+            \Beagle\Core\Domain\PersonalToken\PersonalAccessTokenRepository::class,
+            \Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentPersonalAccessTokenRepository::class
+        );
+
+        $this->app->bind(
+            \Beagle\Core\Domain\PersonalToken\PersonalRefreshTokenRepository::class,
+            \Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentPersonalRefreshTokenRepository::class
+        );
+
+        $this->app->bind(
+            \Beagle\Core\Domain\User\UserVerificationTokenRepository::class,
+            \Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserVerificationTokenRepository::class
         );
 
         $this->app->bind(
@@ -39,8 +49,8 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
-            \Beagle\Shared\Application\Auth\AuthService::class,
-            \Beagle\Shared\Infrastructure\Auth\JwtAuthService::class
+            \Beagle\Shared\Domain\TokenService::class,
+            \Beagle\Shared\Infrastructure\Token\JwtTokenService::class
         );
 
         $this->app->bind(

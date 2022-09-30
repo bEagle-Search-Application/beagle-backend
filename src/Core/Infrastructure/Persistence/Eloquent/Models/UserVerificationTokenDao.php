@@ -7,17 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class UserVerificationDao extends Model
+class UserVerificationTokenDao extends Model
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $table = 'verification_token';
+    protected $table = 'user_verification_tokens';
     protected $keyType = 'string';
     protected $fillable = [
         'id',
-        'email',
+        'user_id',
         'token',
-        'expired_at'
     ];
 
     public $incrementing = false;

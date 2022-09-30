@@ -2,21 +2,21 @@
 
 namespace Beagle\Core\Domain\User\Errors;
 
-use Beagle\Core\Domain\User\ValueObjects\UserToken;
-use Beagle\Shared\Domain\ValueObjects\Email;
+use Beagle\Core\Domain\User\ValueObjects\UserId;
+use Beagle\Core\Domain\User\ValueObjects\UserVerificationTokenId;
 
 final class UserVerificationNotFound extends \Exception
 {
-    private const INVALID_EMAIL = "No se ha encontrado ninguna validación para el email %s";
-    private const INVALID_TOKEN = "No se ha encontrado ninguna validación para el token %s";
+    private const INVALID_USER_ID = "No se ha encontrado ninguna validación para el usuario %s";
+    private const INVALID_ID = "No se ha encontrado ninguna validación para el id %s";
 
-    public static function byEmail(Email $email):self
+    public static function byUserId(UserId $userId):self
     {
-        return new self(\sprintf(self::INVALID_EMAIL, $email->value()));
+        return new self(\sprintf(self::INVALID_USER_ID, $userId->value()));
     }
 
-    public static function byToken(UserToken $userToken):self
+    public static function byId(UserVerificationTokenId $userVerificationTokenId):self
     {
-        return new self(\sprintf(self::INVALID_TOKEN, $userToken->value()));
+        return new self(\sprintf(self::INVALID_ID, $userVerificationTokenId->value()));
     }
 }

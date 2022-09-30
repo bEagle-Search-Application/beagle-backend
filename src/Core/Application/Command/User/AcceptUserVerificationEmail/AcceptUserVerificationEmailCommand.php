@@ -6,15 +6,8 @@ use Beagle\Shared\Bus\Command;
 
 final class AcceptUserVerificationEmailCommand implements Command
 {
-    public function __construct(
-        private string $email,
-        private string $token,
-    ) {
-    }
-
-    public function userEmail():string
+    public function __construct(private string $token)
     {
-        return $this->email;
     }
 
     public function token():string

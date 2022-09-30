@@ -21,18 +21,7 @@ paths:
           required: true
           schema:
             type: string
-            example: isKAjFUreIJKXFOObqXEWrinRaFsMJYupLHHBAEGpFPhYkMN4QRBLQtYPPjgNbMD
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  example: "dani@beagle.com"
-                  required: true
+            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2NjE3ODQ2ODAsImV4cCI6MTY2MTc4ODI4MCwibmJmIjoxNjYxNzg0NjgwLCJqdGkiOiJzNTQyc0FDNW5MUlg3SURSIiwic3ViIjoiTjlwQm5Ud1lock45dEhKUHJnRHZzYiIsInBydiI6Ijc4YTA0Zjg0YzY1ZTE5Y2VkOWUwNTliOThhNGZhNWQxMGIxYzNiMzUifQ.cP8GIRFgrPHvV7VfI_Vaw4QpIvPeTfIwNXRC4mB8224"
       responses:
         '204':
           description: User verified successfully
@@ -119,12 +108,12 @@ paths:
                      auth:
                        type: object
                        properties:
-                         token:
+                         access_token:
                            type: string
                            example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2NjE4ODkwOTQsImV4cCI6MTY2MTg5MjY5NCwibmJmIjoxNjYxODg5MDk0LCJqdGkiOiJ2N2JvNkQ3aFVNNGZ6bUxIIiwic3ViIjoiTjlwQm5Ud1lock45dEhKUHJnRHZzYiIsInBydiI6Ijc4YTA0Zjg0YzY1ZTE5Y2VkOWUwNTliOThhNGZhNWQxMGIxYzNiMzUifQ.OZlHByjBTAm"
-                         type:
+                         refresh_token:
                            type: string
-                           example: "Bearer"
+                           example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2NjE4ODkwOTQsImV4cCI6MTY2MTg5MjY5NCwibmJmIjoxNjYxODg5MDk0LCJqdGkiOiJ2N2JvNkQ3aFVNNGZ6bUxIIiwic3ViIjoiTjlwQm5Ud1lock45dEhKUHJnRHZzYiIsInBydiI6Ijc4YTA0Zjg0YzY1ZTE5Y2VkOWUwNTliOThhNGZhNWQxMGIxYzNiMzUifQ.OZlHByjCfdt"
                  status:
                    type: number
                    example: 200
@@ -201,6 +190,10 @@ components:
         rating:
           type: number
           example: 4
+          required: true
+        is_verified:
+          type: boolean
+          example: true
           required: true
 
   securitySchemes:

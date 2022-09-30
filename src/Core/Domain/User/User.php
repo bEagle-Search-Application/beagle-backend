@@ -7,7 +7,6 @@ use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
 use Beagle\Core\Domain\User\ValueObjects\UserPhone;
-use Beagle\Core\Domain\User\ValueObjects\UserToken;
 use Beagle\Shared\Domain\Entity;
 
 final class User extends Entity
@@ -25,7 +24,6 @@ final class User extends Entity
         private bool $showReviews,
         private int $rating,
         private bool $isVerified,
-        private ?UserToken $authToken
     ) {
     }
 
@@ -50,7 +48,6 @@ final class User extends Entity
             true,
             0,
             false,
-            null
         );
 
         $user->recordThat(
@@ -123,15 +120,5 @@ final class User extends Entity
     public function verify():void
     {
         $this->isVerified = true;
-    }
-
-    public function authToken():?UserToken
-    {
-        return $this->authToken;
-    }
-
-    public function updateToken(UserToken $token):void
-    {
-        $this->authToken = $token;
     }
 }
