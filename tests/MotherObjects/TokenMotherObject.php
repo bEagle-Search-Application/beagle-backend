@@ -17,6 +17,8 @@ final class TokenMotherObject
                 UserIdMotherObject::create()->value()
                 . "."
                 . DateTime::now()->addMinutes(10)->timestamp
+                . "."
+                . TokenType::ACCESS->name
             )
             : Token::accessTokenFromString($token);
     }
@@ -28,6 +30,8 @@ final class TokenMotherObject
                 UserIdMotherObject::create()->value()
                 . "."
                 . DateTime::now()->addMinutes(10)->timestamp
+                . "."
+                . TokenType::REFRESH->name
             )
             : Token::refreshTokenFromString($token);
     }
@@ -38,7 +42,19 @@ final class TokenMotherObject
         DateTime $time
     ):Token {
         return ($type === TokenType::ACCESS)
-            ? Token::accessTokenFromString($userId->value(). "." . $time->timestamp)
-            : Token::refreshTokenFromString($userId->value() . "." . $time->timestamp);
+            ? Token::accessTokenFromString(
+                $userId->value()
+                . "."
+                . $time->timestamp
+                . "."
+                . TokenType::ACCESS->name
+            )
+            : Token::refreshTokenFromString(
+                $userId->value()
+                . "."
+                . $time->timestamp
+                . "."
+                . TokenType::REFRESH->name
+            );
     }
 }

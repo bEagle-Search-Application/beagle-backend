@@ -3,8 +3,10 @@
 namespace Tests\TestDoubles\Infrastructure\Auth;
 
 use Beagle\Core\Domain\User\ValueObjects\UserId;
+use Beagle\Shared\Domain\Errors\InvalidToken;
 use Beagle\Shared\Domain\Errors\TokenExpired;
 use Beagle\Shared\Domain\TokenService;
+use Beagle\Shared\Domain\TokenType;
 use Beagle\Shared\Domain\ValueObjects\DateTime;
 use Beagle\Shared\Domain\ValueObjects\Token;
 
@@ -42,7 +44,15 @@ final class TokenServiceMock implements TokenService
 
     public function validateSignature(Token $token):void
     {
-        // Validate always
+        $signature = \explode(".", $token->value())[2];
+
+        if ($token->isAnAccessToken() && $signature != TokenType::ACCESS->name) {
+            throw InvalidToken::byAccessSignature();
+        }
+
+        if ($token->isARefreshToken() && $signature != TokenType::REFRESH->name) {
+            throw InvalidToken::byRefreshSignature();
+        }
     }
 
     public function validateExpiration(Token $token):void

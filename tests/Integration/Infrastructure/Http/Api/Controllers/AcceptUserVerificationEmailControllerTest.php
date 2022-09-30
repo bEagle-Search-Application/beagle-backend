@@ -10,6 +10,7 @@ use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserRepos
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserVerificationTokenRepository;
 use Beagle\Shared\Domain\ValueObjects\DateTime;
 use Beagle\Shared\Domain\ValueObjects\Token;
+use ReallySimpleJWT\Token as SimpleJwt;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\MotherObjects\DateTimeMotherObject;
 use Tests\MotherObjects\User\UserMotherObject;
@@ -40,7 +41,7 @@ final class AcceptUserVerificationEmailControllerTest extends TestCase
     private function prepareUserVerification():void
     {
         $userId = $this->user->id();
-        $token = Token::customPayload(
+        $token = SimpleJwt::customPayload(
             [
                 'iat' => DateTime::now(),
                 'uid' => $userId,
@@ -76,7 +77,7 @@ final class AcceptUserVerificationEmailControllerTest extends TestCase
 
     public function testItReturnsBadRequestResponseIfUserVerificationExpired():void
     {
-        $expiredToken = Token::customPayload(
+        $expiredToken = SimpleJwt::customPayload(
             [
                 'iat' => DateTime::now(),
                 'uid' => $this->user->id(),

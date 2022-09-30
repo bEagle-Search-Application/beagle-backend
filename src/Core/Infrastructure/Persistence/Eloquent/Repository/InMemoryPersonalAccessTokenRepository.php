@@ -14,6 +14,13 @@ final class InMemoryPersonalAccessTokenRepository implements PersonalAccessToken
 
     public function save(PersonalAccessToken $personalAccessToken):void
     {
+        foreach ($this->personalAccessTokens as $key => $inMemoryPersonalAccessToken) {
+            if ($inMemoryPersonalAccessToken->userId()->equals($personalAccessToken->userId())) {
+                $this->personalAccessTokens[$key] = $personalAccessToken;
+                return;
+            }
+        }
+
         $this->personalAccessTokens[] = $personalAccessToken;
     }
 

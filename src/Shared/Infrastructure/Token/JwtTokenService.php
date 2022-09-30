@@ -8,6 +8,7 @@ use Beagle\Shared\Domain\Errors\TokenExpired;
 use Beagle\Shared\Domain\TokenService;
 use Beagle\Shared\Domain\ValueObjects\DateTime;
 use Beagle\Shared\Domain\ValueObjects\Token;
+use ReallySimpleJWT\Token as SimpleJwt;
 use Beagle\Shared\Infrastructure\Token\Errors\CannotGetClaim;
 
 final class JwtTokenService implements TokenService
@@ -16,7 +17,7 @@ final class JwtTokenService implements TokenService
 
     public function generateAccessToken(UserId $userId):Token
     {
-        $token = Token::customPayload(
+        $token = SimpleJwt::customPayload(
             [
                 'iat' => DateTime::now(),
                 self::USER_ID_KEY => $userId->value(),
@@ -31,7 +32,7 @@ final class JwtTokenService implements TokenService
 
     public function generateRefreshToken(UserId $userId):Token
     {
-        $token = Token::customPayload(
+        $token = SimpleJwt::customPayload(
             [
                 'iat' => DateTime::now(),
                 'exp' => DateTime::now()->addDays(15)->timestamp,
@@ -44,7 +45,7 @@ final class JwtTokenService implements TokenService
 
     public function generateAccessTokenWithExpirationTime(UserId $userId, int $minutes):Token
     {
-        $token = Token::customPayload(
+        $token = SimpleJwt::customPayload(
             [
                 'iat' => DateTime::now(),
                 self::USER_ID_KEY => $userId->value(),
@@ -60,7 +61,7 @@ final class JwtTokenService implements TokenService
     /** @throws CannotGetClaim */
     public function userIdFromToken(Token $token):UserId
     {
-        $payload = Token::getPayload($token->value());
+        $payload = SimpleJwt::getPayload($token->value());
         $userId = $payload[self::USER_ID_KEY];
 
         if (!isset($userId)) {
@@ -73,11 +74,11 @@ final class JwtTokenService implements TokenService
     /** @throws InvalidToken */
     public function validateSignature(Token $token):void
     {
-        if ($token->isAnAccessToken() && !Token::validate($token->value(), \env('JWT_ACCESS_SECRET'))) {
+        if ($token->isAnAccessToken() && !SimpleJwt::validate($token->value(), \env('JWT_ACCESS_SECRET'))) {
             throw InvalidToken::byAccessSignature();
         }
 
-        if ($token->isARefreshToken() && !Token::validate($token->value(), \env('JWT_REFRESH_SECRET'))) {
+        if ($token->isARefreshToken() && !SimpleJwt::validate($token->value(), \env('JWT_REFRESH_SECRET'))) {
             throw InvalidToken::byRefreshSignature();
         }
     }
@@ -85,7 +86,7 @@ final class JwtTokenService implements TokenService
     /** @throws TokenExpired */
     public function validateExpiration(Token $token):void
     {
-        if (!Token::validateExpiration($token->value())) {
+        if (!SimpleJwt::validateExpiration($token->value())) {
             throw TokenExpired::byExpirationDate();
         }
     }

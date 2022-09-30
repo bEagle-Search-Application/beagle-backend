@@ -4,7 +4,7 @@ namespace Beagle\Shared\Domain\ValueObjects;
 
 use Beagle\Shared\Domain\TokenType;
 
-final class Token extends \ReallySimpleJWT\Token
+final class Token
 {
     private function __construct(
         private string $value,
