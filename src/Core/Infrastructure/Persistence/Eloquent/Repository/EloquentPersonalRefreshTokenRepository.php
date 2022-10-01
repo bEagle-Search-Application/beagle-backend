@@ -40,4 +40,9 @@ final class EloquentPersonalRefreshTokenRepository implements PersonalRefreshTok
 
         return $this->personalRefreshTokenDataTransformer->fromDao($personalAccessTokenDao);
     }
+
+    public function deleteByUserId(UserId $userId):void
+    {
+        // TODO: Implement deleteByUserId() method.
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace Beagle\Core\Infrastructure\Persistence\Eloquent\Repository;
 
+use Beagle\Core\Domain\PersonalToken\Errors\CannotDeletePersonalAccessToken;
 use Beagle\Core\Domain\PersonalToken\Errors\PersonalAccessTokenNotFound;
 use Beagle\Core\Domain\PersonalToken\PersonalAccessToken;
 use Beagle\Core\Domain\PersonalToken\PersonalAccessTokenRepository;
@@ -33,5 +34,18 @@ final class InMemoryPersonalAccessTokenRepository implements PersonalAccessToken
         }
 
         throw PersonalAccessTokenNotFound::byUserId($userId);
+    }
+
+    /** @throws CannotDeletePersonalAccessToken */
+    public function deleteByUserId(UserId $userId):void
+    {
+        foreach ($this->personalAccessTokens as $key => $personalAccessToken) {
+            if ($personalAccessToken->userId()->equals($userId)) {
+                unset($this->personalAccessTokens[$key]);
+                return;
+            }
+        }
+
+        throw CannotDeletePersonalAccessToken::byUserId($userId);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Beagle\Core\Domain\PersonalToken;
 
+use Beagle\Core\Domain\PersonalToken\Errors\CannotDeletePersonalRefreshToken;
 use Beagle\Core\Domain\PersonalToken\Errors\InvalidPersonalRefreshToken;
 use Beagle\Core\Domain\PersonalToken\Errors\PersonalRefreshTokenNotFound;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
@@ -14,4 +15,7 @@ interface PersonalRefreshTokenRepository
      * @throws PersonalRefreshTokenNotFound
      */
     public function findByUserId(UserId $userId):PersonalRefreshToken;
+
+    /** @throws CannotDeletePersonalRefreshToken */
+    public function deleteByUserId(UserId $userId):void;
 }
