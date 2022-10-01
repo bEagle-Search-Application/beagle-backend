@@ -13,7 +13,7 @@ use Beagle\Shared\Infrastructure\Token\Errors\CannotGetClaim;
 
 final class JwtTokenService implements TokenService
 {
-    const USER_ID_KEY = 'uid';
+    private const USER_ID_KEY = 'uid';
 
     public function generateAccessToken(UserId $userId):Token
     {
@@ -35,6 +35,7 @@ final class JwtTokenService implements TokenService
         $token = SimpleJwt::customPayload(
             [
                 'iat' => DateTime::now(),
+                self::USER_ID_KEY => $userId->value(),
                 'exp' => DateTime::now()->addDays(15)->timestamp,
             ],
             \env('JWT_REFRESH_SECRET')

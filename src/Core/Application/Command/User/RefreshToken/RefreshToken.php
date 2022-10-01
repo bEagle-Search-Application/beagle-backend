@@ -11,7 +11,6 @@ use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Shared\Bus\Command;
 use Beagle\Shared\Bus\CommandHandler;
-use Beagle\Shared\Domain\Errors\InvalidToken;
 use Beagle\Shared\Domain\Errors\InvalidValueObject;
 use Beagle\Shared\Domain\TokenService;
 
@@ -28,7 +27,6 @@ final class RefreshToken extends CommandHandler
      * @param RefreshTokenCommand $command
      *
      * @throws InvalidPersonalAccessToken
-     * @throws InvalidToken
      * @throws UserNotFound
      * @throws InvalidValueObject
      */

@@ -31,6 +31,14 @@ Route::middleware(['api'])->group(function(){
         )->name('api.login');
     });
 
+    Route::post('/token/refresh',
+        [
+            \Beagle\Core\Infrastructure\Http\Api\Controllers\RefreshTokenController::class,
+            'execute'
+        ]
+    )->name('api.token-refresh')
+         ->middleware(['verify.refresh.token']);
+
     Route::post('/register',
         [
             \Beagle\Core\Infrastructure\Http\Api\Controllers\RegisterUserController::class,
@@ -44,5 +52,5 @@ Route::middleware(['api'])->group(function(){
             'execute'
         ]
     )->name('api.logout')
-     ->middleware(['auth.jwt']);
+     ->middleware(['verify.access.token']);
 });
