@@ -43,6 +43,6 @@ final class EloquentPersonalRefreshTokenRepository implements PersonalRefreshTok
 
     public function deleteByUserId(UserId $userId):void
     {
-        // TODO: Implement deleteByUserId() method.
+        PersonalRefreshTokenDao::where('user_id', $userId->value())->delete();
     }
 }

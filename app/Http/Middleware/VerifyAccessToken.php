@@ -23,10 +23,10 @@ class VerifyAccessToken
     public function handle(Request $request, Closure $next)
     {
         try {
-            $token = $request->header('authorization');
+            $token = $this->tokenFromHeaderAsString($request->header('authorization'));
 
             $isAValidToken = Token::validate(
-                $request->header('authorization'),
+                $token,
                 \env('JWT_ACCESS_SECRET')
             );
             if (!$isAValidToken) {
@@ -46,6 +46,16 @@ class VerifyAccessToken
                 ],
                 Response::HTTP_UNAUTHORIZED
             );
+        }
+    }
+
+    /** @throws InvalidToken */
+    private function tokenFromHeaderAsString(string $header):string
+    {
+        try {
+            return \explode(" ", $header)[1];
+        } catch (\Exception $exception) {
+            throw new InvalidToken($exception->getMessage());
         }
     }
 }

@@ -55,7 +55,7 @@ class VerifyRefreshToken
         try {
             return \explode(" ", $header)[1];
         } catch (\Exception $exception) {
-            throw new InvalidToken($exception);
+            throw new InvalidToken($exception->getMessage());
         }
     }
 }

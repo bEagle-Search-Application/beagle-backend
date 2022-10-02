@@ -43,6 +43,6 @@ final class EloquentPersonalAccessTokenRepository implements PersonalAccessToken
 
     public function deleteByUserId(UserId $userId):void
     {
-        // TODO: Implement deleteByUserId() method.
+        PersonalAccessTokenDao::where('user_id', $userId->value())->delete();
     }
 }
