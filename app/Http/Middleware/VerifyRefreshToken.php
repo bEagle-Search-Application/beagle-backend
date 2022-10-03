@@ -7,6 +7,7 @@ use Beagle\Core\Domain\PersonalToken\Errors\PersonalRefreshTokenNotFound;
 use Beagle\Core\Domain\PersonalToken\PersonalRefreshTokenRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Shared\Domain\Errors\InvalidToken;
+use Beagle\Shared\Domain\Errors\TokenExpired;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -25,20 +26,12 @@ class VerifyRefreshToken
         try {
             $token = $this->tokenFromHeaderAsString($request->header('authorization'));
 
-            $isAValidToken = Token::validate(
-                $token,
-                \env('JWT_REFRESH_SECRET')
-            );
-            if (!$isAValidToken) {
-                throw InvalidToken::byRefreshSignature();
-            }
-
-            $userIdAsString = Token::getPayload($token)['uid'];
-            $userId = UserId::fromString($userIdAsString);
-            $this->personalRefreshTokenRepository->findByUserId($userId);
+            $this->validateSignatureOf($token);
+            $this->validateExpirationOf($token);
+            $this->validateUserOf($token);
 
             return $next($request);
-        } catch (InvalidToken|PersonalRefreshTokenNotFound $e) {
+        } catch (InvalidToken|PersonalRefreshTokenNotFound|TokenExpired $e) {
             return new JsonResponse(
                 [
                     "response" => $e->getMessage(),
@@ -57,5 +50,37 @@ class VerifyRefreshToken
         } catch (\Exception $exception) {
             throw new InvalidToken($exception->getMessage());
         }
+    }
+
+    /** @throws InvalidToken */
+    public function validateSignatureOf(string $token):void
+    {
+        $isAValidToken = Token::validate(
+            $token,
+            \env('JWT_REFRESH_SECRET')
+        );
+        if (!$isAValidToken) {
+            throw InvalidToken::byRefreshSignature();
+        }
+    }
+
+    /** @throws TokenExpired */
+    public function validateExpirationOf(string $token):void
+    {
+        $isANonExpirationToken = Token::validateExpiration($token);
+        if (!$isANonExpirationToken) {
+            throw TokenExpired::byExpirationDate();
+        }
+    }
+
+    /**
+     * @throws PersonalRefreshTokenNotFound
+     * @throws InvalidPersonalRefreshToken
+     */
+    public function validateUserOf(string $token):void
+    {
+        $userIdAsString = Token::getPayload($token)['uid'];
+        $userId = UserId::fromString($userIdAsString);
+        $this->personalRefreshTokenRepository->findByUserId($userId);
     }
 }

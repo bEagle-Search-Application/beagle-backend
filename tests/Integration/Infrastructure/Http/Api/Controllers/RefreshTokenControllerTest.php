@@ -5,14 +5,17 @@ namespace Tests\Integration\Infrastructure\Http\Api\Controllers;
 use Beagle\Core\Domain\PersonalToken\PersonalAccessToken;
 use Beagle\Core\Domain\PersonalToken\PersonalAccessTokenRepository;
 use Beagle\Core\Domain\PersonalToken\PersonalRefreshToken;
-use Beagle\Core\Domain\PersonalToken\ValueObjects\PersonalTokenId;
 use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentPersonalAccessTokenRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentPersonalRefreshTokenRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserRepository;
+use Beagle\Shared\Domain\ValueObjects\DateTime;
+use Beagle\Shared\Domain\ValueObjects\Token;
 use Beagle\Shared\Infrastructure\Token\JwtTokenService;
+use ReallySimpleJWT\Token as SimpleJwt;
 use Symfony\Component\HttpFoundation\Response;
+use Tests\MotherObjects\DateTimeMotherObject;
 use Tests\MotherObjects\PersonalToken\PersonalTokenIdMotherObject;
 use Tests\MotherObjects\User\UserMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserIdMotherObject;
@@ -53,6 +56,35 @@ final class RefreshTokenControllerTest extends TestCase
             "La firma del token de refresco es inválida",
             $decodedResponse["response"]
         );
+    }
+
+    public function testItReturnUnauthorizedResponseITokenExpired():void
+    {
+        $token = SimpleJwt::customPayload(
+            [
+                'iat' => DateTime::now(),
+                'uid' => UserIdMotherObject::create()->value(),
+                'exp' => DateTimeMotherObject::yesterday()->timestamp,
+                'iss' => \env('APP_URL')
+            ],
+            \env('JWT_REFRESH_SECRET')
+        );
+        $accessToken = Token::accessTokenFromString($token);
+
+        $response = $this->post(
+            \route(
+                'api.token-refresh'
+            ),
+            [],
+            [
+                'authorization' => "Bearer " . $accessToken->value()
+            ]
+        );
+
+        $decodedResponse = $this->decodeResponse($response->getContent());
+
+        $this->assertSame(Response::HTTP_UNAUTHORIZED, $response->status());
+        $this->assertSame("El token ha caducado", $decodedResponse["response"]);
     }
 
     public function testItReturnsUnauthorizedExceptionIfTokenNotFound():void

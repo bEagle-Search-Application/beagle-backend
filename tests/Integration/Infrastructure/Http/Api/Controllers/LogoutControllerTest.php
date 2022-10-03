@@ -13,9 +13,12 @@ use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentPersonalAccessTokenRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentPersonalRefreshTokenRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserRepository;
+use Beagle\Shared\Domain\ValueObjects\DateTime;
 use Beagle\Shared\Domain\ValueObjects\Token;
 use Beagle\Shared\Infrastructure\Token\JwtTokenService;
+use ReallySimpleJWT\Token as SimpleJwt;
 use Symfony\Component\HttpFoundation\Response;
+use Tests\MotherObjects\DateTimeMotherObject;
 use Tests\MotherObjects\PersonalToken\PersonalTokenIdMotherObject;
 use Tests\MotherObjects\User\UserMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserIdMotherObject;
@@ -59,6 +62,35 @@ final class LogoutControllerTest extends TestCase
             "La firma del token de acceso es inválida",
             $decodedResponse["response"]
         );
+    }
+
+    public function testItReturnUnauthorizedResponseITokenExpired():void
+    {
+        $token = SimpleJwt::customPayload(
+            [
+                'iat' => DateTime::now(),
+                'uid' => UserIdMotherObject::create()->value(),
+                'exp' => DateTimeMotherObject::yesterday()->timestamp,
+                'iss' => \env('APP_URL')
+            ],
+            \env('JWT_ACCESS_SECRET')
+        );
+        $accessToken = Token::accessTokenFromString($token);
+
+        $response = $this->post(
+            \route(
+                'api.logout'
+            ),
+            [],
+            [
+                'authorization' => "Bearer " . $accessToken->value()
+            ]
+        );
+
+        $decodedResponse = $this->decodeResponse($response->getContent());
+
+        $this->assertSame(Response::HTTP_UNAUTHORIZED, $response->status());
+        $this->assertSame("El token ha caducado", $decodedResponse["response"]);
     }
 
     public function testItReturnUnauthorizedResponseIfUserTokenNotFound():void

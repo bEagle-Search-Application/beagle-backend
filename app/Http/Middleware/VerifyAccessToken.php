@@ -7,6 +7,7 @@ use Beagle\Core\Domain\PersonalToken\Errors\PersonalAccessTokenNotFound;
 use Beagle\Core\Domain\PersonalToken\PersonalAccessTokenRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Shared\Domain\Errors\InvalidToken;
+use Beagle\Shared\Domain\Errors\TokenExpired;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -25,20 +26,12 @@ class VerifyAccessToken
         try {
             $token = $this->tokenFromHeaderAsString($request->header('authorization'));
 
-            $isAValidToken = Token::validate(
-                $token,
-                \env('JWT_ACCESS_SECRET')
-            );
-            if (!$isAValidToken) {
-                throw InvalidToken::byAccessSignature();
-            }
-
-            $userIdAsString = Token::getPayload($token)['uid'];
-            $userId = UserId::fromString($userIdAsString);
-            $this->personalAccessTokenRepository->findByUserId($userId);
+            $this->validateSignatureOf($token);
+            $this->validateExpirationOf($token);
+            $this->validateUserOf($token);
 
             return $next($request);
-        } catch (InvalidToken|PersonalAccessTokenNotFound $e) {
+        } catch (InvalidToken|PersonalAccessTokenNotFound|TokenExpired $e) {
             return new JsonResponse(
                 [
                     "response" => $e->getMessage(),
@@ -57,5 +50,37 @@ class VerifyAccessToken
         } catch (\Exception $exception) {
             throw new InvalidToken($exception->getMessage());
         }
+    }
+
+    /** @throws InvalidToken */
+    private function validateSignatureOf(string $token):void
+    {
+        $isAValidToken = Token::validate(
+            $token,
+            \env('JWT_ACCESS_SECRET')
+        );
+        if (!$isAValidToken) {
+            throw InvalidToken::byAccessSignature();
+        }
+    }
+
+    /** @throws TokenExpired */
+    private function validateExpirationOf(string $token):void
+    {
+        $isANonExpirationToken = Token::validateExpiration($token);
+        if (!$isANonExpirationToken) {
+            throw TokenExpired::byExpirationDate();
+        }
+    }
+
+    /**
+     * @throws PersonalAccessTokenNotFound
+     * @throws InvalidPersonalAccessToken
+     */
+    private function validateUserOf(string $token):void
+    {
+        $userIdAsString = Token::getPayload($token)['uid'];
+        $userId = UserId::fromString($userIdAsString);
+        $this->personalAccessTokenRepository->findByUserId($userId);
     }
 }
