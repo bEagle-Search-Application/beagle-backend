@@ -1,3 +1,9 @@
 #!/usr/bin/env bash
 
+printf "Migrating database...";
+docker exec -it -e APP_ENV=testing php php artisan migrate &> /dev/null
+printf "\033[0;32m ✓ \033[0m \n";
+
 docker exec -it php ./vendor/bin/phpunit $1
+
+docker exec -it -e APP_ENV=testing php php artisan migrate:rollback &> /dev/null
