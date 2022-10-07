@@ -13,8 +13,7 @@ class BaseController extends Controller
     public function __construct(
         protected CommandBus $commandBus,
         protected QueryBus $queryBus
-    )
-    {
+    ) {
     }
 
     protected function generateNotFoundResponse(string $response):JsonResponse
@@ -25,6 +24,11 @@ class BaseController extends Controller
     protected function generateBadRequestResponse(string $response):JsonResponse
     {
         return $this->generateJsonResponse($response, Response::HTTP_BAD_REQUEST);
+    }
+
+    protected function generateUnauthorizedResponse(string $response):JsonResponse
+    {
+        return $this->generateJsonResponse($response, Response::HTTP_UNAUTHORIZED);
     }
 
     protected function generateSuccessfulResponse(array $response):JsonResponse

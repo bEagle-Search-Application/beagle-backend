@@ -2,48 +2,43 @@
 
 namespace Beagle\Shared\Domain\ValueObjects;
 
-use Illuminate\Support\Str;
+use Beagle\Shared\Domain\TokenType;
 
-class Token
+final class Token
 {
-    private const TYPE = "Bearer";
-
-    protected function __construct(private ?string $value)
-    {
+    private function __construct(
+        private string $value,
+        private TokenType $type
+    ) {
     }
 
-    public function value():?string
+    public static function accessTokenFromString(string $token):self
+    {
+        return new self($token, TokenType::ACCESS);
+    }
+
+    public static function refreshTokenFromString(string $token):self
+    {
+        return new self($token, TokenType::REFRESH);
+    }
+
+    public function isARefreshToken():bool
+    {
+        return $this->type === TokenType::REFRESH;
+    }
+
+    public function isAnAccessToken():bool
+    {
+        return $this->type === TokenType::ACCESS;
+    }
+
+    public function value():string
     {
         return $this->value;
-    }
-
-    public static function fromString(string $token):static
-    {
-        return new static($token);
     }
 
     public function equals(Token $token):bool
     {
         return $this->value === $token->value();
-    }
-
-    public function clear():self
-    {
-        return new self(\trim(\str_replace(self::TYPE, "", $this->value)));
-    }
-
-    public function clearValue():string
-    {
-        return $this->clear()->value;
-    }
-
-    public function type():string
-    {
-        return self::TYPE;
-    }
-
-    public static function generateRandom64String():self
-    {
-        return new self(Str::random(64));
     }
 }

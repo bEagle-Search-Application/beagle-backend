@@ -2,9 +2,13 @@
 
 namespace Tests\Integration\Infrastructure\Http\Api\Controllers;
 
+use Beagle\Core\Domain\PersonalToken\PersonalAccessTokenRepository;
+use Beagle\Core\Domain\PersonalToken\PersonalRefreshTokenRepository;
 use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
+use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentPersonalAccessTokenRepository;
+use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentPersonalRefreshTokenRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\MotherObjects\User\UserMotherObject;
@@ -17,12 +21,16 @@ final class LoginControllerTest extends TestCase
     private User $user;
     private string $userPassword;
     private UserRepository $userRepository;
+    private PersonalAccessTokenRepository $personalAccessTokenRepository;
+    private PersonalRefreshTokenRepository $personalRefreshTokenRepository;
 
     protected function setUp():void
     {
         parent::setUp();
 
         $this->userRepository = $this->app->make(EloquentUserRepository::class);
+        $this->personalAccessTokenRepository = $this->app->make(EloquentPersonalAccessTokenRepository::class);
+        $this->personalRefreshTokenRepository = $this->app->make(EloquentPersonalRefreshTokenRepository::class);
 
         $this->prepareSavedUser($this->userRepository);
     }
@@ -31,7 +39,7 @@ final class LoginControllerTest extends TestCase
     {
         $this->userPassword = "1234";
 
-        $this->user = UserMotherObject::createWithoutToken(
+        $this->user = UserMotherObject::create(
             userPassword: UserPassword::fromString(
                 \md5($this->userPassword)
             )
@@ -80,6 +88,9 @@ final class LoginControllerTest extends TestCase
             $this->user->password()
         );
 
+        $personalAccessToken = $this->personalAccessTokenRepository->findByUserId($userLogged->id());
+        $personalRefreshToken = $this->personalRefreshTokenRepository->findByUserId($userLogged->id());
+
         $this->assertSame(Response::HTTP_OK, $response->status());
         $this->assertSame(
             [
@@ -96,10 +107,11 @@ final class LoginControllerTest extends TestCase
                         "picture" => $userLogged->picture(),
                         "show_reviews" => $userLogged->showReviews(),
                         "rating" => $userLogged->rating(),
+                        "is_verified" => $userLogged->isVerified()
                     ],
                     "auth" => [
-                        "token" => $userLogged->authToken()->value(),
-                        "type" => $userLogged->authToken()->type()
+                        "access_token" => $personalAccessToken->token()->value(),
+                        "refresh_token" => $personalRefreshToken->token()->value()
                     ],
                 ],
                 "status" => Response::HTTP_OK

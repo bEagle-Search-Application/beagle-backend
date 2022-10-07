@@ -6,12 +6,19 @@ use Beagle\Shared\Bus\Command;
 
 final class SendEmailVerificationEmailCommand implements Command
 {
-    public function __construct(private string $userEmail)
-    {
+    public function __construct(
+        private string $userVerificationId,
+        private string $userEmail
+    ) {
     }
 
     public function userEmail():string
     {
         return $this->userEmail;
+    }
+
+    public function userVerificationId():string
+    {
+        return $this->userVerificationId;
     }
 }

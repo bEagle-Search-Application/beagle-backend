@@ -4,29 +4,40 @@ namespace Tests\Unit\Application\Command\User\SendEmailVerificationEmail;
 
 use Beagle\Core\Application\Command\User\SendEmailVerificationEmail\SendEmailVerificationEmail;
 use Beagle\Core\Application\Command\User\SendEmailVerificationEmail\SendEmailVerificationEmailCommand;
-use Beagle\Core\Domain\User\UserVerificationRepository;
-use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\InMemoryUserVerificationRepository;
+use Beagle\Core\Domain\User\Errors\UserNotFound;
+use Beagle\Core\Domain\User\UserVerificationTokenRepository;
+use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\InMemoryUserRepository;
+use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\InMemoryUserVerificationTokenRepository;
 use Beagle\Shared\Domain\Errors\InvalidEmail;
 use PHPUnit\Framework\TestCase;
+use Tests\MotherObjects\IdMotherObject;
+use Tests\MotherObjects\User\UserMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserEmailMotherObject;
+use Tests\MotherObjects\User\ValueObjects\UserVerificationTokenIdMotherObject;
+use Tests\TestDoubles\Infrastructure\Auth\TokenServiceMock;
 use Tests\TestDoubles\Infrastructure\Email\Verification\SpyUserVerificationEmailSender;
 
 final class SendEmailVerificationEmailTest extends TestCase
 {
     private SendEmailVerificationEmail $sut;
-    private UserVerificationRepository $userVerificationRepository;
-    private SpyUserVerificationEmailSender $spyUserVerificationRepository;
+    private UserVerificationTokenRepository $userVerificationRepository;
+    private SpyUserVerificationEmailSender $spyUserVerificationEmailSender;
+    private InMemoryUserRepository $userRepository;
 
     protected function setUp():void
     {
         parent::setUp();
 
-        $this->userVerificationRepository = new InMemoryUserVerificationRepository();
-        $this->spyUserVerificationRepository = new SpyUserVerificationEmailSender();
+        $this->userRepository = new InMemoryUserRepository();
+        $tokenService = new TokenServiceMock();
+        $this->userVerificationRepository = new InMemoryUserVerificationTokenRepository();
+        $this->spyUserVerificationEmailSender = new SpyUserVerificationEmailSender();
 
         $this->sut = new SendEmailVerificationEmail(
+            $this->userRepository,
+            $tokenService,
             $this->userVerificationRepository,
-            $this->spyUserVerificationRepository
+            $this->spyUserVerificationEmailSender
         );
     }
 
@@ -35,23 +46,43 @@ final class SendEmailVerificationEmailTest extends TestCase
         $this->expectException(InvalidEmail::class);
 
         $this->sut->__invoke(
-            new SendEmailVerificationEmailCommand("dani@n")
+            new SendEmailVerificationEmailCommand(
+                IdMotherObject::create()->value(),
+                "dani@n"
+            )
+        );
+    }
+
+    public function testItThrowsUserNotFoundException():void
+    {
+        $this->expectException(UserNotFound::class);
+
+        $this->sut->__invoke(
+            new SendEmailVerificationEmailCommand(
+                IdMotherObject::create()->value(),
+                UserEmailMotherObject::create()->value()
+            )
         );
     }
 
     public function testItCreatesAnUserVerification():void
     {
-        $userEmail = UserEmailMotherObject::create();
+        $user = UserMotherObject::createWithHashedPassword();
+        $this->userRepository->save($user);
+
+        $userVerificationId = UserVerificationTokenIdMotherObject::create();
 
         $this->sut->__invoke(
             new SendEmailVerificationEmailCommand(
-                $userEmail->value()
+                $userVerificationId->value(),
+                $user->email()->value()
             )
         );
 
-        $userVerification = $this->userVerificationRepository->findByEmail($userEmail);
+        $userVerification = $this->userVerificationRepository->find($userVerificationId);
 
-        $this->assertTrue($userVerification->email()->equals($userEmail));
-        $this->assertTrue($this->spyUserVerificationRepository->isSent());
+        $this->assertTrue($userVerification->id()->equals($userVerificationId));
+        $this->assertTrue($user->id()->equals($userVerification->userId()));
+        $this->assertTrue($this->spyUserVerificationEmailSender->isSent());
     }
 }

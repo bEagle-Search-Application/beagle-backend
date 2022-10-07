@@ -2,9 +2,10 @@
 
 namespace Beagle\Core\Infrastructure\Email\Verification;
 
-use Beagle\Core\Domain\User\UserVerification;
+use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Infrastructure\Email\ComposedEmail;
 use Beagle\Core\Infrastructure\Email\EmailSender;
+use Beagle\Shared\Domain\ValueObjects\Token;
 
 final class LaravelUserUserVerificationEmailSender implements UserVerificationEmailSender
 {
@@ -15,7 +16,7 @@ final class LaravelUserUserVerificationEmailSender implements UserVerificationEm
     {
     }
 
-    public function execute(UserVerification $userVerification):void
+    public function execute(Token $token, UserEmail $userEmail):void
     {
         $composedEmail = new ComposedEmail(
             self::DEFAULT_EMAIL_SUBJECT,
@@ -24,12 +25,11 @@ final class LaravelUserUserVerificationEmailSender implements UserVerificationEm
                 [
                     "urlToAcceptVerification" => \env('SPA_URL')
                                                  . self::SPA_PATH_TO_VERIFY
-                                                 . "?email=" . $userVerification->email()->value()
-                                                 . "&token=" . $userVerification->token()->value()
+                                                 . "?token=" . $token->value()
                 ]
             )->render()
         );
 
-        $this->emailSender->send([$userVerification->email()->value()], $composedEmail);
+        $this->emailSender->send([$userEmail->value()], $composedEmail);
     }
 }
