@@ -49,8 +49,7 @@ final class LogoutControllerTest extends TestCase
             \route(
                 'api.logout'
             ),
-            [],
-            [
+            headers: [
                 'authorization' => "Bearer dasdasxasasxcdscsdcdsdcdscds"
             ]
         );
@@ -81,8 +80,7 @@ final class LogoutControllerTest extends TestCase
             \route(
                 'api.logout'
             ),
-            [],
-            [
+            headers: [
                 'authorization' => "Bearer " . $accessToken->value()
             ]
         );
@@ -106,8 +104,7 @@ final class LogoutControllerTest extends TestCase
             \route(
                 'api.logout'
             ),
-            [],
-            [
+            headers: [
                 'authorization' => "Bearer " . $accessToken->value()
             ]
         );
@@ -136,8 +133,7 @@ final class LogoutControllerTest extends TestCase
             \route(
                 'api.logout'
             ),
-            [],
-            [
+            headers: [
                 'authorization' => "Bearer " . $accessToken->value()
             ]
         );
