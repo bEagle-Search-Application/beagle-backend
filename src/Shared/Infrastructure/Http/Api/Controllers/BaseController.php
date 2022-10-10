@@ -49,6 +49,13 @@ class BaseController extends Controller
         );
     }
 
+    protected function generateCreatedResponse():JsonResponse
+    {
+        return new JsonResponse(
+            status: Response::HTTP_CREATED
+        );
+    }
+
     private function generateJsonResponse(string $response, int $code):JsonResponse
     {
         return new JsonResponse(
