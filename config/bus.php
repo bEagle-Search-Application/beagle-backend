@@ -18,6 +18,7 @@ return [
         'router' => [
             'routes' => [
                 \Beagle\Core\Application\Query\User\Login\LoginQuery::class => \Beagle\Core\Application\Query\User\Login\Login::class,
+                \Beagle\Core\Application\Query\User\GetUser\GetUserQuery::class => \Beagle\Core\Application\Query\User\GetUser\GetUser::class,
             ],
         ],
     ],
