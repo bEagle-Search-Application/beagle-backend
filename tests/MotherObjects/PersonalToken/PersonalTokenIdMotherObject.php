@@ -8,10 +8,6 @@ final class PersonalTokenIdMotherObject
 {
     public static function create(?string $guid = null):PersonalTokenId
     {
-        return empty($guid)
-            ? PersonalTokenId::fromString(
-                PersonalTokenId::v4()->toBase58()
-            )
-            : PersonalTokenId::fromString($guid);
+        return PersonalTokenId::fromString($guid ?? PersonalTokenId::v4()->toBase58());
     }
 }

@@ -218,9 +218,7 @@ final class PhonePrefixMotherObject
     /** @throws InvalidPhonePrefix */
     public static function create(?string $phonePrefix = null):PhonePrefix
     {
-        return empty($phonePrefix)
-            ? PhonePrefix::fromString(self::randomPrefix())
-            : PhonePrefix::fromString($phonePrefix);
+        return PhonePrefix::fromString($phonePrefix ?? self::randomPrefix());
     }
 
     private static function randomPrefix():string

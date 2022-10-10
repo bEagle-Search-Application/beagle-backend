@@ -8,10 +8,6 @@ final class IdMotherObject
 {
     public static function create(?string $guid = null):Guid
     {
-        return empty($guid)
-            ? Guid::fromString(
-                Guid::v4()->toBase58()
-            )
-            : Guid::fromString($guid);
+        return Guid::fromString($guid ?? Guid::v4()->toBase58());
     }
 }

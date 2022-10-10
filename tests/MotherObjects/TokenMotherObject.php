@@ -3,58 +3,74 @@
 namespace Tests\MotherObjects;
 
 use Beagle\Core\Domain\User\ValueObjects\UserId;
-use Beagle\Shared\Domain\TokenType;
 use Beagle\Shared\Domain\ValueObjects\DateTime;
 use Beagle\Shared\Domain\ValueObjects\Token;
 use Tests\MotherObjects\User\ValueObjects\UserIdMotherObject;
+use ReallySimpleJWT\Token as SimpleJwt;
 
 final class TokenMotherObject
 {
-    public static function createAccessToken(?string $token = null):Token
+    public static function createAccessToken(?UserId $userId = null):Token
     {
-        return empty($token)
-            ? Token::accessTokenFromString(
-                UserIdMotherObject::create()->value()
-                . "."
-                . DateTime::now()->addMinutes(10)->timestamp
-                . "."
-                . TokenType::ACCESS->name
-            )
-            : Token::accessTokenFromString($token);
+        $userId = empty($userId) ? UserIdMotherObject::create()->value() : $userId->value();
+
+        $token = SimpleJwt::customPayload(
+            [
+                'iat' => DateTime::now(),
+                'uid' => $userId,
+                'exp' => DateTimeMotherObject::now()->addMinutes(10)->timestamp,
+                'iss' => \env('APP_URL')
+            ],
+            \env('JWT_ACCESS_SECRET')
+        );
+
+        return Token::accessTokenFromString($token);
     }
 
-    public static function createRefreshToken(?string $token = null):Token
+    public static function createExpiredAccessToken(?UserId $userId = null):Token
     {
-        return empty($token)
-            ? Token::refreshTokenFromString(
-                UserIdMotherObject::create()->value()
-                . "."
-                . DateTime::now()->addMinutes(10)->timestamp
-                . "."
-                . TokenType::REFRESH->name
-            )
-            : Token::refreshTokenFromString($token);
+        $userId = empty($userId) ? UserIdMotherObject::create()->value() : $userId->value();
+
+        $token = SimpleJwt::customPayload(
+            [
+                'iat' => DateTime::now(),
+                'uid' => $userId,
+                'exp' => DateTimeMotherObject::yesterday()->timestamp,
+                'iss' => \env('APP_URL')
+            ],
+            \env('JWT_ACCESS_SECRET')
+        );
+
+        return Token::accessTokenFromString($token);
     }
 
-    public static function customize(
-        TokenType $type,
-        UserId $userId,
-        DateTime $time
-    ):Token {
-        return ($type === TokenType::ACCESS)
-            ? Token::accessTokenFromString(
-                $userId->value()
-                . "."
-                . $time->timestamp
-                . "."
-                . TokenType::ACCESS->name
-            )
-            : Token::refreshTokenFromString(
-                $userId->value()
-                . "."
-                . $time->timestamp
-                . "."
-                . TokenType::REFRESH->name
-            );
+    public static function createRefreshToken(?UserId $userId = null):Token
+    {
+        $userId = empty($userId) ? UserIdMotherObject::create()->value() : $userId->value();
+
+        $token = SimpleJwt::customPayload(
+            [
+                'iat' => DateTime::now(),
+                'uid' => $userId,
+                'exp' => DateTimeMotherObject::now()->addDays(15)->timestamp,
+            ],
+            \env('JWT_REFRESH_SECRET')
+        );
+        return Token::refreshTokenFromString($token);
+    }
+
+    public static function createExpiredRefreshToken(?UserId $userId = null):Token
+    {
+        $userId = empty($userId) ? UserIdMotherObject::create()->value() : $userId->value();
+
+        $token = SimpleJwt::customPayload(
+            [
+                'iat' => DateTime::now(),
+                'uid' => $userId,
+                'exp' => DateTimeMotherObject::yesterday()->timestamp,
+            ],
+            \env('JWT_REFRESH_SECRET')
+        );
+        return Token::refreshTokenFromString($token);
     }
 }

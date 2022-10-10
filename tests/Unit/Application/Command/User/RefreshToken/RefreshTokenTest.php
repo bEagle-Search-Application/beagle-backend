@@ -9,15 +9,13 @@ use Beagle\Core\Domain\User\Errors\UserNotFound;
 use Beagle\Core\Domain\User\User;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\InMemoryPersonalAccessTokenRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\InMemoryUserRepository;
-use Beagle\Shared\Domain\TokenType;
 use Beagle\Shared\Domain\ValueObjects\Token;
+use Beagle\Shared\Infrastructure\Token\JwtTokenService;
 use PHPUnit\Framework\TestCase;
-use Tests\MotherObjects\DateTimeMotherObject;
 use Tests\MotherObjects\PersonalToken\PersonalTokenIdMotherObject;
 use Tests\MotherObjects\TokenMotherObject;
 use Tests\MotherObjects\User\UserMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserIdMotherObject;
-use Tests\TestDoubles\Infrastructure\Auth\TokenServiceMock;
 
 final class RefreshTokenTest extends TestCase
 {
@@ -29,7 +27,7 @@ final class RefreshTokenTest extends TestCase
     {
         parent::setUp();
 
-        $tokenService = new TokenServiceMock();
+        $tokenService = new JwtTokenService();
         $this->personalAccessTokenRepository = new InMemoryPersonalAccessTokenRepository();
         $userRepository = new InMemoryUserRepository();
 
@@ -57,23 +55,13 @@ final class RefreshTokenTest extends TestCase
 
     public function testItUpdatesAccessToken():void
     {
-        $oldAccessToken = TokenMotherObject::customize(
-            TokenType::ACCESS,
-            $this->user->id(),
-            DateTimeMotherObject::yesterday()
-        );
+        $oldAccessToken = TokenMotherObject::createExpiredAccessToken();
         $oldPersonalAccessToken = new PersonalAccessToken(
             PersonalTokenIdMotherObject::create(),
             $this->user->id(),
             Token::accessTokenFromString($oldAccessToken->value())
         );
         $this->personalAccessTokenRepository->save($oldPersonalAccessToken);
-
-        $refreshToken = TokenMotherObject::customize(
-            TokenType::REFRESH,
-            $this->user->id(),
-            DateTimeMotherObject::tomorrow()
-        );
 
         $this->sut->__invoke(
             new RefreshTokenCommand(
