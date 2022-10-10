@@ -11,11 +11,11 @@ use Beagle\Core\Domain\User\UserVerificationToken;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\InMemoryUserRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\InMemoryUserVerificationTokenRepository;
 use Beagle\Shared\Domain\Errors\TokenExpired;
+use Beagle\Shared\Infrastructure\Token\JwtTokenService;
 use PHPUnit\Framework\TestCase;
 use Tests\MotherObjects\TokenMotherObject;
 use Tests\MotherObjects\User\UserMotherObject;
 use Tests\MotherObjects\User\UserVerificationTokenMotherObject;
-use Tests\TestDoubles\Infrastructure\Auth\TokenServiceMock;
 
 final class AcceptUserVerificationEmailTest extends TestCase
 {
@@ -31,7 +31,7 @@ final class AcceptUserVerificationEmailTest extends TestCase
 
         $this->userRepository = new InMemoryUserRepository();
         $this->userVerificationTokenRepository = new InMemoryUserVerificationTokenRepository();
-        $tokenService = new TokenServiceMock();
+        $tokenService = new JwtTokenService();
 
         $this->user = UserMotherObject::createWithHashedPassword();
         $this->userRepository->save($this->user);

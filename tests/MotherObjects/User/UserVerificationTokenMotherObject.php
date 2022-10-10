@@ -5,9 +5,7 @@ namespace Tests\MotherObjects\User;
 use Beagle\Core\Domain\User\UserVerificationToken;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Domain\User\ValueObjects\UserVerificationTokenId;
-use Beagle\Shared\Domain\TokenType;
 use Beagle\Shared\Domain\ValueObjects\Token;
-use Tests\MotherObjects\DateTimeMotherObject;
 use Tests\MotherObjects\TokenMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserIdMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserVerificationTokenIdMotherObject;
@@ -19,18 +17,12 @@ final class UserVerificationTokenMotherObject
         ?UserId $userId = null,
         ?Token $token = null,
     ):UserVerificationToken {
-        $userId = empty($userId) ? UserIdMotherObject::create() : $userId;
+        $userId = $userId ?? UserIdMotherObject::create();
 
         return new UserVerificationToken(
-            empty($id) ? UserVerificationTokenIdMotherObject::create() : $id,
+            $id ?? UserVerificationTokenIdMotherObject::create(),
             $userId,
-            empty($token)
-                ? TokenMotherObject::customize(
-                    TokenType::ACCESS,
-                    $userId,
-                    DateTimeMotherObject::inFuture(10)
-                )
-                : $token,
+            $token ?? TokenMotherObject::createAccessToken($userId)
         );
     }
 
@@ -38,16 +30,12 @@ final class UserVerificationTokenMotherObject
         ?UserVerificationTokenId $id = null,
         ?UserId $userId = null
     ):UserVerificationToken {
-        $userId = empty($userId) ? UserIdMotherObject::create() : $userId;
+        $userId = $userId ?? UserIdMotherObject::create();
 
         return new UserVerificationToken(
-            empty($id) ? UserVerificationTokenIdMotherObject::create() : $id,
+            $id ?? UserVerificationTokenIdMotherObject::create(),
             $userId,
-            TokenMotherObject::customize(
-                TokenType::ACCESS,
-                $userId,
-                DateTimeMotherObject::yesterday()
-            )
+            $token ?? TokenMotherObject::createExpiredAccessToken($userId)
         );
     }
 }

@@ -9,12 +9,12 @@ use Beagle\Core\Domain\User\UserVerificationTokenRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\InMemoryUserRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\InMemoryUserVerificationTokenRepository;
 use Beagle\Shared\Domain\Errors\InvalidEmail;
+use Beagle\Shared\Infrastructure\Token\JwtTokenService;
 use PHPUnit\Framework\TestCase;
 use Tests\MotherObjects\IdMotherObject;
 use Tests\MotherObjects\User\UserMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserEmailMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserVerificationTokenIdMotherObject;
-use Tests\TestDoubles\Infrastructure\Auth\TokenServiceMock;
 use Tests\TestDoubles\Infrastructure\Email\Verification\SpyUserVerificationEmailSender;
 
 final class SendEmailVerificationEmailTest extends TestCase
@@ -29,7 +29,7 @@ final class SendEmailVerificationEmailTest extends TestCase
         parent::setUp();
 
         $this->userRepository = new InMemoryUserRepository();
-        $tokenService = new TokenServiceMock();
+        $tokenService = new JwtTokenService();
         $this->userVerificationRepository = new InMemoryUserVerificationTokenRepository();
         $this->spyUserVerificationEmailSender = new SpyUserVerificationEmailSender();
 

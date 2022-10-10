@@ -12,12 +12,12 @@ use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\InMemoryPersonalA
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\InMemoryPersonalRefreshTokenRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\InMemoryUserRepository;
 use Beagle\Shared\Domain\Errors\InvalidEmail;
+use Beagle\Shared\Infrastructure\Token\JwtTokenService;
 use PHPUnit\Framework\TestCase;
 use Tests\MotherObjects\IdMotherObject;
 use Tests\MotherObjects\User\UserMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserEmailMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserPasswordMotherObject;
-use Tests\TestDoubles\Infrastructure\Auth\TokenServiceMock;
 
 final class LoginTest extends TestCase
 {
@@ -34,7 +34,7 @@ final class LoginTest extends TestCase
         $userRepository = new InMemoryUserRepository();
         $this->personalAccessTokenRepository = new InMemoryPersonalAccessTokenRepository();
         $this->personalRefreshTokenRepository = new InMemoryPersonalRefreshTokenRepository();
-        $tokenService = new TokenServiceMock();
+        $tokenService = new JwtTokenService();
 
         $this->prepareSavedUser($userRepository);
 

@@ -10,8 +10,6 @@ final class PhoneMotherObject
     /** @throws InvalidPhone */
     public static function create(?string $phone = null):Phone
     {
-        return empty($phone)
-            ? Phone::fromString(StringMotherObject::createPhone())
-            : Phone::fromString($phone);
+        return Phone::fromString($phone ?? StringMotherObject::createPhone());
     }
 }
