@@ -103,7 +103,7 @@ paths:
         '500':
           $ref: '#components/responses/500'
   /auth/login:
-    get:
+    post:
       tags:
         - Auth
       description: Login with an existing user
