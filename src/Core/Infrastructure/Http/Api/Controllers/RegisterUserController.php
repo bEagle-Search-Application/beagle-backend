@@ -37,7 +37,7 @@ final class RegisterUserController extends BaseController
                 )
             );
 
-            return $this->generateNoContentResponse();
+            return $this->generateCreatedResponse();
         } catch (CannotSaveUser|InvalidValueObject|ValidationException $invalidParameters) {
             return $this->generateBadRequestResponse($invalidParameters->getMessage());
         }

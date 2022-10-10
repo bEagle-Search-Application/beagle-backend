@@ -208,7 +208,7 @@ final class RegisterUserControllerTest extends TestCase
 
         $expectedUserValidation = $this->userVerificationRepository->findByUserId($expectedUser->id());
 
-        $this->assertSame(Response::HTTP_NO_CONTENT, $response->status());
+        $this->assertSame(Response::HTTP_CREATED, $response->status());
 
         $this->assertTrue($userEmail->equals($expectedUser->email()));
         $this->assertTrue($expectedUser->password()->equals(
