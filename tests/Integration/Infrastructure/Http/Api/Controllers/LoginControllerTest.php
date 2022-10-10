@@ -51,14 +51,12 @@ final class LoginControllerTest extends TestCase
     {
         $userEmail = UserEmailMotherObject::create()->value();
 
-        $response = $this->get(
-            \route(
-                'api.login',
-                [
-                    "email" => $userEmail,
-                    "password" => UserPasswordMotherObject::create()->value(),
-                ]
-            )
+        $response = $this->post(
+            \route('api.login'),
+            [
+                "email" => $userEmail,
+                "password" => UserPasswordMotherObject::create()->value(),
+            ]
         );
 
         $decodedResponse = $this->decodeResponse($response->getContent());
@@ -72,14 +70,12 @@ final class LoginControllerTest extends TestCase
 
     public function testItUserLogin():void
     {
-        $response = $this->get(
-            \route(
-                'api.login',
-                [
-                    "email" => $this->user->email()->value(),
-                    "password" => $this->userPassword,
-                ]
-            )
+        $response = $this->post(
+            \route('api.login'),
+            [
+                "email" => $this->user->email()->value(),
+                "password" => $this->userPassword,
+            ]
         );
 
         $decodedResponse = $this->decodeResponse($response->getContent());

@@ -23,7 +23,7 @@ Route::middleware(['api'])->group(function(){
     });
 
     Route::prefix('auth')->group(function () {
-        Route::get('/login',
+        Route::post('/login',
             [
                 \Beagle\Core\Infrastructure\Http\Api\Controllers\LoginController::class,
                 'execute'

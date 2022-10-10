@@ -43,8 +43,7 @@ final class RefreshTokenControllerTest extends TestCase
             \route(
                 'api.token-refresh'
             ),
-            [],
-            [
+            headers: [
                 'authorization' => "Bearer hreibibninbiot4niro"
             ]
         );
@@ -75,8 +74,7 @@ final class RefreshTokenControllerTest extends TestCase
             \route(
                 'api.token-refresh'
             ),
-            [],
-            [
+            headers: [
                 'authorization' => "Bearer " . $accessToken->value()
             ]
         );
@@ -96,8 +94,7 @@ final class RefreshTokenControllerTest extends TestCase
             \route(
                 'api.token-refresh'
             ),
-            [],
-            [
+            headers: [
                 'authorization' => "Bearer " . $token->value()
             ]
         );
@@ -127,8 +124,7 @@ final class RefreshTokenControllerTest extends TestCase
             \route(
                 'api.token-refresh'
             ),
-            [],
-            [
+            headers: [
                 'authorization' => "Bearer " . $personalRefreshToken->token()->value()
             ]
         );

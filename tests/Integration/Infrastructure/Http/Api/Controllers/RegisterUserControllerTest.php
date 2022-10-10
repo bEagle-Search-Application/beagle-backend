@@ -53,17 +53,15 @@ final class RegisterUserControllerTest extends TestCase
         string $phone,
     ):void {
         $response = $this->post(
-            \route(
-                'api.register',
-                [
-                    "email" => $email,
-                    "password" => $password,
-                    "name" => $name,
-                    "surname" => $surname,
-                    "phone_prefix" => $phone_prefix,
-                    "phone" => $phone,
-                ]
-            )
+            \route('api.register'),
+            [
+                "email" => $email,
+                "password" => $password,
+                "name" => $name,
+                "surname" => $surname,
+                "phone_prefix" => $phone_prefix,
+                "phone" => $phone,
+            ]
         );
 
         $decodedResponse = $this->decodeResponse($response->getContent());
@@ -159,17 +157,15 @@ final class RegisterUserControllerTest extends TestCase
         $this->userRepository->save($userRegistered);
 
         $response = $this->post(
-            \route(
-                'api.register',
-                [
-                    "email" => $userRegistered->email()->value(),
-                    "password" => $this->user->password()->value(),
-                    "name" => $this->user->name(),
-                    "surname" => $this->user->surname(),
-                    "phone_prefix" => $this->user->phone()->phonePrefixAsString(),
-                    "phone" => $this->user->phone()->phoneAsString(),
-                ]
-            )
+            \route('api.register'),
+            [
+                "email" => $userRegistered->email()->value(),
+                "password" => $this->user->password()->value(),
+                "name" => $this->user->name(),
+                "surname" => $this->user->surname(),
+                "phone_prefix" => $this->user->phone()->phonePrefixAsString(),
+                "phone" => $this->user->phone()->phoneAsString(),
+            ]
         );
 
         $decodedResponse = $this->decodeResponse($response->getContent());
@@ -186,17 +182,15 @@ final class RegisterUserControllerTest extends TestCase
         $userEmail = $this->user->email();
 
         $response = $this->post(
-            \route(
-                'api.register',
-                [
-                    "email" => $userEmail->value(),
-                    "password" => $this->user->password()->value(),
-                    "name" => $this->user->name(),
-                    "surname" => $this->user->surname(),
-                    "phone_prefix" => $this->user->phone()->phonePrefixAsString(),
-                    "phone" => $this->user->phone()->phoneAsString(),
-                ]
-            )
+            \route('api.register'),
+            [
+                "email" => $userEmail->value(),
+                "password" => $this->user->password()->value(),
+                "name" => $this->user->name(),
+                "surname" => $this->user->surname(),
+                "phone_prefix" => $this->user->phone()->phonePrefixAsString(),
+                "phone" => $this->user->phone()->phoneAsString(),
+            ]
         );
 
         $expectedUser = $this->userRepository->findByEmailAndPassword(
