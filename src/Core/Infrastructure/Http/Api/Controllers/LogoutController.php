@@ -25,7 +25,7 @@ final class LogoutController extends BaseController
 
             return $this->generateNoContentResponse();
         } catch (UserNotFound $e) {
-            return $this->generateUnauthorizedResponse($e->getMessage());
+            return $this->generateForbiddenResponse($e->getMessage());
         }
     }
 

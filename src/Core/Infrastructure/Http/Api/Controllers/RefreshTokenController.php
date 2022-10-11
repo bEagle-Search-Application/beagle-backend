@@ -10,6 +10,8 @@ use Beagle\Core\Domain\User\Errors\UserNotFound;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Shared\Bus\CommandBus;
 use Beagle\Shared\Bus\QueryBus;
+use Beagle\Shared\Domain\Errors\InvalidTokenSignature;
+use Beagle\Shared\Domain\Errors\TokenExpired;
 use Beagle\Shared\Domain\ValueObjects\Guid;
 use Beagle\Shared\Infrastructure\Http\Api\Controllers\BaseController;
 use Illuminate\Http\JsonResponse;
@@ -27,8 +29,13 @@ final class RefreshTokenController extends BaseController
     }
 
     /**
-     * @throws PersonalAccessTokenNotFound
+     * @param Request $request
+     *
+     * @return JsonResponse
+     * @throws InvalidTokenSignature
+     * @throws TokenExpired
      * @throws InvalidPersonalAccessToken
+     * @throws PersonalAccessTokenNotFound
      */
     public function execute(Request $request):JsonResponse
     {
@@ -52,7 +59,7 @@ final class RefreshTokenController extends BaseController
                 ]
             );
         } catch (UserNotFound $notFound) {
-            return $this->generateNotFoundResponse($notFound->getMessage());
+            return $this->generateForbiddenResponse($notFound->getMessage());
         }
     }
 

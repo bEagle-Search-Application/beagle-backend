@@ -25,8 +25,10 @@ paths:
       responses:
         '204':
           description: User verified successfully
-        '400':
-          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
         '500':
           $ref: '#components/responses/500'
   /token/refresh:
@@ -57,6 +59,8 @@ paths:
                     example: 200
         '401':
           $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
         '500':
           $ref: '#components/responses/500'
   /register:
@@ -165,8 +169,8 @@ paths:
       responses:
         '204':
           description: Successfully user logout
-        '400':
-          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
         '403':
           $ref: '#/components/responses/403'
         '500':

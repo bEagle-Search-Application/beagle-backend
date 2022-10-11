@@ -21,6 +21,11 @@ class BaseController extends Controller
         return $this->generateJsonResponse($response, Response::HTTP_NOT_FOUND);
     }
 
+    protected function generateForbiddenResponse(string $response):JsonResponse
+    {
+        return $this->generateJsonResponse($response, Response::HTTP_FORBIDDEN);
+    }
+
     protected function generateBadRequestResponse(string $response):JsonResponse
     {
         return $this->generateJsonResponse($response, Response::HTTP_BAD_REQUEST);
