@@ -9,6 +9,8 @@ use Beagle\Core\Domain\PersonalToken\PersonalAccessTokenRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\DataTransformers\PersonalAccessTokenDataTransformer;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\PersonalAccessTokenDao;
+use Beagle\Shared\Domain\Errors\InvalidTokenSignature;
+use Beagle\Shared\Domain\Errors\TokenExpired;
 
 final class EloquentPersonalAccessTokenRepository implements PersonalAccessTokenRepository
 {
@@ -27,7 +29,10 @@ final class EloquentPersonalAccessTokenRepository implements PersonalAccessToken
         );
     }
 
-    /** @throws InvalidPersonalAccessToken
+    /**
+     * @throws InvalidTokenSignature
+     * @throws TokenExpired
+     * @throws InvalidPersonalAccessToken
      * @throws PersonalAccessTokenNotFound
      */
     public function findByUserId(UserId $userId):PersonalAccessToken

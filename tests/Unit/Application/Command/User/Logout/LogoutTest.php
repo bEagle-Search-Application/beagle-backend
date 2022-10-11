@@ -6,8 +6,6 @@ use Beagle\Core\Application\Command\User\Logout\Logout;
 use Beagle\Core\Application\Command\User\Logout\LogoutCommand;
 use Beagle\Core\Domain\PersonalToken\Errors\PersonalAccessTokenNotFound;
 use Beagle\Core\Domain\PersonalToken\Errors\PersonalRefreshTokenNotFound;
-use Beagle\Core\Domain\PersonalToken\PersonalAccessToken;
-use Beagle\Core\Domain\PersonalToken\PersonalRefreshToken;
 use Beagle\Core\Domain\User\Errors\UserNotFound;
 use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
@@ -15,8 +13,7 @@ use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\InMemoryPersonalA
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\InMemoryPersonalRefreshTokenRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\InMemoryUserRepository;
 use PHPUnit\Framework\TestCase;
-use Tests\MotherObjects\PersonalToken\PersonalTokenIdMotherObject;
-use Tests\MotherObjects\TokenMotherObject;
+use Tests\MotherObjects\PersonalToken\PersonalTokenMotherObject;
 use Tests\MotherObjects\User\UserMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserIdMotherObject;
 
@@ -73,17 +70,13 @@ final class LogoutTest extends TestCase
         $this->user = UserMotherObject::createWithHashedPassword();
         $this->userRepository->save($this->user);
 
-        $personalAccessToken = new PersonalAccessToken(
-            PersonalTokenIdMotherObject::create(),
-            $this->user->id(),
-            TokenMotherObject::createAccessToken()
+        $personalAccessToken = PersonalTokenMotherObject::createPersonalAccessToken(
+            userId: $this->user->id()
         );
         $this->personalAccessTokenRepository->save($personalAccessToken);
 
-        $personalRefreshToken = new PersonalRefreshToken(
-            PersonalTokenIdMotherObject::create(),
-            $this->user->id(),
-            TokenMotherObject::createRefreshToken()
+        $personalRefreshToken = PersonalTokenMotherObject::createPersonalRefreshToken(
+            userId: $this->user->id()
         );
         $this->personalRefreshTokenRepository->save($personalRefreshToken);
     }

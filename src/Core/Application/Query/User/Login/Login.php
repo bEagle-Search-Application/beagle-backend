@@ -17,7 +17,7 @@ use Beagle\Core\Domain\User\ValueObjects\UserPassword;
 use Beagle\Shared\Bus\Query;
 use Beagle\Shared\Bus\QueryHandler;
 use Beagle\Shared\Bus\QueryResponse;
-use Beagle\Shared\Domain\Errors\InvalidToken;
+use Beagle\Shared\Domain\Errors\InvalidTokenSignature;
 use Beagle\Shared\Domain\Errors\InvalidValueObject;
 use Beagle\Shared\Domain\TokenService;
 
@@ -64,9 +64,9 @@ final class Login extends QueryHandler
     }
 
     /** @throws InvalidPersonalAccessToken
-     * @throws InvalidToken
+     * @throws InvalidTokenSignature
      */
-    public function createPersonalAccessToken(UserId $userId, PersonalTokenId $tokenId):PersonalAccessToken
+    private function createPersonalAccessToken(UserId $userId, PersonalTokenId $tokenId):PersonalAccessToken
     {
         $accessToken = $this->personalTokenService->generateAccessToken($userId);
         return new PersonalAccessToken(
@@ -77,9 +77,9 @@ final class Login extends QueryHandler
     }
 
     /** @throws InvalidPersonalRefreshToken
-     * @throws InvalidToken
+     * @throws InvalidTokenSignature
      */
-    public function createPersonalRefreshToken(UserId $userId, PersonalTokenId $tokenId):PersonalRefreshToken
+    private function createPersonalRefreshToken(UserId $userId, PersonalTokenId $tokenId):PersonalRefreshToken
     {
         $refreshToken = $this->personalTokenService->generateRefreshToken($userId);
         return new PersonalRefreshToken(

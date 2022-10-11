@@ -4,22 +4,16 @@ namespace Tests\Integration\Infrastructure\Http\Api\Controllers;
 
 use Beagle\Core\Domain\PersonalToken\Errors\PersonalAccessTokenNotFound;
 use Beagle\Core\Domain\PersonalToken\Errors\PersonalRefreshTokenNotFound;
-use Beagle\Core\Domain\PersonalToken\PersonalAccessToken;
 use Beagle\Core\Domain\PersonalToken\PersonalAccessTokenRepository;
-use Beagle\Core\Domain\PersonalToken\PersonalRefreshToken;
 use Beagle\Core\Domain\PersonalToken\PersonalRefreshTokenRepository;
 use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentPersonalAccessTokenRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentPersonalRefreshTokenRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserRepository;
-use Beagle\Shared\Domain\ValueObjects\DateTime;
-use Beagle\Shared\Domain\ValueObjects\Token;
-use Beagle\Shared\Infrastructure\Token\JwtTokenService;
-use ReallySimpleJWT\Token as SimpleJwt;
 use Symfony\Component\HttpFoundation\Response;
-use Tests\MotherObjects\DateTimeMotherObject;
-use Tests\MotherObjects\PersonalToken\PersonalTokenIdMotherObject;
+use Tests\MotherObjects\PersonalToken\PersonalTokenMotherObject;
+use Tests\MotherObjects\TokenMotherObject;
 use Tests\MotherObjects\User\UserMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserIdMotherObject;
 use Tests\TestCase;
@@ -30,8 +24,6 @@ final class LogoutControllerTest extends TestCase
     private UserRepository $userRepository;
     private PersonalAccessTokenRepository $personalAccessTokenRepository;
     private PersonalRefreshTokenRepository $personalRefreshTokenRepository;
-    private JwtTokenService $jwtTokenService;
-    private Token $accessToken;
 
     protected function setUp():void
     {
@@ -40,7 +32,6 @@ final class LogoutControllerTest extends TestCase
         $this->userRepository = $this->app->make(EloquentUserRepository::class);
         $this->personalAccessTokenRepository = $this->app->make(EloquentPersonalAccessTokenRepository::class);
         $this->personalRefreshTokenRepository = $this->app->make(EloquentPersonalRefreshTokenRepository::class);
-        $this->jwtTokenService = $this->app->make(JwtTokenService::class);
     }
 
     public function testItReturnUnauthorizedResponseIfTokenIsInvalid():void
@@ -54,34 +45,19 @@ final class LogoutControllerTest extends TestCase
             ]
         );
 
-        $decodedResponse = $this->decodeResponse($response->getContent());
-
         $this->assertSame(Response::HTTP_UNAUTHORIZED, $response->status());
-        $this->assertSame(
-            "La firma del token de acceso es inválida",
-            $decodedResponse["response"]
-        );
     }
 
-    public function testItReturnUnauthorizedResponseITokenExpired():void
+    public function testItReturnUnauthorizedResponseIfTokenExpired():void
     {
-        $token = SimpleJwt::customPayload(
-            [
-                'iat' => DateTime::now(),
-                'uid' => UserIdMotherObject::create()->value(),
-                'exp' => DateTimeMotherObject::yesterday()->timestamp,
-                'iss' => \env('APP_URL')
-            ],
-            \env('JWT_ACCESS_SECRET')
-        );
-        $accessToken = Token::accessTokenFromString($token);
+        $expiredAccessToken = TokenMotherObject::createExpiredAccessToken();
 
         $response = $this->post(
             \route(
                 'api.logout'
             ),
             headers: [
-                'authorization' => "Bearer " . $accessToken->value()
+                'authorization' => "Bearer " . $expiredAccessToken->value()
             ]
         );
 
@@ -91,14 +67,10 @@ final class LogoutControllerTest extends TestCase
         $this->assertSame("El token ha caducado", $decodedResponse["response"]);
     }
 
-    public function testItReturnUnauthorizedResponseIfUserTokenNotFound():void
+    public function testItReturnForbiddenResponseIfUserTokenNotFound():void
     {
         $userId = UserIdMotherObject::create();
-        $accessToken = Token::accessTokenFromString(
-            $this->jwtTokenService->generateAccessToken(
-                $userId
-            )->value()
-        );
+        $accessToken = TokenMotherObject::createAccessToken($userId);
 
         $response = $this->post(
             \route(
@@ -111,7 +83,7 @@ final class LogoutControllerTest extends TestCase
 
         $decodedResponse = $this->decodeResponse($response->getContent());
 
-        $this->assertSame(Response::HTTP_UNAUTHORIZED, $response->status());
+        $this->assertSame(Response::HTTP_FORBIDDEN, $response->status());
         $this->assertSame(
             \sprintf("No se ha encontrado ningún token de acceso asociado al usuario %s", $userId->value()),
             $decodedResponse["response"]
@@ -123,11 +95,7 @@ final class LogoutControllerTest extends TestCase
         $this->prepareDatabase($this->userRepository);
         $userId = $this->user->id();
 
-        $accessToken = Token::accessTokenFromString(
-            $this->jwtTokenService->generateAccessToken(
-                $userId
-            )->value()
-        );
+        $accessToken = TokenMotherObject::createAccessToken($userId);
 
         $response = $this->post(
             \route(
@@ -152,27 +120,13 @@ final class LogoutControllerTest extends TestCase
         $this->user = UserMotherObject::createWithHashedPassword();
         $userRepository->save($this->user);
 
-        $this->accessToken = Token::accessTokenFromString(
-            $this->jwtTokenService->generateAccessToken(
-                $this->user->id()
-            )->value()
-        );
-        $personalAccessToken = new PersonalAccessToken(
-            PersonalTokenIdMotherObject::create(),
-            $this->user->id(),
-            $this->accessToken
+        $personalAccessToken = PersonalTokenMotherObject::createPersonalAccessToken(
+            userId: $this->user->id()
         );
         $this->personalAccessTokenRepository->save($personalAccessToken);
 
-        $refreshToken = Token::refreshTokenFromString(
-            $this->jwtTokenService->generateRefreshToken(
-                $this->user->id()
-            )->value()
-        );
-        $personalRefreshToken = new PersonalRefreshToken(
-            PersonalTokenIdMotherObject::create(),
-            $this->user->id(),
-            $refreshToken
+        $personalRefreshToken = PersonalTokenMotherObject::createPersonalRefreshToken(
+            userId: $this->user->id()
         );
         $this->personalRefreshTokenRepository->save($personalRefreshToken);
     }

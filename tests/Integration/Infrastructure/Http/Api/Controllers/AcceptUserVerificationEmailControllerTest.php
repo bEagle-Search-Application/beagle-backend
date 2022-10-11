@@ -8,14 +8,9 @@ use Beagle\Core\Domain\User\UserVerificationToken;
 use Beagle\Core\Domain\User\UserVerificationTokenRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserVerificationTokenRepository;
-use Beagle\Shared\Domain\ValueObjects\DateTime;
-use Beagle\Shared\Domain\ValueObjects\Token;
-use ReallySimpleJWT\Token as SimpleJwt;
 use Symfony\Component\HttpFoundation\Response;
-use Tests\MotherObjects\DateTimeMotherObject;
 use Tests\MotherObjects\User\UserMotherObject;
 use Tests\MotherObjects\User\UserVerificationTokenMotherObject;
-use Tests\MotherObjects\User\ValueObjects\UserVerificationTokenIdMotherObject;
 use Tests\TestCase;
 
 final class AcceptUserVerificationEmailControllerTest extends TestCase
@@ -41,24 +36,12 @@ final class AcceptUserVerificationEmailControllerTest extends TestCase
     private function prepareUserVerification():void
     {
         $userId = $this->user->id();
-        $token = SimpleJwt::customPayload(
-            [
-                'iat' => DateTime::now(),
-                'uid' => $userId,
-                'exp' => DateTimeMotherObject::now()->addMinutes(10)->timestamp,
-                'iss' => \env('APP_URL')
-            ],
-            \env('JWT_ACCESS_SECRET')
-        );
 
-        $this->userVerification = UserVerificationTokenMotherObject::create(
-            userId: $userId,
-            token: Token::accessTokenFromString($token)
-        );
+        $this->userVerification = UserVerificationTokenMotherObject::create(userId: $userId);
         $this->userVerificationRepository->save($this->userVerification);
     }
 
-    public function testItReturnsNotFoundResponseIfTokenIsInvalid():void
+    public function testItReturnsUnauthorizedResponseIfTokenIsInvalid():void
     {
         $response = $this->post(
             \route(
@@ -69,29 +52,14 @@ final class AcceptUserVerificationEmailControllerTest extends TestCase
             )
         );
 
-        $decodedResponse = $this->decodeResponse($response->getContent());
-
-        $this->assertSame(Response::HTTP_NOT_FOUND, $response->status());
-        $this->assertSame("La firma del token de acceso es inválida", $decodedResponse["response"]);
+        $this->assertSame(Response::HTTP_UNAUTHORIZED, $response->status());
     }
 
     public function testItReturnsBadRequestResponseIfUserVerificationExpired():void
     {
-        $expiredToken = SimpleJwt::customPayload(
-            [
-                'iat' => DateTime::now(),
-                'uid' => $this->user->id(),
-                'exp' => DateTimeMotherObject::yesterday()->timestamp,
-                'iss' => \env('APP_URL')
-            ],
-            \env('JWT_ACCESS_SECRET')
+        $expiredUserVerification = UserVerificationTokenMotherObject::createExpiredAccessToken(
+            userId: $this->user->id()
         );
-        $expiredUserVerification = UserVerificationToken::create(
-            UserVerificationTokenIdMotherObject::create(),
-            $this->user->id(),
-            Token::accessTokenFromString($expiredToken)
-        );
-
         $this->userVerificationRepository->save($expiredUserVerification);
 
         $response = $this->post(
@@ -105,7 +73,7 @@ final class AcceptUserVerificationEmailControllerTest extends TestCase
 
         $decodedResponse = $this->decodeResponse($response->getContent());
 
-        $this->assertSame(Response::HTTP_BAD_REQUEST, $response->status());
+        $this->assertSame(Response::HTTP_UNAUTHORIZED, $response->status());
         $this->assertSame("El token ha caducado", $decodedResponse["response"]);
     }
 

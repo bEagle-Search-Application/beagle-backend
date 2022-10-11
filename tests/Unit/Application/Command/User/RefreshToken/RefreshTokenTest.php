@@ -4,16 +4,14 @@ namespace Tests\Unit\Application\Command\User\RefreshToken;
 
 use Beagle\Core\Application\Command\User\RefreshToken\RefreshToken;
 use Beagle\Core\Application\Command\User\RefreshToken\RefreshTokenCommand;
-use Beagle\Core\Domain\PersonalToken\PersonalAccessToken;
 use Beagle\Core\Domain\User\Errors\UserNotFound;
 use Beagle\Core\Domain\User\User;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\InMemoryPersonalAccessTokenRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\InMemoryUserRepository;
-use Beagle\Shared\Domain\ValueObjects\Token;
 use Beagle\Shared\Infrastructure\Token\JwtTokenService;
 use PHPUnit\Framework\TestCase;
 use Tests\MotherObjects\PersonalToken\PersonalTokenIdMotherObject;
-use Tests\MotherObjects\TokenMotherObject;
+use Tests\MotherObjects\PersonalToken\PersonalTokenMotherObject;
 use Tests\MotherObjects\User\UserMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserIdMotherObject;
 
@@ -55,11 +53,8 @@ final class RefreshTokenTest extends TestCase
 
     public function testItUpdatesAccessToken():void
     {
-        $oldAccessToken = TokenMotherObject::createExpiredAccessToken();
-        $oldPersonalAccessToken = new PersonalAccessToken(
-            PersonalTokenIdMotherObject::create(),
-            $this->user->id(),
-            Token::accessTokenFromString($oldAccessToken->value())
+        $oldPersonalAccessToken = PersonalTokenMotherObject::createPersonalAccessToken(
+            userId: $this->user->id()
         );
         $this->personalAccessTokenRepository->save($oldPersonalAccessToken);
 

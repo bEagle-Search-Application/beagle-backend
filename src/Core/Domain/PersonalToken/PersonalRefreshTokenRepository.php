@@ -6,12 +6,17 @@ use Beagle\Core\Domain\PersonalToken\Errors\CannotDeletePersonalRefreshToken;
 use Beagle\Core\Domain\PersonalToken\Errors\InvalidPersonalRefreshToken;
 use Beagle\Core\Domain\PersonalToken\Errors\PersonalRefreshTokenNotFound;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
+use Beagle\Shared\Domain\Errors\InvalidTokenSignature;
+use Beagle\Shared\Domain\Errors\TokenExpired;
 
 interface PersonalRefreshTokenRepository
 {
     public function save(PersonalRefreshToken $personalRefreshToken):void;
 
-    /** @throws InvalidPersonalRefreshToken
+    /**
+     * @throws InvalidTokenSignature
+     * @throws TokenExpired
+     * @throws InvalidPersonalRefreshToken
      * @throws PersonalRefreshTokenNotFound
      */
     public function findByUserId(UserId $userId):PersonalRefreshToken;

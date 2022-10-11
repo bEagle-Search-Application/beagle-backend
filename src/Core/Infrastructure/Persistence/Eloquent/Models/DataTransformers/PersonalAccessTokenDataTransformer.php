@@ -7,11 +7,17 @@ use Beagle\Core\Domain\PersonalToken\PersonalAccessToken;
 use Beagle\Core\Domain\PersonalToken\ValueObjects\PersonalTokenId;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\PersonalAccessTokenDao;
+use Beagle\Shared\Domain\Errors\InvalidTokenSignature;
+use Beagle\Shared\Domain\Errors\TokenExpired;
 use Beagle\Shared\Domain\ValueObjects\Token;
 
 final class PersonalAccessTokenDataTransformer
 {
-    /** @throws InvalidPersonalAccessToken */
+    /**
+     * @throws TokenExpired
+     * @throws InvalidPersonalAccessToken
+     * @throws InvalidTokenSignature
+     */
     public function fromDao(PersonalAccessTokenDao $accessTokenDao): PersonalAccessToken
     {
         return new PersonalAccessToken(

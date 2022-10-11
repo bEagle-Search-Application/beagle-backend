@@ -6,7 +6,7 @@ use Beagle\Core\Application\Command\User\AcceptUserVerificationEmail\AcceptUserV
 use Beagle\Core\Domain\User\Errors\UserNotFound;
 use Beagle\Core\Domain\User\Errors\UserVerificationNotFound;
 use Beagle\Shared\Domain\Errors\InvalidEmail;
-use Beagle\Shared\Domain\Errors\InvalidToken;
+use Beagle\Shared\Domain\Errors\InvalidTokenSignature;
 use Beagle\Shared\Domain\Errors\TokenExpired;
 use Beagle\Shared\Infrastructure\Http\Api\Controllers\BaseController;
 use Beagle\Shared\Infrastructure\Token\Errors\CannotGetClaim;
@@ -21,11 +21,15 @@ final class AcceptUserVerificationEmailController extends BaseController
                 new AcceptUserVerificationEmailCommand($token)
             );
 
-            return $this->generateNoContentResponse();
-        } catch (UserNotFound |InvalidEmail|CannotGetClaim|TokenExpired $invalidArgumentsException) {
-            return $this->generateBadRequestResponse($invalidArgumentsException->getMessage());
-        } catch (UserVerificationNotFound|InvalidToken $notFoundException) {
-            return $this->generateNotFoundResponse($notFoundException->getMessage());
+            $response = $this->generateNoContentResponse();
+        } catch (UserNotFound |InvalidEmail|CannotGetClaim $invalidArgumentsException) {
+            $response = $this->generateBadRequestResponse($invalidArgumentsException->getMessage());
+        } catch (UserVerificationNotFound $notFoundException) {
+            $response = $this->generateNotFoundResponse($notFoundException->getMessage());
+        } catch (TokenExpired|InvalidTokenSignature $unauthorizedException) {
+            $response = $this->generateUnauthorizedResponse($unauthorizedException->getMessage());
         }
+
+        return $response;
     }
 }
