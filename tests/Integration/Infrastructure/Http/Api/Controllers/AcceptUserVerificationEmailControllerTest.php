@@ -41,6 +41,31 @@ final class AcceptUserVerificationEmailControllerTest extends TestCase
         $this->userVerificationRepository->save($this->userVerification);
     }
 
+    public function testItReturnsForbiddenResponseIfUserVerificationDoesNotExists():void
+    {
+        $userVerificationToken = UserVerificationTokenMotherObject::create();
+
+        $response = $this->post(
+            \route(
+                'api.users-verify',
+                [
+                    "token" => $userVerificationToken->token()->value(),
+                ]
+            )
+        );
+
+        $decodedResponse = $this->decodeResponse($response->getContent());
+
+        $this->assertSame(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertSame(
+            \sprintf(
+                "No se ha encontrado ninguna validación para el usuario %s",
+                $userVerificationToken->userId()->value()
+            ),
+            $decodedResponse["response"]
+        );
+    }
+
     public function testItReturnsUnauthorizedResponseIfTokenIsInvalid():void
     {
         $response = $this->post(
@@ -55,7 +80,7 @@ final class AcceptUserVerificationEmailControllerTest extends TestCase
         $this->assertSame(Response::HTTP_UNAUTHORIZED, $response->status());
     }
 
-    public function testItReturnsBadRequestResponseIfUserVerificationExpired():void
+    public function testItReturnsUnauthorizedResponseIfUserVerificationExpired():void
     {
         $expiredUserVerification = UserVerificationTokenMotherObject::createExpiredAccessToken(
             userId: $this->user->id()
