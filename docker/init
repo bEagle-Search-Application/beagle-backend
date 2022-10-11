@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+userId=$(id -u)
+
+USER_ID=$userId docker-compose -f ./docker-compose.yml up --build -d
+
+docker exec -it php php composer install
+docker exec -it php php artisan migrate
+docker exec -it php php artisan db:seed

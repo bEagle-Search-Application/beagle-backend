@@ -22,15 +22,7 @@ cd beagle-backend
 
 To up all containers projects, execute:
 ```
-docker/up
+docker/init
 ```
 
-This command up all containers, execute database migrations and seeder.
-
-
-## Execute Artisan Commands
-
-If you wanna execute Artisan command, execute:
-```
-docker/dev/artisan "[your-command-here]"
-```
+This command up all containers, install dependencies, execute database migrations and seeder.
