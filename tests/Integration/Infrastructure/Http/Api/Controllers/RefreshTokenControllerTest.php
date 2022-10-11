@@ -10,20 +10,15 @@ use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentPersonalAccessTokenRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentPersonalRefreshTokenRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserRepository;
-use Beagle\Shared\Domain\ValueObjects\DateTime;
-use Beagle\Shared\Domain\ValueObjects\Token;
-use Beagle\Shared\Infrastructure\Token\JwtTokenService;
-use ReallySimpleJWT\Token as SimpleJwt;
 use Symfony\Component\HttpFoundation\Response;
-use Tests\MotherObjects\DateTimeMotherObject;
-use Tests\MotherObjects\PersonalToken\PersonalTokenIdMotherObject;
+use Tests\MotherObjects\PersonalToken\PersonalTokenMotherObject;
+use Tests\MotherObjects\TokenMotherObject;
 use Tests\MotherObjects\User\UserMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserIdMotherObject;
 use Tests\TestCase;
 
 final class RefreshTokenControllerTest extends TestCase
 {
-    private JwtTokenService $jwtTokenService;
     private UserRepository $userRepository;
     private PersonalAccessTokenRepository $personalAccessTokenRepository;
 
@@ -32,7 +27,6 @@ final class RefreshTokenControllerTest extends TestCase
         parent::setUp();
 
         $this->userRepository = $this->app->make(EloquentUserRepository::class);
-        $this->jwtTokenService = $this->app->make(JwtTokenService::class);
         $this->personalAccessTokenRepository = $this->app->make(EloquentPersonalAccessTokenRepository::class);
         $this->personalRefreshTokenRepository = $this->app->make(EloquentPersonalRefreshTokenRepository::class);
     }
@@ -48,34 +42,19 @@ final class RefreshTokenControllerTest extends TestCase
             ]
         );
 
-        $decodedResponse = $this->decodeResponse($response->getContent());
-
         $this->assertSame(Response::HTTP_UNAUTHORIZED, $response->status());
-        $this->assertSame(
-            "La firma del token de refresco es inválida",
-            $decodedResponse["response"]
-        );
     }
 
-    public function testItReturnUnauthorizedResponseITokenExpired():void
+    public function testItReturnUnauthorizedResponseIfTokenExpired():void
     {
-        $token = SimpleJwt::customPayload(
-            [
-                'iat' => DateTime::now(),
-                'uid' => UserIdMotherObject::create()->value(),
-                'exp' => DateTimeMotherObject::yesterday()->timestamp,
-                'iss' => \env('APP_URL')
-            ],
-            \env('JWT_REFRESH_SECRET')
-        );
-        $accessToken = Token::accessTokenFromString($token);
+        $expiredRefreshToken = TokenMotherObject::createExpiredRefreshToken();
 
         $response = $this->post(
             \route(
                 'api.token-refresh'
             ),
             headers: [
-                'authorization' => "Bearer " . $accessToken->value()
+                'authorization' => "Bearer " . $expiredRefreshToken->value()
             ]
         );
 
@@ -85,10 +64,10 @@ final class RefreshTokenControllerTest extends TestCase
         $this->assertSame("El token ha caducado", $decodedResponse["response"]);
     }
 
-    public function testItReturnsUnauthorizedExceptionIfTokenNotFound():void
+    public function testItReturnsForbiddenResponseIfTokenNotFound():void
     {
         $userId = UserIdMotherObject::create();
-        $token = $this->jwtTokenService->generateRefreshToken($userId);
+        $token = TokenMotherObject::createRefreshToken($userId);
 
         $response = $this->post(
             \route(
@@ -101,7 +80,7 @@ final class RefreshTokenControllerTest extends TestCase
 
         $decodedResponse = $this->decodeResponse($response->getContent());
 
-        $this->assertSame(Response::HTTP_UNAUTHORIZED, $response->status());
+        $this->assertSame(Response::HTTP_FORBIDDEN, $response->status());
         $this->assertSame(
             \sprintf(
                 "No se ha encontrado ningún token de refresco asociado al usuario %s",
@@ -137,11 +116,8 @@ final class RefreshTokenControllerTest extends TestCase
 
     private function prepareAccessToken(UserId $userId):PersonalAccessToken
     {
-        $accessToken = $this->jwtTokenService->generateAccessToken($userId);
-        $personalAccessToken = new PersonalAccessToken(
-            PersonalTokenIdMotherObject::create(),
-            $userId,
-            $accessToken
+        $personalAccessToken = PersonalTokenMotherObject::createPersonalAccessToken(
+            userId: $userId
         );
         $this->personalAccessTokenRepository->save($personalAccessToken);
 
@@ -150,11 +126,8 @@ final class RefreshTokenControllerTest extends TestCase
 
     private function prepareRefreshToken(UserId $userId):PersonalRefreshToken
     {
-        $refreshToken = $this->jwtTokenService->generateRefreshToken($userId);
-        $personalRefreshToken = new PersonalRefreshToken(
-            PersonalTokenIdMotherObject::create(),
-            $userId,
-            $refreshToken
+        $personalRefreshToken = PersonalTokenMotherObject::createPersonalRefreshToken(
+            userId: $userId
         );
         $this->personalRefreshTokenRepository->save($personalRefreshToken);
 

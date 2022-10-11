@@ -3,28 +3,21 @@
 namespace Beagle\Shared\Domain;
 
 use Beagle\Core\Domain\User\ValueObjects\UserId;
-use Beagle\Shared\Domain\Errors\InvalidToken;
-use Beagle\Shared\Domain\Errors\TokenExpired;
+use Beagle\Shared\Domain\Errors\InvalidTokenSignature;
 use Beagle\Shared\Domain\ValueObjects\Token;
 use Beagle\Shared\Infrastructure\Token\Errors\CannotGetClaim;
 
 interface TokenService
 {
-    /** @throws InvalidToken */
+    /** @throws InvalidTokenSignature */
     public function generateAccessToken(UserId $userId): Token;
 
-    /** @throws InvalidToken */
+    /** @throws InvalidTokenSignature */
     public function generateRefreshToken(UserId $userId): Token;
 
-    /** @throws InvalidToken */
+    /** @throws InvalidTokenSignature */
     public function generateAccessTokenWithExpirationTime(UserId $userId, int $minutes): Token;
 
     /** @throws CannotGetClaim */
     public function userIdFromToken(Token $token):UserId;
-
-    /** @throws InvalidToken */
-    public function validateSignature(Token $token):void;
-
-    /** @throws TokenExpired */
-    public function validateExpiration(Token $token):void;
 }

@@ -37,8 +37,6 @@ final class AcceptUserVerificationEmail extends CommandHandler
     protected function handle(Command $command):void
     {
         $accessToken = Token::accessTokenFromString($command->token());
-        $this->tokenService->validateSignature($accessToken);
-        $this->tokenService->validateExpiration($accessToken);
 
         $userId = $this->tokenService->userIdFromToken($accessToken);
         $this->verificationTokenRepository->findByUserId($userId);

@@ -9,6 +9,8 @@ use Beagle\Core\Domain\PersonalToken\PersonalRefreshTokenRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\DataTransformers\PersonalRefreshTokenDataTransformer;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\PersonalRefreshTokenDao;
+use Beagle\Shared\Domain\Errors\InvalidTokenSignature;
+use Beagle\Shared\Domain\Errors\TokenExpired;
 
 final class EloquentPersonalRefreshTokenRepository implements PersonalRefreshTokenRepository
 {
@@ -27,7 +29,10 @@ final class EloquentPersonalRefreshTokenRepository implements PersonalRefreshTok
         );
     }
 
-    /** @throws InvalidPersonalRefreshToken
+    /**
+     * @throws InvalidTokenSignature
+     * @throws TokenExpired
+     * @throws InvalidPersonalRefreshToken
      * @throws PersonalRefreshTokenNotFound
      */
     public function findByUserId(UserId $userId):PersonalRefreshToken
