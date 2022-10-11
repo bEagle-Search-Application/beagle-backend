@@ -100,7 +100,7 @@ paths:
                   example: "666777888"
                   required: true
       responses:
-        '204':
+        '201':
           description: Successfully created a new user
         '400':
           $ref: '#/components/responses/400'
