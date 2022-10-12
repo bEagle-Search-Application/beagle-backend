@@ -16,7 +16,7 @@ Route::middleware(['api'])->group(function(){
     Route::prefix('users')->group(function () {
         Route::post('/verify/{token}',
             [
-                \Beagle\Core\Infrastructure\Http\Api\Controllers\AcceptUserVerificationEmailController::class,
+                \Beagle\Core\Infrastructure\Http\Api\Controllers\User\AcceptUserVerificationEmailController::class,
                 'execute'
             ]
         )->name('api.users-verify');
@@ -25,7 +25,7 @@ Route::middleware(['api'])->group(function(){
     Route::prefix('auth')->group(function () {
         Route::post('/login',
             [
-                \Beagle\Core\Infrastructure\Http\Api\Controllers\LoginController::class,
+                \Beagle\Core\Infrastructure\Http\Api\Controllers\User\LoginController::class,
                 'execute'
             ]
         )->name('api.login');
@@ -33,7 +33,7 @@ Route::middleware(['api'])->group(function(){
 
     Route::post('/token/refresh',
         [
-            \Beagle\Core\Infrastructure\Http\Api\Controllers\RefreshTokenController::class,
+            \Beagle\Core\Infrastructure\Http\Api\Controllers\User\RefreshTokenController::class,
             'execute'
         ]
     )->name('api.token-refresh')
@@ -41,14 +41,14 @@ Route::middleware(['api'])->group(function(){
 
     Route::post('/register',
         [
-            \Beagle\Core\Infrastructure\Http\Api\Controllers\RegisterUserController::class,
+            \Beagle\Core\Infrastructure\Http\Api\Controllers\User\RegisterUserController::class,
             'execute'
         ]
     )->name('api.register');
 
     Route::post('/logout',
         [
-            \Beagle\Core\Infrastructure\Http\Api\Controllers\LogoutController::class,
+            \Beagle\Core\Infrastructure\Http\Api\Controllers\User\LogoutController::class,
             'execute'
         ]
     )->name('api.logout')

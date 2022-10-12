@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Beagle\Core\Infrastructure\Http\Api\Controllers;
+namespace Beagle\Core\Infrastructure\Http\Api\Controllers\User;
 
 use Beagle\Core\Application\Command\User\RegisterUser\RegisterUserCommand;
 use Beagle\Core\Domain\User\Errors\CannotSaveUser;
