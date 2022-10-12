@@ -11,20 +11,16 @@ final class UserPasswordMotherObject
     /** @throws InvalidPassword */
     public static function create(?string $password = null):UserPassword
     {
-        return empty($password)
-            ? UserPassword::fromString(self::createStringNumber())
-            : UserPassword::fromString($password);
+        return UserPassword::fromString($password ?? self::createNumberAsString());
     }
 
     /** @throws InvalidPassword */
     public static function createWithHash(?string $password = null):UserPassword
     {
-        return empty($password)
-            ? UserPassword::fromString(\md5(self::createStringNumber()))
-            : UserPassword::fromString($password);
+        return UserPassword::fromString($password ?? \md5(self::createNumberAsString()));
     }
 
-    private static function createStringNumber():string
+    private static function createNumberAsString():string
     {
         return (string) Factory::create()->randomNumber(9);
     }

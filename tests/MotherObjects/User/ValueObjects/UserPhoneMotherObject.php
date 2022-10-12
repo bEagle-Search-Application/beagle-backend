@@ -4,8 +4,6 @@ namespace Tests\MotherObjects\User\ValueObjects;
 
 use Beagle\Core\Domain\User\ValueObjects\UserPhone;
 use Beagle\Shared\Domain\Errors\InvalidValueObject;
-use Beagle\Shared\Domain\ValueObjects\Phone;
-use Beagle\Shared\Domain\ValueObjects\PhonePrefix;
 use Tests\MotherObjects\PhoneMotherObject;
 use Tests\MotherObjects\PhonePrefixMotherObject;
 
@@ -17,8 +15,8 @@ final class UserPhoneMotherObject
         ?string $phone = null
     ):UserPhone {
         return UserPhone::create(
-            empty($phonePrefix) ? PhonePrefixMotherObject::create() : PhonePrefix::fromString($phonePrefix),
-            empty($phone) ? PhoneMotherObject::create() : Phone::fromString($phonePrefix),
+            $phonePrefix ?? PhonePrefixMotherObject::create(),
+            $phone ?? PhoneMotherObject::create(),
         );
     }
 }
