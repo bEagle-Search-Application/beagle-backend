@@ -16,7 +16,6 @@ use PHPUnit\Framework\TestCase;
 use Tests\MotherObjects\PhoneMotherObject;
 use Tests\MotherObjects\PhonePrefixMotherObject;
 use Tests\MotherObjects\User\UserMotherObject;
-use Tests\MotherObjects\User\ValueObjects\UserPasswordMotherObject;
 use Tests\TestDoubles\Bus\EventBusSpy;
 
 final class RegisterUserTest extends TestCase
@@ -33,9 +32,7 @@ final class RegisterUserTest extends TestCase
         $this->userRepository = new InMemoryUserRepository();
         $this->eventBus = new EventBusSpy();
 
-        $this->user = UserMotherObject::createForRegister(
-            userPassword: UserPasswordMotherObject::createWithHash()
-        );
+        $this->user = UserMotherObject::createForRegister();
 
         $this->sut = new RegisterUser(
             $this->userRepository,
@@ -99,7 +96,7 @@ final class RegisterUserTest extends TestCase
 
     public function testItThrowsCannotSaveUserException():void
     {
-        $registeredUser = UserMotherObject::createWithHashedPassword();
+        $registeredUser = UserMotherObject::create();
         $this->userRepository->save($registeredUser);
 
         $this->expectException(CannotSaveUser::class);

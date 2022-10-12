@@ -107,37 +107,6 @@ final class UserMotherObject
     }
 
     /** @throws InvalidValueObject */
-    public static function createWithHashedPassword(
-        ?UserId $userId = null,
-        ?UserEmail $userEmail = null,
-        ?UserPassword $userPassword = null,
-        ?string $name = null,
-        ?string $surname = null,
-        ?string $bio = null,
-        ?string $location = null,
-        ?string $phone = null,
-        ?string $picture = null,
-        ?bool $showReviews = null,
-        ?int $rating = null,
-        ?bool $isVerified = null,
-    ):User {
-        return new User(
-            $userId ?? UserIdMotherObject::create(),
-            $userEmail ?? UserEmailMotherObject::create(),
-            $userPassword ?? UserPasswordMotherObject::createWithHash(),
-            $name ?? StringMotherObject::createName(),
-            $surname ?? StringMotherObject::createSurname(),
-            $bio ?? StringMotherObject::create(),
-            $location ?? StringMotherObject::createLocation(),
-            $phone ?? UserPhoneMotherObject::create(),
-            $picture ?? StringMotherObject::createPath(),
-            $showReviews ?? BooleanMotherObject::create(),
-            $rating ?? IntegerMotherObject::createRating(),
-            $isVerified ?? BooleanMotherObject::create(),
-        );
-    }
-
-    /** @throws InvalidValueObject */
     public static function createForRegister(
         ?UserId $userId = null,
         ?UserEmail $userEmail = null,
@@ -149,7 +118,7 @@ final class UserMotherObject
         return new User(
             $userId ?? UserIdMotherObject::create(),
             $userEmail ?? UserEmailMotherObject::create(),
-            $userPassword ?? UserPasswordMotherObject::createWithHash(),
+            $userPassword ?? UserPasswordMotherObject::create(),
             $name ?? StringMotherObject::createName(),
             $surname ?? StringMotherObject::createSurname(),
             null,

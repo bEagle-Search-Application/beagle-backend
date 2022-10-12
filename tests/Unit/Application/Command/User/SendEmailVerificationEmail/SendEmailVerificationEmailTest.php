@@ -67,7 +67,7 @@ final class SendEmailVerificationEmailTest extends TestCase
 
     public function testItCreatesAnUserVerification():void
     {
-        $user = UserMotherObject::createWithHashedPassword();
+        $user = UserMotherObject::create();
         $this->userRepository->save($user);
 
         $userVerificationId = UserVerificationTokenIdMotherObject::create();

@@ -5,7 +5,6 @@ namespace Tests\Integration\Infrastructure\Http\Api\Controllers;
 use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\UserVerificationTokenRepository;
-use Beagle\Core\Domain\User\ValueObjects\UserPassword;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserVerificationTokenRepository;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,8 +19,8 @@ final class RegisterUserControllerTest extends TestCase
 {
     private User $user;
     private UserRepository $userRepository;
-    private UserPassword $userPassword;
     private UserVerificationTokenRepository $userVerificationRepository;
+    private string $userPasswordWithoutHash;
 
     protected function setUp():void
     {
@@ -35,10 +34,13 @@ final class RegisterUserControllerTest extends TestCase
 
     private function prepareUserForRegister():void
     {
-        $this->userPassword = UserPasswordMotherObject::create();
+        $this->userPasswordWithoutHash = "12345678";
+        $userPassword = UserPasswordMotherObject::create(
+            $this->userPasswordWithoutHash
+        );
 
         $this->user = UserMotherObject::createForRegister(
-            userPassword: $this->userPassword
+            userPassword: $userPassword
         );
     }
 
@@ -153,14 +155,14 @@ final class RegisterUserControllerTest extends TestCase
 
     public function testItUserEmailAlreadyExists():void
     {
-        $userRegistered = UserMotherObject::createWithHashedPassword();
+        $userRegistered = UserMotherObject::create();
         $this->userRepository->save($userRegistered);
 
         $response = $this->post(
             \route('api.register'),
             [
                 "email" => $userRegistered->email()->value(),
-                "password" => $this->user->password()->value(),
+                "password" => $this->userPasswordWithoutHash,
                 "name" => $this->user->name(),
                 "surname" => $this->user->surname(),
                 "phone_prefix" => $this->user->phone()->phonePrefixAsString(),
@@ -185,7 +187,7 @@ final class RegisterUserControllerTest extends TestCase
             \route('api.register'),
             [
                 "email" => $userEmail->value(),
-                "password" => $this->user->password()->value(),
+                "password" => $this->userPasswordWithoutHash,
                 "name" => $this->user->name(),
                 "surname" => $this->user->surname(),
                 "phone_prefix" => $this->user->phone()->phonePrefixAsString(),
@@ -193,23 +195,14 @@ final class RegisterUserControllerTest extends TestCase
             ]
         );
 
-        $expectedUser = $this->userRepository->findByEmailAndPassword(
-            $userEmail,
-            UserPasswordMotherObject::create(
-                \md5($this->user->password()->value())
-            )
-        );
+        $expectedUser = $this->userRepository->findByEmail($userEmail);
 
         $expectedUserValidation = $this->userVerificationRepository->findByUserId($expectedUser->id());
 
         $this->assertSame(Response::HTTP_CREATED, $response->status());
 
         $this->assertTrue($userEmail->equals($expectedUser->email()));
-        $this->assertTrue($expectedUser->password()->equals(
-            UserPassword::fromString(
-                \md5($this->userPassword->value())
-            )
-        ));
+        $this->assertTrue($expectedUser->password()->equals($this->user->password()));
 
         $this->assertTrue($expectedUserValidation->userId()->equals($expectedUser->id()));
     }
