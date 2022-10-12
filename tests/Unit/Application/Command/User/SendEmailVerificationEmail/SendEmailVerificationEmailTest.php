@@ -6,8 +6,8 @@ use Beagle\Core\Application\Command\User\SendEmailVerificationEmail\SendEmailVer
 use Beagle\Core\Application\Command\User\SendEmailVerificationEmail\SendEmailVerificationEmailCommand;
 use Beagle\Core\Domain\User\Errors\UserNotFound;
 use Beagle\Core\Domain\User\UserVerificationTokenRepository;
-use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\InMemoryUserRepository;
-use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\InMemoryUserVerificationTokenRepository;
+use Beagle\Core\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
+use Beagle\Core\Infrastructure\Persistence\InMemory\Repository\InMemoryUserVerificationTokenRepository;
 use Beagle\Shared\Domain\Errors\InvalidEmail;
 use Beagle\Shared\Infrastructure\Token\JwtTokenService;
 use PHPUnit\Framework\TestCase;

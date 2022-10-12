@@ -8,7 +8,7 @@ use Beagle\Core\Domain\User\Errors\CannotSaveUser;
 use Beagle\Core\Domain\User\Event\UserCreated;
 use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
-use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\InMemoryUserRepository;
+use Beagle\Core\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
 use Beagle\Shared\Domain\Errors\InvalidEmail;
 use Beagle\Shared\Domain\Errors\InvalidPhone;
 use Beagle\Shared\Domain\Errors\InvalidPhonePrefix;

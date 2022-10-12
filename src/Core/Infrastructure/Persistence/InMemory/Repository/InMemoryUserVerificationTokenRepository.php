@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Beagle\Core\Infrastructure\Persistence\Eloquent\Repository;
+namespace Beagle\Core\Infrastructure\Persistence\InMemory\Repository;
 
 use Beagle\Core\Domain\User\Errors\UserVerificationNotFound;
 use Beagle\Core\Domain\User\UserVerificationToken;
