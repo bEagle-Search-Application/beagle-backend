@@ -11,8 +11,6 @@ final class UserEmailMotherObject
     /** @throws InvalidEmail */
     public static function create(?string $userEmail = null):UserEmail
     {
-        return empty($userEmail)
-            ? UserEmail::fromString(Factory::create()->email)
-            : UserEmail::fromString($userEmail);
+        return UserEmail::fromString($userEmail ?? Factory::create()->email);
     }
 }

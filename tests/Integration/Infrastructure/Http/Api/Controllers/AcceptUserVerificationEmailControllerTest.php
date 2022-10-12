@@ -27,7 +27,7 @@ final class AcceptUserVerificationEmailControllerTest extends TestCase
         $this->userRepository = $this->app->make(EloquentUserRepository::class);
         $this->userVerificationRepository = $this->app->make(EloquentUserVerificationTokenRepository::class);
 
-        $this->user = UserMotherObject::createWithHashedPassword();
+        $this->user = UserMotherObject::create();
         $this->userRepository->save($this->user);
 
         $this->prepareUserVerification();

@@ -29,7 +29,7 @@ final class RefreshTokenTest extends TestCase
         $this->personalAccessTokenRepository = new InMemoryPersonalAccessTokenRepository();
         $userRepository = new InMemoryUserRepository();
 
-        $this->user = UserMotherObject::createWithHashedPassword();
+        $this->user = UserMotherObject::create();
         $userRepository->save($this->user);
 
         $this->sut = new RefreshToken(

@@ -6,12 +6,10 @@ use Beagle\Core\Domain\User\ValueObjects\UserVerificationTokenId;
 
 final class UserVerificationTokenIdMotherObject
 {
-    public static function create(?string $userId = null):UserVerificationTokenId
+    public static function create(?string $userVerificationTokenId = null):UserVerificationTokenId
     {
-        return empty($userId)
-            ? UserVerificationTokenId::fromString(
-                UserVerificationTokenId::v4()->toBase58()
-            )
-            : UserVerificationTokenId::fromString($userId);
+        return UserVerificationTokenId::fromString(
+            $userVerificationTokenId ?? UserVerificationTokenId::v4()->toBase58()
+        );
     }
 }

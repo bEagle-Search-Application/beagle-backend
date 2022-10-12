@@ -7,7 +7,6 @@ use Beagle\Core\Application\Query\User\Login\LoginQuery;
 use Beagle\Core\Domain\User\Errors\UserNotFound;
 use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
-use Beagle\Core\Domain\User\ValueObjects\UserPassword;
 use Beagle\Core\Infrastructure\Persistence\InMemory\Repository\InMemoryPersonalAccessTokenRepository;
 use Beagle\Core\Infrastructure\Persistence\InMemory\Repository\InMemoryPersonalRefreshTokenRepository;
 use Beagle\Core\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
@@ -23,7 +22,7 @@ final class LoginTest extends TestCase
 {
     private Login $sut;
     private User $user;
-    private string $userPassword;
+    private string $userPasswordWithoutHashed;
     private InMemoryPersonalAccessTokenRepository $personalAccessTokenRepository;
     private InMemoryPersonalRefreshTokenRepository $personalRefreshTokenRepository;
 
@@ -48,12 +47,10 @@ final class LoginTest extends TestCase
 
     private function prepareSavedUser(UserRepository $userRepository):void
     {
-        $this->userPassword = "1234";
+        $this->userPasswordWithoutHashed = "1234";
 
         $this->user = UserMotherObject::create(
-            userPassword: UserPassword::fromString(
-                \md5($this->userPassword)
-            )
+            userPassword: UserPasswordMotherObject::create($this->userPasswordWithoutHashed)
         );
         $userRepository->save($this->user);
     }
@@ -67,7 +64,7 @@ final class LoginTest extends TestCase
                 IdMotherObject::create()->value(),
                 IdMotherObject::create()->value(),
                 UserEmailMotherObject::create()->value(),
-                UserPasswordMotherObject::createWithHash()->value()
+                UserPasswordMotherObject::create()->value()
             )
         );
     }
@@ -81,7 +78,7 @@ final class LoginTest extends TestCase
                 IdMotherObject::create()->value(),
                 IdMotherObject::create()->value(),
                 "dani@nomail",
-                UserPasswordMotherObject::createWithHash()->value()
+                UserPasswordMotherObject::create()->value()
             )
         );
     }
@@ -96,7 +93,7 @@ final class LoginTest extends TestCase
                 $accessTokenId->value(),
                 $refreshTokenId->value(),
                 $this->user->email()->value(),
-                \md5($this->userPassword)
+                \md5($this->userPasswordWithoutHashed)
             )
         );
 

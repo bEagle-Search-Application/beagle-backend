@@ -6,11 +6,11 @@ use Beagle\Core\Domain\PersonalToken\PersonalAccessTokenRepository;
 use Beagle\Core\Domain\PersonalToken\PersonalRefreshTokenRepository;
 use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
-use Beagle\Core\Domain\User\ValueObjects\UserPassword;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentPersonalAccessTokenRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentPersonalRefreshTokenRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserRepository;
 use Symfony\Component\HttpFoundation\Response;
+use Tests\MotherObjects\StringMotherObject;
 use Tests\MotherObjects\User\UserMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserEmailMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserPasswordMotherObject;
@@ -19,7 +19,7 @@ use Tests\TestCase;
 final class LoginControllerTest extends TestCase
 {
     private User $user;
-    private string $userPassword;
+    private string $userPasswordWithoutHash;
     private UserRepository $userRepository;
     private PersonalAccessTokenRepository $personalAccessTokenRepository;
     private PersonalRefreshTokenRepository $personalRefreshTokenRepository;
@@ -37,17 +37,15 @@ final class LoginControllerTest extends TestCase
 
     private function prepareSavedUser(UserRepository $userRepository):void
     {
-        $this->userPassword = "1234";
+        $this->userPasswordWithoutHash = "1234";
 
         $this->user = UserMotherObject::create(
-            userPassword: UserPassword::fromString(
-                \md5($this->userPassword)
-            )
+            userPassword: UserPasswordMotherObject::create($this->userPasswordWithoutHash)
         );
         $userRepository->save($this->user);
     }
 
-    public function testItReturnsBadRequestResponse():void
+    public function testItReturnsBadRequestResponseIfCredentialsAreIncorrect():void
     {
         $userEmail = UserEmailMotherObject::create()->value();
 
@@ -55,7 +53,7 @@ final class LoginControllerTest extends TestCase
             \route('api.login'),
             [
                 "email" => $userEmail,
-                "password" => UserPasswordMotherObject::create()->value(),
+                "password" => StringMotherObject::createNumber(),
             ]
         );
 
@@ -74,7 +72,7 @@ final class LoginControllerTest extends TestCase
             \route('api.login'),
             [
                 "email" => $this->user->email()->value(),
-                "password" => $this->userPassword,
+                "password" => $this->userPasswordWithoutHash,
             ]
         );
 

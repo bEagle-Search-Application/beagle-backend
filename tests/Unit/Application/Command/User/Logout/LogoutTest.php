@@ -67,7 +67,7 @@ final class LogoutTest extends TestCase
 
     private function prepareDatabase():void
     {
-        $this->user = UserMotherObject::createWithHashedPassword();
+        $this->user = UserMotherObject::create();
         $this->userRepository->save($this->user);
 
         $personalAccessToken = PersonalTokenMotherObject::createPersonalAccessToken(

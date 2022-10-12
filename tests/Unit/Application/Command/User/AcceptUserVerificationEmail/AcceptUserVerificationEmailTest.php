@@ -33,7 +33,7 @@ final class AcceptUserVerificationEmailTest extends TestCase
         $this->userVerificationTokenRepository = new InMemoryUserVerificationTokenRepository();
         $tokenService = new JwtTokenService();
 
-        $this->user = UserMotherObject::createWithHashedPassword();
+        $this->user = UserMotherObject::create();
         $this->userRepository->save($this->user);
 
         $this->userVerification = UserVerificationTokenMotherObject::create(
