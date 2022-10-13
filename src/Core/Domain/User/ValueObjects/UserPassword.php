@@ -9,9 +9,7 @@ final class UserPassword
     /** @throws InvalidPassword */
     private function __construct(private string $value)
     {
-        if (!preg_match('/^[a-f0-9]{32}$/', $this->value)) {
-            throw InvalidPassword::byEncryption();
-        }
+        $this->checkIfPasswordEncryptionIsInvalid();
     }
 
     public function value():string
@@ -28,5 +26,13 @@ final class UserPassword
     public function equals(UserPassword $userPassword):bool
     {
         return $this->value === $userPassword->value();
+    }
+
+    /** @throws InvalidPassword */
+    private function checkIfPasswordEncryptionIsInvalid():void
+    {
+        if (!preg_match('/^[a-f0-9]{32}$/', $this->value)) {
+            throw InvalidPassword::byEncryption();
+        }
     }
 }

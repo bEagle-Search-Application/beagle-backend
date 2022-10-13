@@ -35,7 +35,7 @@ final class GetUserTest extends TestCase
 
     public function testItGetsUser():void
     {
-        $user = UserMotherObject::createWithHashedPassword();
+        $user = UserMotherObject::create();
         $this->userRepository->save($user);
 
         $response = $this->sut->__invoke(
