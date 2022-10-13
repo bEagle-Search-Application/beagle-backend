@@ -1,5 +1,7 @@
 <?php
 
+// phpcs:disable
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,6 +22,13 @@ Route::middleware(['api'])->group(function(){
                 'execute'
             ]
         )->name('api.users-verify');
+
+        Route::get(
+            '/{userId}', [
+                \Beagle\Core\Infrastructure\Http\Api\Controllers\User\GetUserController::class,
+                'execute',
+            ]
+        )->name('api.get-user')->middleware(['verify.access.token']);
     });
 
     Route::prefix('auth')->group(function () {
@@ -36,8 +45,7 @@ Route::middleware(['api'])->group(function(){
             \Beagle\Core\Infrastructure\Http\Api\Controllers\User\RefreshTokenController::class,
             'execute'
         ]
-    )->name('api.token-refresh')
-         ->middleware(['verify.refresh.token']);
+    )->name('api.token-refresh')->middleware(['verify.refresh.token']);
 
     Route::post('/register',
         [
@@ -51,6 +59,5 @@ Route::middleware(['api'])->group(function(){
             \Beagle\Core\Infrastructure\Http\Api\Controllers\User\LogoutController::class,
             'execute'
         ]
-    )->name('api.logout')
-     ->middleware(['verify.access.token']);
+    )->name('api.logout')->middleware(['verify.access.token']);
 });

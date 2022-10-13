@@ -9,6 +9,7 @@ use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Shared\Domain\Errors\InvalidTokenSignature;
 use Beagle\Shared\Domain\Errors\TokenExpired;
 use Beagle\Shared\Domain\TokenType;
+use Beagle\Shared\Infrastructure\Http\Errors\HeaderNotFound;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -25,14 +26,14 @@ class VerifyRefreshToken
     public function handle(Request $request, Closure $next)
     {
         try {
-            $token = $this->tokenFromHeaderAsString($request->header('authorization'));
+            $token = $this->tokenFromHeaderAsString($this->header($request, 'authorization'));
 
             $this->validateSignatureOf($token);
             $this->validateExpirationOf($token);
             $this->validateUserOf($token);
 
             return $next($request);
-        } catch (InvalidTokenSignature|TokenExpired $unauthorizedException) {
+        } catch (InvalidTokenSignature|TokenExpired|HeaderNotFound $unauthorizedException) {
             return new JsonResponse(
                 [
                     "response" => $unauthorizedException->getMessage(),
@@ -83,7 +84,9 @@ class VerifyRefreshToken
     }
 
     /**
+     * @throws InvalidTokenSignature
      * @throws PersonalRefreshTokenNotFound
+     * @throws TokenExpired
      * @throws InvalidPersonalRefreshToken
      */
     public function validateUserOf(string $token):void
@@ -91,5 +94,17 @@ class VerifyRefreshToken
         $userIdAsString = Token::getPayload($token)['uid'];
         $userId = UserId::fromString($userIdAsString);
         $this->personalRefreshTokenRepository->findByUserId($userId);
+    }
+
+    /** @throws HeaderNotFound */
+    private function header(Request $request, string $key):array|null|string
+    {
+        $header = $request->header($key);
+
+        if (empty($header)) {
+            throw HeaderNotFound::byValue($key);
+        }
+
+        return $header;
     }
 }

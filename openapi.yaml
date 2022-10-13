@@ -16,12 +16,7 @@ paths:
         - User
       description: Verify user email
       parameters:
-        - in: path
-          name: token
-          required: true
-          schema:
-            type: string
-            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2NjE3ODQ2ODAsImV4cCI6MTY2MTc4ODI4MCwibmJmIjoxNjYxNzg0NjgwLCJqdGkiOiJzNTQyc0FDNW5MUlg3SURSIiwic3ViIjoiTjlwQm5Ud1lock45dEhKUHJnRHZzYiIsInBydiI6Ijc4YTA0Zjg0YzY1ZTE5Y2VkOWUwNTliOThhNGZhNWQxMGIxYzNiMzUifQ.cP8GIRFgrPHvV7VfI_Vaw4QpIvPeTfIwNXRC4mB8224"
+        - $ref: '#/components/parameters/authorization_header'
       responses:
         '204':
           description: User verified successfully
@@ -31,15 +26,46 @@ paths:
           $ref: '#/components/responses/403'
         '500':
           $ref: '#components/responses/500'
+  /users/{userId}:
+    get:
+      tags:
+        - User
+      description: Get user data
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            example: "TDQJK8vX8ec6FMq49g6EoN"
+      responses:
+        '200':
+          description: User verified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    $ref: '#/components/schemas/user'
+                  status:
+                    type: number
+                    example: 200
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#components/responses/500'
   /token/refresh:
     post:
       description: Refresh access token
       parameters:
-        - in: header
-          name: "Authorization"
-          schema:
-            type: string
-            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2NjE3ODQ2ODAsImV4cCI6MTY2MTc4ODI4MCwibmJmIjoxNjYxNzg0NjgwLCJqdGkiOiJzNTQyc0FDNW5MUlg3SURSIiwic3ViIjoiTjlwQm5Ud1lock45dEhKUHJnRHZzYiIsInBydiI6Ijc4YTA0Zjg0YzY1ZTE5Y2VkOWUwNTliOThhNGZhNWQxMGIxYzNiMzUifQ.cP8GIRFgrPHvV7VfI_Vaw4QpIvPeTfIwNXRC4mB8224"
+        - $ref: '#/components/parameters/authorization_header'
       responses:
         '200':
           description: Successfully access token refreshed
@@ -138,7 +164,7 @@ paths:
                    type: object
                    properties:
                      user:
-                       $ref: '#/components/schemas/User'
+                       $ref: '#/components/schemas/user'
                      auth:
                        type: object
                        properties:
@@ -161,11 +187,7 @@ paths:
         - Auth
       description: Logout with your user
       parameters:
-        - in: header
-          name: "Authorization"
-          schema:
-            type: string
-            example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2NjE3ODQ2ODAsImV4cCI6MTY2MTc4ODI4MCwibmJmIjoxNjYxNzg0NjgwLCJqdGkiOiJzNTQyc0FDNW5MUlg3SURSIiwic3ViIjoiTjlwQm5Ud1lock45dEhKUHJnRHZzYiIsInBydiI6Ijc4YTA0Zjg0YzY1ZTE5Y2VkOWUwNTliOThhNGZhNWQxMGIxYzNiMzUifQ.cP8GIRFgrPHvV7VfI_Vaw4QpIvPeTfIwNXRC4mB8224"
+        - $ref: '#/components/parameters/authorization_header'
       responses:
         '204':
           description: Successfully user logout
@@ -177,8 +199,17 @@ paths:
           $ref: '#components/responses/500'
 
 components:
+  parameters:
+    authorization_header:
+      in: path
+      name: token
+      required: true
+      schema:
+        type: string
+        example: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2NjE3ODQ2ODAsImV4cCI6MTY2MTc4ODI4MCwibmJmIjoxNjYxNzg0NjgwLCJqdGkiOiJzNTQyc0FDNW5MUlg3SURSIiwic3ViIjoiTjlwQm5Ud1lock45dEhKUHJnRHZzYiIsInBydiI6Ijc4YTA0Zjg0YzY1ZTE5Y2VkOWUwNTliOThhNGZhNWQxMGIxYzNiMzUifQ.cP8GIRFgrPHvV7VfI_Vaw4QpIvPeTfIwNXRC4mB8224"
+
   schemas:
-    User:
+    user:
       type: object
       properties:
         id:
@@ -259,7 +290,7 @@ components:
             properties:
               response:
                 type: string
-                example: "You don't have enough permissions"
+                example: "You are not authorized"
               status:
                 type: number
                 example: 401
@@ -276,5 +307,18 @@ components:
               status:
                 type: number
                 example: 403
+    404:
+      description: Not Found request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              response:
+                type: string
+                example: "Resource not found"
+              status:
+                type: number
+                example: 404
     500:
       description: Internal Server Error
