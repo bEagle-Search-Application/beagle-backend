@@ -91,4 +91,35 @@ public function testItThrowsException() ✅
 public function throwsException() ❌
 ```
 
----
+* The repository methods that find for a primary key must be call **find** and return exception:
+```php
+public function find(UserId $userId):User ✅
+
+public function findByUserId(UserId $userId):User ❌
+```
+
+* The repository methods that find for a non-primary key must be call **findBy** and return null:
+```php
+public function findByEmail(UserEmail $userEmail):?User ✅
+
+public function find(UserId $userId):?User ❌
+```
+
+* The repository methods that search for any field or fields like a filter must be call **searchBy** and return a collection:
+```php
+public function searchByName(UserName $userName):UserCollection ✅
+```
+
+* The named-constructor that creates a new entity with default params must be call **create**:
+```php
+public static function create() ✅
+
+public static function createWithDefaultValues() ❌
+```
+
+* The named-constructor that creates a new entity with non default params must be call **createWith...**:
+```php
+public static function createWithDefaultName(string $name) ✅
+
+public static function createWithDefaultNameAndAge(string $name, int $age) ✅
+```
