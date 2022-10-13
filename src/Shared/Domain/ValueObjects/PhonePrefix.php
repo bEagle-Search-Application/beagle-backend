@@ -217,9 +217,7 @@ class PhonePrefix
     /** @throws InvalidPhonePrefix */
     protected function __construct(private string $value)
     {
-        if (!\array_key_exists($this->value, self::COUNTRY_PREFIXES)) {
-            throw InvalidPhonePrefix::byCode($this->value);
-        }
+        $this->checkIfPhonePrefixIsInvalid();
     }
 
     /** @throws InvalidPhonePrefix */
@@ -236,5 +234,13 @@ class PhonePrefix
     public function equals(PhonePrefix $prefixPhone):bool
     {
         return $this->value === $prefixPhone->value;
+    }
+
+    /** @throws InvalidPhonePrefix */
+    private function checkIfPhonePrefixIsInvalid():void
+    {
+        if (!\array_key_exists($this->value, self::COUNTRY_PREFIXES)) {
+            throw InvalidPhonePrefix::byCode($this->value);
+        }
     }
 }

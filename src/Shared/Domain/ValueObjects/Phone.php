@@ -9,9 +9,7 @@ class Phone
     /** @throws InvalidPhone */
     protected function __construct(private string $value)
     {
-        if (!\filter_var($this->value, FILTER_SANITIZE_NUMBER_INT)) {
-            throw InvalidPhone::byFormat($this->value);
-        }
+        $this->checkIfPhoneIsInvalid();
     }
 
     /** @throws InvalidPhone */
@@ -28,5 +26,13 @@ class Phone
     public function equals(Phone $phone):bool
     {
         return $this->value === $phone->value;
+    }
+
+    /** @throws InvalidPhone */
+    private function checkIfPhoneIsInvalid():void
+    {
+        if (!\filter_var($this->value, FILTER_SANITIZE_NUMBER_INT)) {
+            throw InvalidPhone::byFormat($this->value);
+        }
     }
 }

@@ -9,9 +9,7 @@ class Email
     /** @throws InvalidEmail */
     protected function __construct(private string $value)
     {
-        if (!\filter_var($this->value, FILTER_VALIDATE_EMAIL)) {
-            throw InvalidEmail::byFormat($this->value);
-        }
+        $this->checkIfEmailIsInvalid();
     }
 
     /** @throws InvalidEmail */
@@ -28,5 +26,13 @@ class Email
     public function equals(Email $email):bool
     {
         return $this->value === $email->value();
+    }
+
+    /** @throws InvalidEmail */
+    private function checkIfEmailIsInvalid():void
+    {
+        if (!\filter_var($this->value, FILTER_VALIDATE_EMAIL)) {
+            throw InvalidEmail::byFormat($this->value);
+        }
     }
 }

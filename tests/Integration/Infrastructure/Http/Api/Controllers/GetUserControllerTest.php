@@ -24,7 +24,7 @@ final class GetUserControllerTest extends TestCase
         $userRepository = $this->app->make(EloquentUserRepository::class);
         $personalAccessTokenRepository = $this->app->make(EloquentPersonalAccessTokenRepository::class);
 
-        $this->user = UserMotherObject::createWithHashedPassword();
+        $this->user = UserMotherObject::create();
         $userRepository->save($this->user);
 
         $this->personalAccessToken = PersonalTokenMotherObject::createPersonalAccessToken(
