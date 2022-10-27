@@ -11,6 +11,7 @@ use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\DataTransformers\Pers
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\PersonalAccessTokenDao;
 use Beagle\Shared\Domain\Errors\InvalidTokenSignature;
 use Beagle\Shared\Domain\Errors\TokenExpired;
+use Beagle\Shared\Domain\ValueObjects\Token;
 
 final class EloquentPersonalAccessTokenRepository implements PersonalAccessTokenRepository
 {
@@ -30,6 +31,9 @@ final class EloquentPersonalAccessTokenRepository implements PersonalAccessToken
     }
 
     /**
+     * TODO: Refactor this method if you use on production
+     * This method is only for testing
+     *
      * @throws InvalidTokenSignature
      * @throws TokenExpired
      * @throws InvalidPersonalAccessToken
@@ -49,5 +53,27 @@ final class EloquentPersonalAccessTokenRepository implements PersonalAccessToken
     public function deleteByUserId(UserId $userId):void
     {
         PersonalAccessTokenDao::where('user_id', $userId->value())->delete();
+    }
+
+    /**
+     * @throws TokenExpired
+     * @throws InvalidPersonalAccessToken
+     * @throws InvalidTokenSignature
+     * @throws PersonalAccessTokenNotFound
+     */
+    public function findByUserIdAndToken(
+        UserId $userId,
+        Token $token
+    ):PersonalAccessToken {
+        $personalAccessTokenDao = PersonalAccessTokenDao::where([
+            ['user_id', $userId->value()],
+            ['token', $token->value()],
+        ])->first();
+
+        if ($personalAccessTokenDao === null) {
+            throw PersonalAccessTokenNotFound::byUserIdAndToken($userId);
+        }
+
+        return $this->personalAccessTokenDataTransformer->fromDao($personalAccessTokenDao);
     }
 }

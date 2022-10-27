@@ -7,6 +7,7 @@ use Beagle\Core\Domain\PersonalToken\Errors\PersonalAccessTokenNotFound;
 use Beagle\Core\Domain\PersonalToken\PersonalAccessToken;
 use Beagle\Core\Domain\PersonalToken\PersonalAccessTokenRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
+use Beagle\Shared\Domain\ValueObjects\Token;
 
 final class InMemoryPersonalAccessTokenRepository implements PersonalAccessTokenRepository
 {
@@ -47,5 +48,25 @@ final class InMemoryPersonalAccessTokenRepository implements PersonalAccessToken
         }
 
         throw CannotDeletePersonalAccessToken::byUserId($userId);
+    }
+
+    public function findByUserIdAndToken(UserId $userId, Token $token):PersonalAccessToken
+    {
+        foreach ($this->personalAccessTokens as $personalAccessToken) {
+            if ($this->userIdAndTokenAreEquals($personalAccessToken, $userId, $token)) {
+                return $personalAccessToken;
+            }
+        }
+
+        throw PersonalAccessTokenNotFound::byUserIdAndToken($userId);
+    }
+
+    private function userIdAndTokenAreEquals(
+        PersonalAccessToken $personalAccessToken,
+        UserId $userId,
+        Token $personalTokenId
+    ):bool {
+        return $personalAccessToken->userId()->equals($userId)
+               && $personalAccessToken->token()->equals($personalTokenId);
     }
 }
