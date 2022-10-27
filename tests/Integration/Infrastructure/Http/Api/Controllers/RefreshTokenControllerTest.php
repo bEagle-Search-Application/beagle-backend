@@ -83,7 +83,7 @@ final class RefreshTokenControllerTest extends TestCase
         $this->assertSame(Response::HTTP_FORBIDDEN, $response->status());
         $this->assertSame(
             \sprintf(
-                "No se ha encontrado ningún token de refresco asociado al usuario %s",
+                "El token especificado no está asociado al usuario %s",
                 $userId->value()
             ),
             $decodedResponse["response"]
