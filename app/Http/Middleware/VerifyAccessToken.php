@@ -8,12 +8,11 @@ use Beagle\Core\Domain\PersonalToken\PersonalAccessTokenRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Shared\Domain\Errors\InvalidTokenSignature;
 use Beagle\Shared\Domain\Errors\TokenExpired;
-use Beagle\Shared\Domain\TokenType;
+use Beagle\Shared\Domain\ValueObjects\Token;
 use Beagle\Shared\Infrastructure\Http\Errors\HeaderNotFound;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use ReallySimpleJWT\Token;
 use Symfony\Component\HttpFoundation\Response;
 
 class VerifyAccessToken
@@ -28,9 +27,7 @@ class VerifyAccessToken
         try {
             $token = $this->tokenFromHeaderAsString($this->header($request, 'authorization'));
 
-            $this->validateSignatureOf($token);
-            $this->validateExpirationOf($token);
-            $this->validateUserOf($token);
+            $this->validateToken(Token::accessTokenFromString($token));
 
             return $next($request);
         } catch (InvalidTokenSignature|TokenExpired|HeaderNotFound $unauthorizedException) {
@@ -62,38 +59,20 @@ class VerifyAccessToken
         }
     }
 
-    /** @throws InvalidTokenSignature */
-    private function validateSignatureOf(string $token):void
-    {
-        $isAValidToken = Token::validate(
-            $token,
-            \env('JWT_ACCESS_SECRET')
-        );
-        if (!$isAValidToken) {
-            throw InvalidTokenSignature::byType(TokenType::ACCESS);
-        }
-    }
-
-    /** @throws TokenExpired */
-    private function validateExpirationOf(string $token):void
-    {
-        $isANonExpirationToken = Token::validateExpiration($token);
-        if (!$isANonExpirationToken) {
-            throw TokenExpired::byExpirationDate();
-        }
-    }
-
     /**
      * @throws InvalidTokenSignature
      * @throws PersonalAccessTokenNotFound
      * @throws TokenExpired
      * @throws InvalidPersonalAccessToken
      */
-    private function validateUserOf(string $token):void
+    private function validateToken(Token $token):void
     {
-        $userIdAsString = Token::getPayload($token)['uid'];
+        $userIdAsString = $token::getPayload($token->value())['uid'];
         $userId = UserId::fromString($userIdAsString);
-        $this->personalAccessTokenRepository->findByUserId($userId);
+        $this->personalAccessTokenRepository->findByUserIdAndToken(
+            $userId,
+            $token
+        );
     }
 
     /** @throws HeaderNotFound */

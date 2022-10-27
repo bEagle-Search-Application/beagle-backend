@@ -6,7 +6,6 @@ use Beagle\Core\Domain\PersonalToken\Errors\PersonalAccessTokenNotFound;
 use Beagle\Core\Domain\PersonalToken\Errors\PersonalRefreshTokenNotFound;
 use Beagle\Core\Domain\PersonalToken\PersonalAccessTokenRepository;
 use Beagle\Core\Domain\PersonalToken\PersonalRefreshTokenRepository;
-use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentPersonalAccessTokenRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentPersonalRefreshTokenRepository;
@@ -20,7 +19,6 @@ use Tests\TestCase;
 
 final class LogoutControllerTest extends TestCase
 {
-    private User $user;
     private UserRepository $userRepository;
     private PersonalAccessTokenRepository $personalAccessTokenRepository;
     private PersonalRefreshTokenRepository $personalRefreshTokenRepository;
@@ -85,24 +83,34 @@ final class LogoutControllerTest extends TestCase
 
         $this->assertSame(Response::HTTP_FORBIDDEN, $response->status());
         $this->assertSame(
-            \sprintf("No se ha encontrado ningún token de acceso asociado al usuario %s", $userId->value()),
+            \sprintf("El token especificado no está asociado al usuario %s", $userId->value()),
             $decodedResponse["response"]
         );
     }
 
     public function testItUserLogout():void
     {
-        $this->prepareDatabase($this->userRepository);
-        $userId = $this->user->id();
+        $user = UserMotherObject::create();
+        $this->userRepository->save($user);
 
-        $accessToken = TokenMotherObject::createAccessToken($userId);
+        $userId = $user->id();
+
+        $personalAccessToken = PersonalTokenMotherObject::createPersonalAccessToken(
+            userId: $userId
+        );
+        $this->personalAccessTokenRepository->save($personalAccessToken);
+
+        $personalRefreshToken = PersonalTokenMotherObject::createPersonalRefreshToken(
+            userId: $userId
+        );
+        $this->personalRefreshTokenRepository->save($personalRefreshToken);
 
         $response = $this->post(
             \route(
                 'api.logout'
             ),
             headers: [
-                'authorization' => "Bearer " . $accessToken->value()
+                'authorization' => "Bearer " . $personalAccessToken->token()->value()
             ]
         );
 
@@ -113,21 +121,5 @@ final class LogoutControllerTest extends TestCase
         $this->personalRefreshTokenRepository->findByUserId($userId);
 
         $this->assertSame(Response::HTTP_NO_CONTENT, $response->status());
-    }
-
-    private function prepareDatabase(UserRepository $userRepository):void
-    {
-        $this->user = UserMotherObject::create();
-        $userRepository->save($this->user);
-
-        $personalAccessToken = PersonalTokenMotherObject::createPersonalAccessToken(
-            userId: $this->user->id()
-        );
-        $this->personalAccessTokenRepository->save($personalAccessToken);
-
-        $personalRefreshToken = PersonalTokenMotherObject::createPersonalRefreshToken(
-            userId: $this->user->id()
-        );
-        $this->personalRefreshTokenRepository->save($personalRefreshToken);
     }
 }
