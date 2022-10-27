@@ -7,6 +7,7 @@ use Beagle\Core\Domain\PersonalToken\Errors\PersonalRefreshTokenNotFound;
 use Beagle\Core\Domain\PersonalToken\PersonalRefreshToken;
 use Beagle\Core\Domain\PersonalToken\PersonalRefreshTokenRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
+use Beagle\Shared\Domain\ValueObjects\Token;
 
 final class InMemoryPersonalRefreshTokenRepository implements PersonalRefreshTokenRepository
 {
@@ -40,5 +41,25 @@ final class InMemoryPersonalRefreshTokenRepository implements PersonalRefreshTok
         }
 
         throw CannotDeletePersonalRefreshToken::byUserId($userId);
+    }
+
+    public function findByUserIdAndToken(UserId $userId, Token $token):PersonalRefreshToken
+    {
+        foreach ($this->personalRefreshTokens as $personalRefreshToken) {
+            if ($this->userIdAndTokenAreEquals($personalRefreshToken, $userId, $token)) {
+                return $personalRefreshToken;
+            }
+        }
+
+        throw PersonalRefreshTokenNotFound::byUserIdAndToken($userId);
+    }
+
+    private function userIdAndTokenAreEquals(
+        PersonalRefreshToken $personalAccessToken,
+        UserId $userId,
+        Token $personalTokenId
+    ):bool {
+        return $personalAccessToken->userId()->equals($userId)
+               && $personalAccessToken->token()->equals($personalTokenId);
     }
 }

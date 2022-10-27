@@ -11,6 +11,7 @@ use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\DataTransformers\Pers
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\PersonalRefreshTokenDao;
 use Beagle\Shared\Domain\Errors\InvalidTokenSignature;
 use Beagle\Shared\Domain\Errors\TokenExpired;
+use Beagle\Shared\Domain\ValueObjects\Token;
 
 final class EloquentPersonalRefreshTokenRepository implements PersonalRefreshTokenRepository
 {
@@ -30,6 +31,9 @@ final class EloquentPersonalRefreshTokenRepository implements PersonalRefreshTok
     }
 
     /**
+     * TODO: Refactor this method if you use on production
+     * This method is only for testing
+     *
      * @throws InvalidTokenSignature
      * @throws TokenExpired
      * @throws InvalidPersonalRefreshToken
@@ -49,5 +53,27 @@ final class EloquentPersonalRefreshTokenRepository implements PersonalRefreshTok
     public function deleteByUserId(UserId $userId):void
     {
         PersonalRefreshTokenDao::where('user_id', $userId->value())->delete();
+    }
+
+    /**
+     * @throws InvalidTokenSignature
+     * @throws TokenExpired
+     * @throws InvalidPersonalRefreshToken
+     * @throws PersonalRefreshTokenNotFound
+     */
+    public function findByUserIdAndToken(
+        UserId $userId,
+        Token $token
+    ):PersonalRefreshToken {
+        $personalAccessTokenDao = PersonalRefreshTokenDao::where([
+            ['user_id', $userId->value()],
+            ['token', $token->value()],
+        ])->first();
+
+        if ($personalAccessTokenDao === null) {
+            throw PersonalRefreshTokenNotFound::byUserIdAndToken($userId);
+        }
+
+        return $this->personalRefreshTokenDataTransformer->fromDao($personalAccessTokenDao);
     }
 }
