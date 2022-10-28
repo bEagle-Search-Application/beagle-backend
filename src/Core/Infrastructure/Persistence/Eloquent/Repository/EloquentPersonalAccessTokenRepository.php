@@ -21,10 +21,10 @@ final class EloquentPersonalAccessTokenRepository implements PersonalAccessToken
     public function save(PersonalAccessToken $personalAccessToken):void
     {
         PersonalAccessTokenDao::updateOrCreate(
-            ['user_id' => $personalAccessToken->userId()->value()],
+            [PersonalAccessTokenDao::USER_ID => $personalAccessToken->userId()->value()],
             [
-                'id' => $personalAccessToken->id()->value(),
-                'token' => $personalAccessToken->token()->value(),
+                PersonalAccessTokenDao::ID => $personalAccessToken->id()->value(),
+                PersonalAccessTokenDao::TOKEN => $personalAccessToken->token()->value(),
             ]
         );
     }
@@ -37,7 +37,10 @@ final class EloquentPersonalAccessTokenRepository implements PersonalAccessToken
      */
     public function findByUserId(UserId $userId):PersonalAccessToken
     {
-        $personalAccessTokenDao = PersonalAccessTokenDao::where('user_id', $userId->value())->first();
+        $personalAccessTokenDao = PersonalAccessTokenDao::where(
+            PersonalAccessTokenDao::USER_ID,
+            $userId->value()
+        )->first();
 
         if ($personalAccessTokenDao === null) {
             throw PersonalAccessTokenNotFound::byUserId($userId);
@@ -48,6 +51,6 @@ final class EloquentPersonalAccessTokenRepository implements PersonalAccessToken
 
     public function deleteByUserId(UserId $userId):void
     {
-        PersonalAccessTokenDao::where('user_id', $userId->value())->delete();
+        PersonalAccessTokenDao::where(PersonalAccessTokenDao::USER_ID, $userId->value())->delete();
     }
 }
