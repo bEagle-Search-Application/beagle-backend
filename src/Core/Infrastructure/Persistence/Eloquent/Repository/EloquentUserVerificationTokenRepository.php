@@ -7,30 +7,39 @@ use Beagle\Core\Domain\User\UserVerificationToken;
 use Beagle\Core\Domain\User\UserVerificationTokenRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Domain\User\ValueObjects\UserVerificationTokenId;
-use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\DataTransformers\UserVerificationDataTransformer;
+use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\DataTransformers\UserVerificationTokenDataTransformer;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\UserVerificationTokenDao;
+use Beagle\Shared\Domain\Errors\InvalidTokenSignature;
+use Beagle\Shared\Domain\Errors\TokenExpired;
 
 final class EloquentUserVerificationTokenRepository implements UserVerificationTokenRepository
 {
-    public function __construct(private UserVerificationDataTransformer $userVerificationDataTransformer)
+    public function __construct(private UserVerificationTokenDataTransformer $userVerificationDataTransformer)
     {
     }
 
     public function save(UserVerificationToken $userVerificationToken):void
     {
         UserVerificationTokenDao::updateOrCreate(
-            ['user_id' => $userVerificationToken->userId()->value()],
+            [UserVerificationTokenDao::USER_ID => $userVerificationToken->userId()->value()],
             [
-                'id' => $userVerificationToken->id()->value(),
-                'token' => $userVerificationToken->token()->value(),
+                UserVerificationTokenDao::ID => $userVerificationToken->id()->value(),
+                UserVerificationTokenDao::TOKEN => $userVerificationToken->token()->value(),
             ]
         );
     }
 
-    /** @throws UserVerificationNotFound */
+    /**
+     * @throws UserVerificationNotFound
+     * @throws InvalidTokenSignature
+     * @throws TokenExpired
+     */
     public function findByUserId(UserId $userId):UserVerificationToken
     {
-        $userVerificationDao = UserVerificationTokenDao::where('user_id', $userId->value())->first();
+        $userVerificationDao = UserVerificationTokenDao::where(
+            UserVerificationTokenDao::USER_ID,
+            $userId->value()
+        )->first();
 
         if ($userVerificationDao === null) {
             throw UserVerificationNotFound::byUserId($userId);
@@ -39,13 +48,19 @@ final class EloquentUserVerificationTokenRepository implements UserVerificationT
         return $this->userVerificationDataTransformer->fromDao($userVerificationDao);
     }
 
-    /** @throws UserVerificationNotFound */
+    /**
+     * @throws TokenExpired
+     * @throws UserVerificationNotFound
+     * @throws InvalidTokenSignature
+     */
     public function find(UserVerificationTokenId $userVerificationTokenId):UserVerificationToken
     {
-        $userVerificationDao = UserVerificationTokenDao::where('id', $userVerificationTokenId->value())->first();
+        $userVerificationDao = UserVerificationTokenDao::where(
+            UserVerificationTokenDao::ID,
+            $userVerificationTokenId->value()
+        )->first();
 
         if ($userVerificationDao === null) {
-            dump("Dentro del error");
             throw UserVerificationNotFound::byId($userVerificationTokenId);
         }
 

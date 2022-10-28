@@ -11,6 +11,10 @@ class UserVerificationTokenDao extends Model
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    public const ID = 'id';
+    public const USER_ID = 'user_id';
+    public const TOKEN = 'token';
+
     protected $table = 'user_verification_tokens';
     protected $keyType = 'string';
     protected $fillable = [
