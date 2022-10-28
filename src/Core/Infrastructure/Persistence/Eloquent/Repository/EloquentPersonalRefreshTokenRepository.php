@@ -21,10 +21,10 @@ final class EloquentPersonalRefreshTokenRepository implements PersonalRefreshTok
     public function save(PersonalRefreshToken $personalRefreshToken):void
     {
         PersonalRefreshTokenDao::updateOrCreate(
-            ['user_id' => $personalRefreshToken->userId()->value()],
+            [PersonalRefreshTokenDao::USER_ID => $personalRefreshToken->userId()->value()],
             [
-                'id' => $personalRefreshToken->id()->value(),
-                'token' => $personalRefreshToken->token()->value(),
+                PersonalRefreshTokenDao::ID => $personalRefreshToken->id()->value(),
+                PersonalRefreshTokenDao::TOKEN => $personalRefreshToken->token()->value(),
             ]
         );
     }
@@ -37,7 +37,10 @@ final class EloquentPersonalRefreshTokenRepository implements PersonalRefreshTok
      */
     public function findByUserId(UserId $userId):PersonalRefreshToken
     {
-        $personalAccessTokenDao = PersonalRefreshTokenDao::where('user_id', $userId->value())->first();
+        $personalAccessTokenDao = PersonalRefreshTokenDao::where(
+            PersonalRefreshTokenDao::USER_ID,
+            $userId->value()
+        )->first();
 
         if ($personalAccessTokenDao === null) {
             throw PersonalRefreshTokenNotFound::byUserId($userId);
@@ -48,6 +51,6 @@ final class EloquentPersonalRefreshTokenRepository implements PersonalRefreshTok
 
     public function deleteByUserId(UserId $userId):void
     {
-        PersonalRefreshTokenDao::where('user_id', $userId->value())->delete();
+        PersonalRefreshTokenDao::where(PersonalRefreshTokenDao::USER_ID, $userId->value())->delete();
     }
 }

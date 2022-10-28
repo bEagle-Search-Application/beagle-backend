@@ -6,9 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 final class TagDao extends Model
 {
+    public const ID = 'id';
+    public const TITLE = 'title';
+
     protected $table = 'tags';
     protected $keyType = 'string';
     protected $fillable = [
+        'id',
         'title',
     ];
 

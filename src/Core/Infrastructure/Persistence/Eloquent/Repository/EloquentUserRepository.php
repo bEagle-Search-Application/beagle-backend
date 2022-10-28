@@ -27,8 +27,8 @@ final class EloquentUserRepository implements UserRepository
     public function findByEmailAndPassword(UserEmail $userEmail, UserPassword $userPassword):User
     {
         $userDao = UserDao::where([
-            ['email', $userEmail->value()],
-            ['password', $userPassword->value()],
+            [UserDao::EMAIL, $userEmail->value()],
+            [UserDao::PASSWORD, $userPassword->value()],
         ])->first();
 
         if ($userDao === null) {
@@ -43,20 +43,20 @@ final class EloquentUserRepository implements UserRepository
     {
         try {
             UserDao::updateOrCreate(
-                ['id' => $user->id()->value()],
+                [UserDao::ID => $user->id()->value()],
                 [
-                    'email' => $user->email()->value(),
-                    'password' => $user->password()->value(),
-                    'name' => $user->name(),
-                    'surname' => $user->surname(),
-                    'bio' => $user->bio(),
-                    'location' => $user->location(),
-                    'phone_prefix' => $user->phone()->phonePrefixAsString(),
-                    'phone' => $user->phone()->phoneAsString(),
-                    'picture' => $user->picture(),
-                    'show_reviews' => $user->showReviews(),
-                    'rating' => $user->rating(),
-                    'is_verified' => $user->isVerified(),
+                    UserDao::EMAIL => $user->email()->value(),
+                    UserDao::PASSWORD => $user->password()->value(),
+                    UserDao::NAME => $user->name(),
+                    UserDao::SURNAME => $user->surname(),
+                    UserDao::BIO => $user->bio(),
+                    UserDao::LOCATION => $user->location(),
+                    UserDao::PHONE_PREFIX => $user->phone()->phonePrefixAsString(),
+                    UserDao::PHONE => $user->phone()->phoneAsString(),
+                    UserDao::PICTURE => $user->picture(),
+                    UserDao::SHOW_REVIEWS => $user->showReviews(),
+                    UserDao::RATING => $user->rating(),
+                    UserDao::IS_VERIFIED => $user->isVerified(),
                 ]
             );
         } catch (QueryException $e) {
@@ -74,7 +74,7 @@ final class EloquentUserRepository implements UserRepository
      */
     public function findByEmail(UserEmail $email):User
     {
-        $userDao = UserDao::where('email', $email->value())->first();
+        $userDao = UserDao::where(UserDao::EMAIL, $email->value())->first();
 
         if ($userDao === null) {
             throw UserNotFound::byEmail($email);
@@ -89,7 +89,7 @@ final class EloquentUserRepository implements UserRepository
      */
     public function find(UserId $userId):User
     {
-        $userDao = UserDao::where('id', $userId->value())->first();
+        $userDao = UserDao::where(UserDao::ID, $userId->value())->first();
 
         if ($userDao === null) {
             throw UserNotFound::byId($userId);

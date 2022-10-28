@@ -21,9 +21,9 @@ final class PersonalAccessTokenDataTransformer
     public function fromDao(PersonalAccessTokenDao $accessTokenDao): PersonalAccessToken
     {
         return new PersonalAccessToken(
-            PersonalTokenId::fromString($accessTokenDao->id),
-            UserId::fromString($accessTokenDao->user_id),
-            Token::accessTokenFromString($accessTokenDao->token)
+            PersonalTokenId::fromString($accessTokenDao->getAttribute(PersonalAccessTokenDao::ID)),
+            UserId::fromString($accessTokenDao->getAttribute(PersonalAccessTokenDao::USER_ID)),
+            Token::accessTokenFromString($accessTokenDao->getAttribute(PersonalAccessTokenDao::TOKEN))
         );
     }
 }

@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 final class PersonalAccessTokenDao extends Model
 {
+    public const ID = 'id';
+    public const USER_ID = 'user_id';
+    public const TOKEN = 'token';
+
     protected $table = 'personal_access_tokens';
     protected $keyType = 'string';
     protected $fillable = [
