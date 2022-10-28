@@ -4,6 +4,7 @@ namespace Beagle\Shared\Domain\ValueObjects;
 
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Shared\Domain\Errors\InvalidTokenSignature;
+use Beagle\Shared\Domain\Errors\PayloadValueNotFound;
 use Beagle\Shared\Domain\Errors\TokenExpired;
 use Beagle\Shared\Domain\TokenType;
 use ReallySimpleJWT\Token as ReallySimpleJWT;
@@ -90,6 +91,18 @@ final class Token extends ReallySimpleJWT
         self::ensureIfTokenHasExpired($token);
 
         return new self($token, TokenType::REFRESH);
+    }
+
+    /** @throws PayloadValueNotFound */
+    public function getValueFromPayloadByKey(string $key)
+    {
+        $payload = self::getPayload($this->value);
+
+        if ($payload[$key] === null) {
+            throw PayloadValueNotFound::byKey($key);
+        }
+
+        return $payload[$key];
     }
 
     /** @throws TokenExpired */

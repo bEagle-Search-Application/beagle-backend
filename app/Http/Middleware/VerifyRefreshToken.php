@@ -7,6 +7,7 @@ use Beagle\Core\Domain\PersonalToken\Errors\PersonalRefreshTokenNotFound;
 use Beagle\Core\Domain\PersonalToken\PersonalRefreshTokenRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Shared\Domain\Errors\InvalidTokenSignature;
+use Beagle\Shared\Domain\Errors\PayloadValueNotFound;
 use Beagle\Shared\Domain\Errors\TokenExpired;
 use Beagle\Shared\Domain\ValueObjects\Token;
 use Beagle\Shared\Infrastructure\Http\Errors\HeaderNotFound;
@@ -64,10 +65,11 @@ class VerifyRefreshToken
      * @throws PersonalRefreshTokenNotFound
      * @throws TokenExpired
      * @throws InvalidPersonalRefreshToken
+     * @throws PayloadValueNotFound
      */
     public function validateToken(Token $token):void
     {
-        $userIdAsString = $token::getPayload($token->value())['uid'];
+        $userIdAsString = $token->getValueFromPayloadByKey('uid');
         $userId = UserId::fromString($userIdAsString);
         $this->personalRefreshTokenRepository->findByUserIdAndToken($userId, $token);
     }
