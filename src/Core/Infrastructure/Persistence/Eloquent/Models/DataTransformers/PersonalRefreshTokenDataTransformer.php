@@ -21,9 +21,9 @@ final class PersonalRefreshTokenDataTransformer
     public function fromDao(PersonalRefreshTokenDao $accessTokenDao): PersonalRefreshToken
     {
         return new PersonalRefreshToken(
-            PersonalTokenId::fromString($accessTokenDao->id),
-            UserId::fromString($accessTokenDao->user_id),
-            Token::refreshTokenFromString($accessTokenDao->token)
+            PersonalTokenId::fromString($accessTokenDao->getAttribute(PersonalRefreshTokenDao::ID)),
+            UserId::fromString($accessTokenDao->getAttribute(PersonalRefreshTokenDao::USER_ID)),
+            Token::refreshTokenFromString($accessTokenDao->getAttribute(PersonalRefreshTokenDao::TOKEN))
         );
     }
 }
