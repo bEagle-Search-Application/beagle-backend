@@ -18,42 +18,21 @@ final class UserDataTransformer
     public function fromDao(UserDao $userDao): User
     {
         return new User(
-            UserId::fromString($userDao->id),
-            UserEmail::fromString($userDao->email),
-            UserPassword::fromString($userDao->password),
-            $userDao->name,
-            $userDao->surname,
-            $userDao->bio,
-            $userDao->location,
+            UserId::fromString($userDao->getAttribute(UserDao::ID)),
+            UserEmail::fromString($userDao->getAttribute(UserDao::EMAIL)),
+            UserPassword::fromString($userDao->getAttribute(UserDao::PASSWORD)),
+            $userDao->getAttribute(UserDao::NAME),
+            $userDao->getAttribute(UserDao::SURNAME),
+            $userDao->getAttribute(UserDao::BIO),
+            $userDao->getAttribute(UserDao::LOCATION),
             UserPhone::create(
-                PhonePrefix::fromString($userDao->phone_prefix),
-                Phone::fromString($userDao->phone),
+                PhonePrefix::fromString($userDao->getAttribute(UserDao::PHONE_PREFIX)),
+                Phone::fromString($userDao->getAttribute(UserDao::PHONE)),
             ),
-            $userDao->picture,
-            (bool) $userDao->show_reviews,
-            $userDao->rating,
-            (bool) $userDao->is_verified,
+            $userDao->getAttribute(UserDao::PICTURE),
+            (bool) $userDao->getAttribute(UserDao::SHOW_REVIEWS),
+            $userDao->getAttribute(UserDao::RATING),
+            (bool) $userDao->getAttribute(UserDao::IS_VERIFIED),
         );
-    }
-
-    public function fromUser(User $user): UserDao
-    {
-        $userDao = new UserDao();
-
-        $userDao->id = $user->id()->value();
-        $userDao->email = $user->email()->value();
-        $userDao->password = $user->password()->value();
-        $userDao->name = $user->name();
-        $userDao->surname = $user->surname();
-        $userDao->bio = $user->bio();
-        $userDao->location = $user->location();
-        $userDao->phone_prefix = $user->phone()->phonePrefixAsString();
-        $userDao->phone = $user->phone()->phoneAsString();
-        $userDao->picture = $user->picture();
-        $userDao->show_reviews = $user->showReviews();
-        $userDao->rating = $user->rating();
-        $userDao->is_verified = $user->isVerified();
-
-        return $userDao;
     }
 }

@@ -11,6 +11,20 @@ class UserDao extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    public const ID = 'id';
+    public const EMAIL = 'email';
+    public const PASSWORD = 'password';
+    public const NAME = 'name';
+    public const SURNAME = 'surname';
+    public const BIO = 'bio';
+    public const LOCATION = 'location';
+    public const PHONE_PREFIX = 'phone_prefix';
+    public const PHONE = 'phone';
+    public const PICTURE = 'picture';
+    public const SHOW_REVIEWS = 'show_reviews';
+    public const RATING = 'rating';
+    public const IS_VERIFIED = 'is_verified';
+
     public $incrementing = false;
 
     protected $table = 'users';
