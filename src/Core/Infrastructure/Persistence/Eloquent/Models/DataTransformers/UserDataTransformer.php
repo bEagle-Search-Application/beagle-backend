@@ -6,54 +6,33 @@ use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
-use Beagle\Core\Domain\User\ValueObjects\UserToken;
+use Beagle\Core\Domain\User\ValueObjects\UserPhone;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\UserDao;
-use Beagle\Shared\Domain\Errors\InvalidEmail;
-use Beagle\Shared\Domain\Errors\InvalidPassword;
+use Beagle\Shared\Domain\Errors\InvalidValueObject;
+use Beagle\Shared\Domain\ValueObjects\Phone;
+use Beagle\Shared\Domain\ValueObjects\PhonePrefix;
 
 final class UserDataTransformer
 {
-    /**
-     * @throws InvalidEmail
-     * @throws InvalidPassword
-     */
+    /** @throws InvalidValueObject */
     public function fromDao(UserDao $userDao): User
     {
-        $auth_token = $userDao->auth_token;
-
         return new User(
-            UserId::fromString($userDao->id),
-            UserEmail::fromString($userDao->email),
-            UserPassword::fromString($userDao->password),
-            $userDao->name,
-            $userDao->surname,
-            $userDao->bio,
-            $userDao->location,
-            $userDao->phone,
-            $userDao->picture,
-            (bool) $userDao->show_reviews,
-            $userDao->rating,
-            empty($auth_token) ? null :UserToken::fromString($auth_token)
+            UserId::fromString($userDao->getAttribute(UserDao::ID)),
+            UserEmail::fromString($userDao->getAttribute(UserDao::EMAIL)),
+            UserPassword::fromString($userDao->getAttribute(UserDao::PASSWORD)),
+            $userDao->getAttribute(UserDao::NAME),
+            $userDao->getAttribute(UserDao::SURNAME),
+            $userDao->getAttribute(UserDao::BIO),
+            $userDao->getAttribute(UserDao::LOCATION),
+            UserPhone::create(
+                PhonePrefix::fromString($userDao->getAttribute(UserDao::PHONE_PREFIX)),
+                Phone::fromString($userDao->getAttribute(UserDao::PHONE)),
+            ),
+            $userDao->getAttribute(UserDao::PICTURE),
+            (bool) $userDao->getAttribute(UserDao::SHOW_REVIEWS),
+            $userDao->getAttribute(UserDao::RATING),
+            (bool) $userDao->getAttribute(UserDao::IS_VERIFIED),
         );
-    }
-
-    public function fromUser(User $user): UserDao
-    {
-        $userDao = new UserDao();
-
-        $userDao->id = $user->id()->value();
-        $userDao->email = $user->email()->value();
-        $userDao->password = $user->password()->value();
-        $userDao->name = $user->name();
-        $userDao->surname = $user->surname();
-        $userDao->bio = $user->bio();
-        $userDao->location = $user->location();
-        $userDao->phone = $user->phone();
-        $userDao->picture = $user->picture();
-        $userDao->show_reviews = $user->showReviews();
-        $userDao->rating = $user->rating();
-        $userDao->auth_token = $user->authToken();
-
-        return $userDao;
     }
 }

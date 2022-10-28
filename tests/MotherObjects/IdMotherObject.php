@@ -2,12 +2,12 @@
 
 namespace Tests\MotherObjects;
 
-use Symfony\Component\Uid\Uuid;
+use Beagle\Shared\Domain\ValueObjects\Guid;
 
 final class IdMotherObject
 {
-    public static function create(): Uuid
+    public static function create(?string $guid = null):Guid
     {
-        return Uuid::v4();
+        return Guid::fromString($guid ?? Guid::v4()->toBase58());
     }
 }

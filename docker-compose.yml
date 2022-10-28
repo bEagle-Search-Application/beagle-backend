@@ -1,5 +1,8 @@
 version: "3.7"
 
+networks:
+    laravel:
+
 services:
   nginx:
     image: nginx:stable-alpine
@@ -69,7 +72,11 @@ services:
     networks:
       - laravel
 
-
-networks:
-  laravel:
-
+  mailcatcher:
+    image: dockage/mailcatcher:0.8.2
+    container_name: mailcatcher
+    ports:
+        - "1080:1080"
+        - "1025:1025"
+    networks:
+        - laravel

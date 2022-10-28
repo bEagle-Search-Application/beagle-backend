@@ -2,19 +2,14 @@
 
 namespace Beagle\Core\Domain\User\ValueObjects;
 
-use Beagle\Shared\Domain\Errors\InvalidPassword;
+use Beagle\Core\Domain\User\Errors\InvalidPassword;
 
 final class UserPassword
 {
-    private const MIN_LENGTH = 8;
-
     /** @throws InvalidPassword */
     private function __construct(private string $value)
     {
-        if (\strlen($this->value) < self::MIN_LENGTH)
-        {
-            throw InvalidPassword::byLength(self::MIN_LENGTH);
-        }
+        $this->checkIfPasswordEncryptionIsInvalid();
     }
 
     public function value():string
@@ -31,5 +26,13 @@ final class UserPassword
     public function equals(UserPassword $userPassword):bool
     {
         return $this->value === $userPassword->value();
+    }
+
+    /** @throws InvalidPassword */
+    private function checkIfPasswordEncryptionIsInvalid():void
+    {
+        if (!preg_match('/^[a-f0-9]{32}$/', $this->value)) {
+            throw InvalidPassword::byEncryption();
+        }
     }
 }

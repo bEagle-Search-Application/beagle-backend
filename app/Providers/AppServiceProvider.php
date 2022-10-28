@@ -19,8 +19,57 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
-            \Beagle\Shared\Application\Auth\AuthService::class,
-            \Beagle\Shared\Infrastructure\Auth\JwtAuthService::class
+            \Beagle\Core\Domain\PersonalToken\PersonalAccessTokenRepository::class,
+            \Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentPersonalAccessTokenRepository::class
+        );
+
+        $this->app->bind(
+            \Beagle\Core\Domain\PersonalToken\PersonalRefreshTokenRepository::class,
+            \Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentPersonalRefreshTokenRepository::class
+        );
+
+        $this->app->bind(
+            \Beagle\Core\Domain\User\UserVerificationTokenRepository::class,
+            \Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserVerificationTokenRepository::class
+        );
+
+        $this->app->bind(
+            \Beagle\Core\Infrastructure\Email\EmailSender::class,
+            function () {
+                return new \Beagle\Core\Infrastructure\Email\LaravelEmailSender(
+                    env('MAIL_FROM_ADDRESS'),
+                    env('MAIL_FROM_NAME'),
+                );
+            }
+        );
+
+        $this->app->bind(
+            \Beagle\Core\Infrastructure\Email\Verification\UserVerificationEmailSender::class,
+            \Beagle\Core\Infrastructure\Email\Verification\LaravelUserUserVerificationEmailSender::class
+        );
+
+        $this->app->bind(
+            \Beagle\Shared\Domain\TokenService::class,
+            \Beagle\Shared\Infrastructure\Token\JwtTokenService::class
+        );
+
+        $this->app->bind(
+            \Beagle\Shared\Bus\EventBus::class,
+            static function () {
+                $containerLocator = new \Beagle\Shared\Bus\Tactician\LaravelLazyHandlerLocator(
+                    config('bus.event_bus.router.routes')
+                );
+
+                $commandHandlerMiddleware = new \League\Tactician\Handler\CommandHandlerMiddleware(
+                    new \League\Tactician\Handler\CommandNameExtractor\ClassNameExtractor(),
+                    $containerLocator,
+                    new \League\Tactician\Handler\MethodNameInflector\InvokeInflector()
+                );
+
+                return new \Beagle\Shared\Bus\Tactician\TacticianSyncEventBus(
+                    $commandHandlerMiddleware
+                );
+            }
         );
 
         $this->app->bind(
@@ -60,7 +109,6 @@ class AppServiceProvider extends ServiceProvider
                 );
             }
         );
-
     }
 
     /**

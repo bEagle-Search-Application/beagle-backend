@@ -20,14 +20,13 @@ return new class extends Migration
             $table->string('name');
             $table->string('surname');
             $table->string('bio')->nullable();
-            $table->string('location');
-            $table->string('phone')->nullable();
+            $table->string('location')->nullable();
+            $table->string('phone_prefix');
+            $table->string('phone');
             $table->string('picture')->nullable();
             $table->boolean('show_reviews');
             $table->integer('rating');
-            $table->timestamp('email_verified_at')->nullable();
-            $table->rememberToken();
-            $table->string('auth_token', 360)->nullable();
+            $table->boolean('is_verified');
             $table->timestamps();
         });
     }

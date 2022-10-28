@@ -2,12 +2,14 @@
 
 namespace Beagle\Core\Domain\User;
 
+use Beagle\Core\Domain\User\Event\UserCreated;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
-use Beagle\Core\Domain\User\ValueObjects\UserToken;
+use Beagle\Core\Domain\User\ValueObjects\UserPhone;
+use Beagle\Shared\Domain\Entity;
 
-final class User
+final class User extends Entity
 {
     public function __construct(
         private UserId $id,
@@ -16,16 +18,44 @@ final class User
         private string $name,
         private string $surname,
         private ?string $bio,
-        private string $location,
-        private ?string $phone,
+        private ?string $location,
+        private UserPhone $phone,
         private ?string $picture,
         private bool $showReviews,
         private int $rating,
-        private ?UserToken $authToken
-    )
-    {
+        private bool $isVerified,
+    ) {
     }
 
+    public static function createWithBasicInformation(
+        UserId $id,
+        UserEmail $email,
+        UserPassword $password,
+        string $name,
+        string $surname,
+        UserPhone $phone
+    ):self {
+        $user = new self(
+            $id,
+            $email,
+            $password,
+            $name,
+            $surname,
+            null,
+            null,
+            $phone,
+            null,
+            true,
+            0,
+            false,
+        );
+
+        $user->recordThat(
+            new UserCreated($user->email())
+        );
+
+        return $user;
+    }
 
     public function id():UserId
     {
@@ -57,12 +87,12 @@ final class User
         return $this->bio;
     }
 
-    public function location():string
+    public function location():?string
     {
         return $this->location;
     }
 
-    public function phone():?string
+    public function phone():UserPhone
     {
         return $this->phone;
     }
@@ -82,13 +112,13 @@ final class User
         return $this->rating;
     }
 
-    public function authToken():?UserToken
+    public function isVerified():bool
     {
-        return $this->authToken;
+        return $this->isVerified;
     }
 
-    public function updateToken(UserToken $token):void
+    public function verify():void
     {
-        $this->authToken = $token;
+        $this->isVerified = true;
     }
 }

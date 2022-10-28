@@ -2,9 +2,9 @@
 
 namespace Beagle\Shared\Domain\Errors;
 
-final class InvalidEmail extends \Exception
+final class InvalidEmail extends InvalidValueObject
 {
-    private const INVALID_FORMAT = "The email %s has an invalid format";
+    private const INVALID_FORMAT = "El email %s tiene un formato inválido";
 
     public static function byFormat(string $email): self
     {

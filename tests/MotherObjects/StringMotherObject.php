@@ -11,6 +11,11 @@ final class StringMotherObject
         return Factory::create()->text;
     }
 
+    public static function createNumber():string
+    {
+        return (string) IntegerMotherObject::create();
+    }
+
     public static function createName():string
     {
         return Factory::create()->name;

@@ -8,55 +8,54 @@ use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
+use Beagle\Core\Domain\User\ValueObjects\UserPhone;
 use Beagle\Shared\Bus\Command;
 use Beagle\Shared\Bus\CommandHandler;
-use Beagle\Shared\Bus\QueryHandler;
-use Beagle\Shared\Domain\Errors\InvalidEmail;
-use Beagle\Shared\Domain\Errors\InvalidPassword;
+use Beagle\Shared\Bus\EventBus;
+use Beagle\Shared\Domain\Errors\InvalidValueObject;
+use Beagle\Shared\Domain\ValueObjects\Phone;
+use Beagle\Shared\Domain\ValueObjects\PhonePrefix;
 
 final class RegisterUser extends CommandHandler
 {
-    public function __construct(private UserRepository $userRepository)
-    {
+    public function __construct(
+        private UserRepository $userRepository,
+        private EventBus $eventBus
+    ) {
     }
 
     /**
      * @param RegisterUserCommand $command
      *
-     * @throws InvalidEmail
-     * @throws InvalidPassword
+     * @throws InvalidValueObject
      * @throws CannotSaveUser
      */
     public function handle(Command $command):void
     {
-        $this->userRepository->save(
-            $this->createUser($command)
-        );
+        $user = $this->createUser($command);
+        $this->userRepository->save($user);
+
+        $this->eventBus->dispatch(...$user->pullEvents());
     }
 
-    /**
-     * @throws InvalidEmail
-     * @throws InvalidPassword
-     */
+    /** @throws InvalidValueObject */
     public function createUser(RegisterUserCommand $command):User
     {
         $userId = UserId::fromString($command->userId());
         $userEmail = UserEmail::fromString($command->userEmail());
         $userPassword = UserPassword::fromString($command->userPassword());
+        $userPhone = UserPhone::create(
+            PhonePrefix::fromString($command->userPhonePrefix()),
+            Phone::fromString($command->userPhone()),
+        );
 
-        return new User(
+        return User::createWithBasicInformation(
             $userId,
             $userEmail,
             $userPassword,
             $command->userName(),
             $command->userSurname(),
-            $command->userBio(),
-            $command->userLocation(),
-            $command->userPhone(),
-            null,
-            true,
-            0,
-            null
+            $userPhone
         );
     }
 }

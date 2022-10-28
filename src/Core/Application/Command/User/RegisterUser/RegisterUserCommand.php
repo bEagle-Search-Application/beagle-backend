@@ -12,11 +12,9 @@ final class RegisterUserCommand implements Command
         private string $userPassword,
         private string $userName,
         private string $userSurname,
-        private string $userBio,
-        private string $userLocation,
+        private string $userPhonePrefix,
         private string $userPhone,
-    )
-    {
+    ) {
     }
 
     public function userId():string
@@ -44,18 +42,13 @@ final class RegisterUserCommand implements Command
         return $this->userSurname;
     }
 
-    public function userBio():string
-    {
-        return $this->userBio;
-    }
-
-    public function userLocation():string
-    {
-        return $this->userLocation;
-    }
-
     public function userPhone():string
     {
         return $this->userPhone;
+    }
+
+    public function userPhonePrefix():string
+    {
+        return $this->userPhonePrefix;
     }
 }

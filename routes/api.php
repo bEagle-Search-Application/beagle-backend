@@ -1,5 +1,7 @@
 <?php
 
+// phpcs:disable
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,28 +15,49 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::middleware(['api'])->group(function(){
-    Route::prefix('auth')->group(function () {
-        Route::get('/login',
+    Route::prefix('users')->group(function () {
+        Route::post('/verify/{token}',
             [
-                \Beagle\Core\Infrastructure\Http\Api\Controllers\LoginController::class,
+                \Beagle\Core\Infrastructure\Http\Api\Controllers\User\AcceptUserVerificationEmailController::class,
+                'execute'
+            ]
+        )->name('api.users-verify');
+
+        Route::get(
+            '/{userId}', [
+                \Beagle\Core\Infrastructure\Http\Api\Controllers\User\GetUserController::class,
+                'execute',
+            ]
+        )->name('api.get-user')->middleware(['verify.access.token']);
+    });
+
+    Route::prefix('auth')->group(function () {
+        Route::post('/login',
+            [
+                \Beagle\Core\Infrastructure\Http\Api\Controllers\User\LoginController::class,
                 'execute'
             ]
         )->name('api.login');
     });
 
+    Route::post('/token/refresh',
+        [
+            \Beagle\Core\Infrastructure\Http\Api\Controllers\User\RefreshTokenController::class,
+            'execute'
+        ]
+    )->name('api.token-refresh')->middleware(['verify.refresh.token']);
+
     Route::post('/register',
         [
-            \Beagle\Core\Infrastructure\Http\Api\Controllers\RegisterUserController::class,
+            \Beagle\Core\Infrastructure\Http\Api\Controllers\User\RegisterUserController::class,
             'execute'
         ]
     )->name('api.register');
-});
 
-Route::middleware(['auth.jwt'])->group(function(){
     Route::post('/logout',
         [
-            \Beagle\Core\Infrastructure\Http\Api\Controllers\LogoutController::class,
+            \Beagle\Core\Infrastructure\Http\Api\Controllers\User\LogoutController::class,
             'execute'
         ]
-    )->name('api.logout');
+    )->name('api.logout')->middleware(['verify.access.token']);
 });

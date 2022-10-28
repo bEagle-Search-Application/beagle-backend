@@ -13,8 +13,7 @@ class BaseController extends Controller
     public function __construct(
         protected CommandBus $commandBus,
         protected QueryBus $queryBus
-    )
-    {
+    ) {
     }
 
     protected function generateNotFoundResponse(string $response):JsonResponse
@@ -22,9 +21,19 @@ class BaseController extends Controller
         return $this->generateJsonResponse($response, Response::HTTP_NOT_FOUND);
     }
 
+    protected function generateForbiddenResponse(string $response):JsonResponse
+    {
+        return $this->generateJsonResponse($response, Response::HTTP_FORBIDDEN);
+    }
+
     protected function generateBadRequestResponse(string $response):JsonResponse
     {
         return $this->generateJsonResponse($response, Response::HTTP_BAD_REQUEST);
+    }
+
+    protected function generateUnauthorizedResponse(string $response):JsonResponse
+    {
+        return $this->generateJsonResponse($response, Response::HTTP_UNAUTHORIZED);
     }
 
     protected function generateSuccessfulResponse(array $response):JsonResponse
@@ -42,6 +51,13 @@ class BaseController extends Controller
     {
         return new JsonResponse(
             status: Response::HTTP_NO_CONTENT
+        );
+    }
+
+    protected function generateCreatedResponse():JsonResponse
+    {
+        return new JsonResponse(
+            status: Response::HTTP_CREATED
         );
     }
 
