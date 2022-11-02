@@ -17,6 +17,12 @@ paths:
       description: Verify user email
       parameters:
         - $ref: '#/components/parameters/authorization_header'
+        - in: path
+          name: token
+          required: true
+          schema:
+            type: string
+            example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2NjE4ODkwOTQsImV4cCI6MTY2MTg5MjY5NCwibmJmIjoxNjYxODg5MDk0LCJqdGkiOiJ2N2JvNkQ3aFVNNGZ6bUxIIiwic3ViIjoiTjlwQm5Ud1lock45dEhKUHJnRHZzYiIsInBydiI6Ijc4YTA0Zjg0YzY1ZTE5Y2VkOWUwNTliOThhNGZhNWQxMGIxYzNiMzUifQ.OZlHByjBTAm"
       responses:
         '204':
           description: User verified successfully
@@ -201,7 +207,7 @@ paths:
 components:
   parameters:
     authorization_header:
-      in: path
+      in: header
       name: token
       required: true
       schema:
