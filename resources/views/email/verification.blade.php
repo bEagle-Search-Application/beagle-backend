@@ -233,7 +233,7 @@
                     </p>
                     <div>
                         <a
-                            href="/{link}"
+                            href="{{ $urlToAcceptVerification }}"
                             style="
                                         display: block;
                                         margin-top: 0.5rem;
