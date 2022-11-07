@@ -16,7 +16,6 @@ paths:
         - User
       description: Verify user email
       parameters:
-        - $ref: '#/components/parameters/authorization_header'
         - in: path
           name: token
           required: true
