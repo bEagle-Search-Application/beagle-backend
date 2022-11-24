@@ -15,6 +15,13 @@ final class InMemoryUserVerificationTokenRepository implements UserVerificationT
 
     public function save(UserVerificationToken $userVerificationToken):void
     {
+        foreach ($this->userVerifications as $key => $userVerification) {
+            if ($userVerification->userId()->equals($userVerificationToken->userId())) {
+                $this->userVerifications[$key] = $userVerificationToken;
+                return;
+            }
+        }
+
         $this->userVerifications[] = $userVerificationToken;
     }
 

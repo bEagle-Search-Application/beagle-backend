@@ -6,12 +6,12 @@ use Beagle\Shared\Bus\Command;
 
 final class AcceptUserVerificationEmailCommand implements Command
 {
-    public function __construct(private string $token)
+    public function __construct(private string $userId)
     {
     }
 
-    public function token():string
+    public function userId():string
     {
-        return $this->token;
+        return $this->userId;
     }
 }

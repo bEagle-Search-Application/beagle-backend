@@ -10,12 +10,10 @@ use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\UserVerificationToken;
 use Beagle\Core\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
 use Beagle\Core\Infrastructure\Persistence\InMemory\Repository\InMemoryUserVerificationTokenRepository;
-use Beagle\Shared\Domain\Errors\TokenExpired;
-use Beagle\Shared\Infrastructure\Token\JwtTokenService;
 use PHPUnit\Framework\TestCase;
-use Tests\MotherObjects\TokenMotherObject;
 use Tests\MotherObjects\User\UserMotherObject;
 use Tests\MotherObjects\User\UserVerificationTokenMotherObject;
+use Tests\MotherObjects\User\ValueObjects\UserIdMotherObject;
 
 final class AcceptUserVerificationEmailTest extends TestCase
 {
@@ -31,7 +29,6 @@ final class AcceptUserVerificationEmailTest extends TestCase
 
         $this->userRepository = new InMemoryUserRepository();
         $this->userVerificationTokenRepository = new InMemoryUserVerificationTokenRepository();
-        $tokenService = new JwtTokenService();
 
         $this->user = UserMotherObject::create();
         $this->userRepository->save($this->user);
@@ -44,7 +41,6 @@ final class AcceptUserVerificationEmailTest extends TestCase
         $this->sut = new AcceptUserVerificationEmail(
             $this->userRepository,
             $this->userVerificationTokenRepository,
-            $tokenService
         );
     }
 
@@ -54,23 +50,7 @@ final class AcceptUserVerificationEmailTest extends TestCase
 
         $this->sut->__invoke(
             new AcceptUserVerificationEmailCommand(
-                TokenMotherObject::createAccessToken()->value()
-            )
-        );
-    }
-
-    public function testItThrowsInvalidTokenExceptionIfUserVerificationExpired():void
-    {
-        $this->expectException(TokenExpired::class);
-
-        $expiredUserVerification = UserVerificationTokenMotherObject::createExpiredAccessToken(
-            userId: $this->user->id()
-        );
-        $this->userVerificationTokenRepository->save($expiredUserVerification);
-
-        $this->sut->__invoke(
-            new AcceptUserVerificationEmailCommand(
-                $expiredUserVerification->token()->value()
+                UserIdMotherObject::create()->value()
             )
         );
     }
@@ -79,7 +59,7 @@ final class AcceptUserVerificationEmailTest extends TestCase
     {
         $this->sut->__invoke(
             new AcceptUserVerificationEmailCommand(
-                $this->userVerification->token()->value()
+                $this->user->id()->value()
             )
         );
 
