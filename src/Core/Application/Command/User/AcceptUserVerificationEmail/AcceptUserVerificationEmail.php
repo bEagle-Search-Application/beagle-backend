@@ -7,20 +7,17 @@ use Beagle\Core\Domain\User\Errors\UserNotFound;
 use Beagle\Core\Domain\User\Errors\UserVerificationNotFound;
 use Beagle\Core\Domain\User\UserRepository;
 use Beagle\Core\Domain\User\UserVerificationTokenRepository;
+use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Shared\Bus\Command;
 use Beagle\Shared\Bus\CommandHandler;
 use Beagle\Shared\Domain\Errors\InvalidValueObject;
 use Beagle\Shared\Domain\Errors\TokenExpired;
-use Beagle\Shared\Domain\TokenService;
-use Beagle\Shared\Domain\ValueObjects\Token;
-use Beagle\Shared\Infrastructure\Token\Errors\CannotGetClaim;
 
 final class AcceptUserVerificationEmail extends CommandHandler
 {
     public function __construct(
         private UserRepository $userRepository,
         private UserVerificationTokenRepository $verificationTokenRepository,
-        private TokenService $tokenService
     ) {
     }
 
@@ -28,7 +25,6 @@ final class AcceptUserVerificationEmail extends CommandHandler
      * @param AcceptUserVerificationEmailCommand $command
      *
      * @throws TokenExpired
-     * @throws CannotGetClaim
      * @throws InvalidValueObject
      * @throws UserVerificationNotFound
      * @throws CannotSaveUser
@@ -36,9 +32,7 @@ final class AcceptUserVerificationEmail extends CommandHandler
      */
     protected function handle(Command $command):void
     {
-        $accessToken = Token::accessTokenFromString($command->token());
-
-        $userId = $this->tokenService->userIdFromToken($accessToken);
+        $userId = UserId::fromString($command->userId());
         $this->verificationTokenRepository->findByUserId($userId);
 
         $user = $this->userRepository->find($userId);
