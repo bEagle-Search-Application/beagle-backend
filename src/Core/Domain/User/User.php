@@ -121,4 +121,44 @@ final class User extends Entity
     {
         $this->isVerified = true;
     }
+
+    public function updateEmail(UserEmail $userEmail):void
+    {
+        $this->email = $userEmail;
+    }
+
+    public function updateName(string $userName):void
+    {
+        $this->name = $userName;
+    }
+
+    public function updateSurname(string $userSurname):void
+    {
+        $this->surname = $userSurname;
+    }
+
+    public function updatePhone(UserPhone $userPhone):void
+    {
+        $this->phone = $userPhone;
+    }
+
+    public function updateLocation(string $userLocation):void
+    {
+        $this->location = $userLocation;
+    }
+
+    public function updateBio(string $userBio):void
+    {
+        $this->bio = $userBio;
+    }
+
+    public function disableReviews():void
+    {
+        $this->showReviews = false;
+    }
+
+    public function activeReviews():void
+    {
+        $this->showReviews = true;
+    }
 }
