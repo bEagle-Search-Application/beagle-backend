@@ -11,6 +11,7 @@ return [
                 \Beagle\Core\Application\Command\User\AcceptUserVerificationEmail\AcceptUserVerificationEmailCommand::class => \Beagle\Core\Application\Command\User\AcceptUserVerificationEmail\AcceptUserVerificationEmail::class,
                 \Beagle\Core\Application\Command\User\RefreshToken\RefreshTokenCommand::class => \Beagle\Core\Application\Command\User\RefreshToken\RefreshToken::class,
                 \Beagle\Core\Application\Command\User\Logout\LogoutCommand::class => \Beagle\Core\Application\Command\User\Logout\Logout::class,
+                \Beagle\Core\Application\Command\User\EditUser\EditUserCommand::class => \Beagle\Core\Application\Command\User\EditUser\EditUser::class,
             ],
         ],
     ],

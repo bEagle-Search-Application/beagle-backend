@@ -14,17 +14,19 @@ use Beagle\Shared\Domain\ValueObjects\Token;
 use Beagle\Shared\Infrastructure\Http\Api\Controllers\BaseController;
 use Beagle\Shared\Infrastructure\Token\Errors\CannotGetClaim;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 final class AcceptUserVerificationEmailController extends BaseController
 {
     public function __construct(
         CommandBus $commandBus,
         QueryBus $queryBus,
+        Request $request,
         private TokenService $tokenService
     ) {
         $this->commandBus = $commandBus;
         $this->queryBus = $queryBus;
-        parent::__construct($commandBus, $queryBus);
+        parent::__construct($commandBus, $queryBus, $request);
     }
 
     public function execute(string $token):JsonResponse

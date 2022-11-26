@@ -66,7 +66,7 @@ final class RegisterUserControllerTest extends TestCase
             ]
         );
 
-        $decodedResponse = $this->decodeResponse($response->getContent());
+        $decodedResponse = $response->decodeResponseJson();
 
         $this->assertSame(Response::HTTP_BAD_REQUEST, $response->status());
         $this->assertSame(
@@ -170,7 +170,7 @@ final class RegisterUserControllerTest extends TestCase
             ]
         );
 
-        $decodedResponse = $this->decodeResponse($response->getContent());
+        $decodedResponse = $response->decodeResponseJson();
 
         $this->assertSame(Response::HTTP_BAD_REQUEST, $response->status());
         $this->assertSame(

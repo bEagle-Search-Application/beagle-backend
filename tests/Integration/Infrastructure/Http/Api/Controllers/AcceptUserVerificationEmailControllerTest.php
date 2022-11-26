@@ -54,7 +54,7 @@ final class AcceptUserVerificationEmailControllerTest extends TestCase
             )
         );
 
-        $decodedResponse = $this->decodeResponse($response->getContent());
+        $decodedResponse = $response->decodeResponseJson();
 
         $this->assertSame(Response::HTTP_FORBIDDEN, $response->status());
         $this->assertSame(
@@ -96,7 +96,7 @@ final class AcceptUserVerificationEmailControllerTest extends TestCase
             )
         );
 
-        $decodedResponse = $this->decodeResponse($response->getContent());
+        $decodedResponse = $response->decodeResponseJson();
 
         $this->assertSame(Response::HTTP_UNAUTHORIZED, $response->status());
         $this->assertSame("El token ha caducado", $decodedResponse["response"]);

@@ -29,6 +29,13 @@ Route::middleware(['api'])->group(function(){
                 'execute',
             ]
         )->name('api.get-user')->middleware(['verify.access.token']);
+
+        Route::put(
+            '/{userId}', [
+                \Beagle\Core\Infrastructure\Http\Api\Controllers\User\EditUserController::class,
+                'execute',
+            ]
+        )->name('api.edit-user')->middleware(['verify.access.token']);
     });
 
     Route::prefix('auth')->group(function () {
