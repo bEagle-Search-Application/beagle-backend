@@ -3,12 +3,9 @@
 namespace Tests\MotherObjects\User;
 
 use Beagle\Core\Domain\User\UserEmailChangeVerification;
-use Beagle\Core\Domain\User\UserVerificationToken;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
-use Beagle\Core\Domain\User\ValueObjects\UserVerificationTokenId;
 use Beagle\Shared\Domain\ValueObjects\Token;
-use Tests\MotherObjects\BooleanMotherObject;
 use Tests\MotherObjects\TokenMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserEmailMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserIdMotherObject;

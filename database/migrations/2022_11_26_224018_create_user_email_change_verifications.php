@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up():void
     {
-        Schema::create('user_email_changes', function (Blueprint $table) {
+        Schema::create('user_email_change_verifications', function (Blueprint $table) {
             $table->string('user_id')->primary();
             $table->string('old_email');
             $table->string('new_email');
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down():void
     {
-        Schema::dropIfExists('user_email_changes');
+        Schema::dropIfExists('user_email_change_verifications');
     }
 };

@@ -7,12 +7,12 @@ use Beagle\Core\Application\Command\User\AcceptUserVerificationEmail\AcceptUserV
 use Beagle\Core\Domain\User\Errors\UserVerificationNotFound;
 use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
-use Beagle\Core\Domain\User\UserVerificationToken;
+use Beagle\Core\Domain\User\UserEmailVerification;
 use Beagle\Core\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
-use Beagle\Core\Infrastructure\Persistence\InMemory\Repository\InMemoryUserVerificationTokenRepository;
+use Beagle\Core\Infrastructure\Persistence\InMemory\Repository\InMemoryUserEmailVerificationRepository;
 use PHPUnit\Framework\TestCase;
 use Tests\MotherObjects\User\UserMotherObject;
-use Tests\MotherObjects\User\UserVerificationTokenMotherObject;
+use Tests\MotherObjects\User\UserEmailVerificationMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserIdMotherObject;
 
 final class AcceptUserVerificationEmailTest extends TestCase
@@ -20,20 +20,20 @@ final class AcceptUserVerificationEmailTest extends TestCase
     private AcceptUserVerificationEmail $sut;
     private User $user;
     private UserRepository $userRepository;
-    private UserVerificationToken $userVerification;
-    private InMemoryUserVerificationTokenRepository $userVerificationTokenRepository;
+    private UserEmailVerification $userVerification;
+    private InMemoryUserEmailVerificationRepository $userVerificationTokenRepository;
 
     protected function setUp():void
     {
         parent::setUp();
 
         $this->userRepository = new InMemoryUserRepository();
-        $this->userVerificationTokenRepository = new InMemoryUserVerificationTokenRepository();
+        $this->userVerificationTokenRepository = new InMemoryUserEmailVerificationRepository();
 
         $this->user = UserMotherObject::create();
         $this->userRepository->save($this->user);
 
-        $this->userVerification = UserVerificationTokenMotherObject::create(
+        $this->userVerification = UserEmailVerificationMotherObject::create(
             userId: $this->user->id()
         );
         $this->userVerificationTokenRepository->save($this->userVerification);

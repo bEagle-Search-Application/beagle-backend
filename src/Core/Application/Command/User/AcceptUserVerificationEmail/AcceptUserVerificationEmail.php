@@ -6,7 +6,7 @@ use Beagle\Core\Domain\User\Errors\CannotSaveUser;
 use Beagle\Core\Domain\User\Errors\UserNotFound;
 use Beagle\Core\Domain\User\Errors\UserVerificationNotFound;
 use Beagle\Core\Domain\User\UserRepository;
-use Beagle\Core\Domain\User\UserVerificationTokenRepository;
+use Beagle\Core\Domain\User\UserEmailVerificationRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Shared\Bus\Command;
 use Beagle\Shared\Bus\CommandHandler;
@@ -17,7 +17,7 @@ final class AcceptUserVerificationEmail extends CommandHandler
 {
     public function __construct(
         private UserRepository $userRepository,
-        private UserVerificationTokenRepository $verificationTokenRepository,
+        private UserEmailVerificationRepository $userEmailVerificationRepository,
     ) {
     }
 
@@ -33,7 +33,7 @@ final class AcceptUserVerificationEmail extends CommandHandler
     protected function handle(Command $command):void
     {
         $userId = UserId::fromString($command->userId());
-        $this->verificationTokenRepository->findByUserId($userId);
+        $this->userEmailVerificationRepository->findByUserId($userId);
 
         $user = $this->userRepository->find($userId);
         $user->verify();

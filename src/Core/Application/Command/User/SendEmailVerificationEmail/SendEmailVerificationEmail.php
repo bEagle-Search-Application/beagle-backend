@@ -4,10 +4,10 @@ namespace Beagle\Core\Application\Command\User\SendEmailVerificationEmail;
 
 use Beagle\Core\Domain\User\Errors\UserNotFound;
 use Beagle\Core\Domain\User\UserRepository;
-use Beagle\Core\Domain\User\UserVerificationToken;
-use Beagle\Core\Domain\User\UserVerificationTokenRepository;
+use Beagle\Core\Domain\User\UserEmailVerification;
+use Beagle\Core\Domain\User\UserEmailVerificationRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
-use Beagle\Core\Domain\User\ValueObjects\UserVerificationTokenId;
+use Beagle\Core\Domain\User\ValueObjects\UserEmailVerificationId;
 use Beagle\Core\Infrastructure\Email\Verification\UserVerificationEmailSender;
 use Beagle\Shared\Bus\Command;
 use Beagle\Shared\Bus\CommandHandler;
@@ -21,7 +21,7 @@ final class SendEmailVerificationEmail extends CommandHandler
     public function __construct(
         private UserRepository $userRepository,
         private TokenService $tokenService,
-        private UserVerificationTokenRepository $userVerificationRepository,
+        private UserEmailVerificationRepository $userVerificationRepository,
         private UserVerificationEmailSender $verificationEmailSender
     ) {
     }
@@ -35,14 +35,14 @@ final class SendEmailVerificationEmail extends CommandHandler
     protected function handle(Command $command):void
     {
         $userEmail = UserEmail::fromString($command->userEmail());
-        $userVerificationId = UserVerificationTokenId::fromString($command->userVerificationId());
+        $userVerificationId = UserEmailVerificationId::fromString($command->userVerificationId());
 
         $user = $this->userRepository->findByEmail($userEmail);
         $accessToken = $this->tokenService->generateAccessTokenWithExpirationTime(
             $user->id(),
             self::VERIFICATION_EXPIRATION_TIME_IN_MINUTES
         );
-        $userVerification = UserVerificationToken::create(
+        $userVerification = UserEmailVerification::create(
             $userVerificationId,
             $user->id(),
             $accessToken

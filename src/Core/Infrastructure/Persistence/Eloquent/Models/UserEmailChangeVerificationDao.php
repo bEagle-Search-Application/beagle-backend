@@ -12,7 +12,7 @@ class UserEmailChangeVerificationDao extends Model
     public const TOKEN = 'token';
     public const CONFIRMED = 'confirmed';
 
-    protected $table = 'user_email_changes';
+    protected $table = 'user_email_change_verifications';
     protected $keyType = 'string';
     protected $fillable = [
         'user_id',

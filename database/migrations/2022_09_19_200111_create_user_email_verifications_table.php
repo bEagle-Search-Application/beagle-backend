@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('user_verification_tokens', function (Blueprint $table) {
+        Schema::create('user_email_verifications', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->string("user_id");
             $table->string("token", 300)->unique();
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_verification_tokens');
+        Schema::dropIfExists('user_email_verifications');
     }
 };

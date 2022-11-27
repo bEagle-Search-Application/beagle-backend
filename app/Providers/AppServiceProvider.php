@@ -1,5 +1,7 @@
 <?php
 
+// phpcs:disable
+
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
@@ -29,8 +31,8 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
-            \Beagle\Core\Domain\User\UserVerificationTokenRepository::class,
-            \Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserVerificationTokenRepository::class
+            \Beagle\Core\Domain\User\UserEmailVerificationRepository::class,
+            \Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserEmailVerificationRepository::class
         );
 
         $this->app->bind(

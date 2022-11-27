@@ -3,20 +3,20 @@
 namespace Beagle\Core\Domain\User;
 
 use Beagle\Core\Domain\User\ValueObjects\UserId;
-use Beagle\Core\Domain\User\ValueObjects\UserVerificationTokenId;
+use Beagle\Core\Domain\User\ValueObjects\UserEmailVerificationId;
 use Beagle\Shared\Domain\ValueObjects\Token;
 
-final class UserVerificationToken
+final class UserEmailVerification
 {
     public function __construct(
-        private UserVerificationTokenId $id,
+        private UserEmailVerificationId $id,
         private UserId $userId,
         private Token $token,
     ) {
     }
 
     public static function create(
-        UserVerificationTokenId $id,
+        UserEmailVerificationId $id,
         UserId $userId,
         Token $token
     ):self {
@@ -27,7 +27,7 @@ final class UserVerificationToken
         );
     }
 
-    public function id():UserVerificationTokenId
+    public function id():UserEmailVerificationId
     {
         return $this->id;
     }
