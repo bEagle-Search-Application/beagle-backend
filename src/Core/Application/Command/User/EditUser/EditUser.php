@@ -11,6 +11,7 @@ use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Domain\User\ValueObjects\UserPhone;
 use Beagle\Shared\Bus\Command;
 use Beagle\Shared\Bus\CommandHandler;
+use Beagle\Shared\Bus\EventBus;
 use Beagle\Shared\Domain\Errors\InvalidValueObject;
 use Beagle\Shared\Domain\ValueObjects\Phone;
 use Beagle\Shared\Domain\ValueObjects\PhonePrefix;
@@ -18,8 +19,10 @@ use InvalidArgumentException;
 
 final class EditUser extends CommandHandler
 {
-    public function __construct(private UserRepository $userRepository)
-    {
+    public function __construct(
+        private UserRepository $userRepository,
+        private EventBus $eventBus
+    ) {
     }
 
     /**
@@ -76,6 +79,8 @@ final class EditUser extends CommandHandler
         $userShowReviews ? $user->activeReviews() : $user->disableReviews();
 
         $this->userRepository->save($user);
+
+        $this->eventBus->dispatch(...$user->pullEvents());
     }
 
     /** @throws UserCannotBeEdited */

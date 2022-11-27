@@ -3,6 +3,7 @@
 namespace Beagle\Core\Domain\User;
 
 use Beagle\Core\Domain\User\Event\UserCreated;
+use Beagle\Core\Domain\User\Event\UserEmailEdited;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
@@ -124,7 +125,16 @@ final class User extends Entity
 
     public function updateEmail(UserEmail $userEmail):void
     {
+        $oldEmail = $this->email;
+
         $this->email = $userEmail;
+        $this->recordThat(
+            new UserEmailEdited(
+                $this->id,
+                $oldEmail,
+                $userEmail
+            )
+        );
     }
 
     public function updateName(string $userName):void

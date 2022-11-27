@@ -5,6 +5,7 @@ namespace Tests\Unit\Application\Command\User\EditUser;
 use Beagle\Core\Application\Command\User\EditUser\EditUser;
 use Beagle\Core\Application\Command\User\EditUser\EditUserCommand;
 use Beagle\Core\Domain\User\Errors\UserCannotBeEdited;
+use Beagle\Core\Domain\User\Event\UserEmailEdited;
 use Beagle\Core\Domain\User\User;
 use Beagle\Core\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
 use Beagle\Shared\Domain\Errors\InvalidValueObject;
@@ -18,23 +19,29 @@ use Tests\MotherObjects\User\UserMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserEmailMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserIdMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserPhoneMotherObject;
+use Tests\TestDoubles\Bus\EventBusSpy;
 
 final class EditUserTest extends TestCase
 {
     private InMemoryUserRepository $userRepository;
     private User $user;
     private EditUser $sut;
+    private EventBusSpy $eventBus;
 
     protected function setUp():void
     {
         parent::setUp();
 
         $this->userRepository = new InMemoryUserRepository();
+        $this->eventBus = new EventBusSpy();
 
         $this->user = UserMotherObject::create();
         $this->userRepository->save($this->user);
 
-        $this->sut = new EditUser($this->userRepository);
+        $this->sut = new EditUser(
+            $this->userRepository,
+            $this->eventBus
+        );
     }
 
     /** @dataProvider invalidArgumentsProvider */
@@ -176,5 +183,6 @@ final class EditUserTest extends TestCase
         $this->assertSame($user->location(), $location);
         $this->assertSame($user->bio(), $bio);
         $this->assertSame($user->showReviews(), $showReviews);
+        $this->assertTrue($this->eventBus->eventDispatched(UserEmailEdited::class));
     }
 }

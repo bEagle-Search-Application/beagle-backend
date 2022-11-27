@@ -12,6 +12,7 @@ return [
                 \Beagle\Core\Application\Command\User\RefreshToken\RefreshTokenCommand::class => \Beagle\Core\Application\Command\User\RefreshToken\RefreshToken::class,
                 \Beagle\Core\Application\Command\User\Logout\LogoutCommand::class => \Beagle\Core\Application\Command\User\Logout\Logout::class,
                 \Beagle\Core\Application\Command\User\EditUser\EditUserCommand::class => \Beagle\Core\Application\Command\User\EditUser\EditUser::class,
+                \Beagle\Core\Application\Command\User\SendEmailChangeVerificationEmail\SendEmailChangeVerificationEmailCommand::class => \Beagle\Core\Application\Command\User\SendEmailChangeVerificationEmail\SendEmailChangeVerificationEmail::class,
             ],
         ],
     ],
@@ -28,6 +29,9 @@ return [
             'routes' => [
                 \Beagle\Core\Domain\User\Event\UserCreated::class => [
                     \Beagle\Core\Application\Listener\User\SendEmailVerificationEmail\SendEmailVerificationEmail::class
+                ],
+                \Beagle\Core\Domain\User\Event\UserEmailEdited::class => [
+                    \Beagle\Core\Application\Listener\User\SendEmailChangeVerificationEmail\SendEmailChangeVerification::class
                 ]
             ],
         ],

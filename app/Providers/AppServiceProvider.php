@@ -34,6 +34,11 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
+            \Beagle\Core\Domain\User\UserEmailChangeVerificationRepository::class,
+            \Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserEmailChangeVerificationRepository::class
+        );
+
+        $this->app->bind(
             \Beagle\Core\Infrastructure\Email\EmailSender::class,
             function () {
                 return new \Beagle\Core\Infrastructure\Email\LaravelEmailSender(
@@ -45,7 +50,12 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(
             \Beagle\Core\Infrastructure\Email\Verification\UserVerificationEmailSender::class,
-            \Beagle\Core\Infrastructure\Email\Verification\LaravelUserUserVerificationEmailSender::class
+            \Beagle\Core\Infrastructure\Email\Verification\LaravelUserVerificationEmailSender::class
+        );
+
+        $this->app->bind(
+            \Beagle\Core\Infrastructure\Email\Verification\UserEmailChangeVerificationSender::class,
+            \Beagle\Core\Infrastructure\Email\Verification\LaravelUserEmailChangeVerificationSender::class
         );
 
         $this->app->bind(

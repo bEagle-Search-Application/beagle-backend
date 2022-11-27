@@ -7,9 +7,9 @@ use Beagle\Core\Infrastructure\Email\ComposedEmail;
 use Beagle\Core\Infrastructure\Email\EmailSender;
 use Beagle\Shared\Domain\ValueObjects\Token;
 
-final class LaravelUserUserVerificationEmailSender implements UserVerificationEmailSender
+final class LaravelUserEmailChangeVerificationSender implements UserEmailChangeVerificationSender
 {
-    private const DEFAULT_EMAIL_SUBJECT = "Verificación de email";
+    private const DEFAULT_EMAIL_SUBJECT = "Verificación de cambio de email";
     private const SPA_PATH_TO_VERIFY = "/email-confirmation";
 
     public function __construct(private EmailSender $emailSender)
@@ -21,7 +21,7 @@ final class LaravelUserUserVerificationEmailSender implements UserVerificationEm
         $composedEmail = new ComposedEmail(
             self::DEFAULT_EMAIL_SUBJECT,
             view(
-                'email.verification',
+                'email.change-email-verification',
                 [
                     "urlToAcceptVerification" => \env('SPA_URL')
                                                  . self::SPA_PATH_TO_VERIFY
