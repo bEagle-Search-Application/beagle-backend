@@ -123,7 +123,7 @@ final class User extends Entity
         $this->isVerified = true;
     }
 
-    public function updateEmail(UserEmail $userEmail):void
+    public function updateEmailBeforeVerify(UserEmail $userEmail):void
     {
         $oldEmail = $this->email;
 
@@ -135,6 +135,11 @@ final class User extends Entity
                 $userEmail
             )
         );
+    }
+
+    public function updateEmailAfterVerify(UserEmail $userEmail):void
+    {
+        $this->email = $userEmail;
     }
 
     public function updateName(string $userName):void

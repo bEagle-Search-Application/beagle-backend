@@ -47,4 +47,9 @@ final class UserEmailChangeVerification
     {
         return $this->confirmed;
     }
+
+    public function confirm():void
+    {
+        $this->confirmed = true;
+    }
 }

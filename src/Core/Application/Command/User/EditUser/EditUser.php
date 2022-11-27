@@ -53,7 +53,7 @@ final class EditUser extends CommandHandler
         $user = $this->userRepository->find($userId);
 
         if (!$user->email()->equals($userEmail)) {
-            $user->updateEmail($userEmail);
+            $user->updateEmailBeforeVerify($userEmail);
         }
 
         if (!$user->name() !== $userName) {

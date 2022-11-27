@@ -4,6 +4,7 @@ namespace Beagle\Core\Infrastructure\Persistence\Eloquent\Repository;
 
 use Beagle\Core\Domain\User\UserEmailChangeVerification;
 use Beagle\Core\Domain\User\UserEmailChangeVerificationRepository;
+use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\UserEmailChangeVerificationDao;
 
 final class EloquentUserEmailChangeVerificationRepository implements UserEmailChangeVerificationRepository
@@ -18,5 +19,10 @@ final class EloquentUserEmailChangeVerificationRepository implements UserEmailCh
                 UserEmailChangeVerificationDao::CONFIRMED => $userChangeEmailVerification->confirmed(),
             ]
         );
+    }
+
+    public function find(UserId $userId):UserEmailChangeVerification
+    {
+        throw new \Exception("Not implemented yet");
     }
 }
