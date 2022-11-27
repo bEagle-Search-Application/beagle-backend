@@ -123,15 +123,12 @@ final class User extends Entity
         $this->isVerified = true;
     }
 
-    public function updateEmailBeforeVerify(UserEmail $userEmail):void
+    public function askForEmailChangeValidation(UserEmail $userEmail):void
     {
-        $oldEmail = $this->email;
-
-        $this->email = $userEmail;
         $this->recordThat(
             new UserEmailEdited(
                 $this->id,
-                $oldEmail,
+                $this->email,
                 $userEmail
             )
         );

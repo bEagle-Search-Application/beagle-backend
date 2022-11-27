@@ -176,7 +176,7 @@ final class EditUserTest extends TestCase
 
         $user = $this->userRepository->find($this->user->id());
 
-        $this->assertTrue($user->email()->equals($email));
+        $this->assertFalse($user->email()->equals($email));
         $this->assertSame($user->name(), $name);
         $this->assertSame($user->surname(), $surname);
         $this->assertTrue($user->phone()->equals($userPhone));

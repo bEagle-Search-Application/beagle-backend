@@ -76,6 +76,11 @@ final class AcceptUserEmailChangeVerificationEmailTest extends TestCase
 
     public function testItUserVerifiesEmailChange():void
     {
+        $userWithOldEmail = $this->userRepository->findByEmail(
+            $this->user->email()
+        );
+        $this->assertTrue($userWithOldEmail->email()->equals($this->user->email()));
+
         $this->sut->__invoke(
             new AcceptUserVerificationEmailCommand(
                 $this->user->id()->value(),
@@ -86,11 +91,11 @@ final class AcceptUserEmailChangeVerificationEmailTest extends TestCase
         $expectedUserVerification = $this->userEmailChangeVerificationRepository->find(
             $this->userChangeEmailVerification->userId()
         );
-        $expectedUser = $this->userRepository->findByEmail(
+        $expectedUserWithNewEmail = $this->userRepository->findByEmail(
             $this->user->email()
         );
 
         $this->assertTrue($expectedUserVerification->confirmed());
-        $this->assertTrue($expectedUser->email()->equals($this->userChangeEmailVerification->newEmail()));
+        $this->assertTrue($expectedUserWithNewEmail->email()->equals($this->userChangeEmailVerification->newEmail()));
     }
 }

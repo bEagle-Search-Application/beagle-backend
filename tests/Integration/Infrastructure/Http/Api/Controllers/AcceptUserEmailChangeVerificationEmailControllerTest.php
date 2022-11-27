@@ -115,6 +115,9 @@ final class AcceptUserEmailChangeVerificationEmailControllerTest extends TestCas
 
     public function testItReturnsNoContentResponseIfUserEmailChangeVerifies():void
     {
+        $userWithOldEmail = $this->userRepository->find($this->user->id());
+        $this->assertTrue($userWithOldEmail->email()->equals($this->user->email()));
+
         $token = TokenMotherObject::createAccessToken(
             userId: $this->user->id()
         );
@@ -129,11 +132,11 @@ final class AcceptUserEmailChangeVerificationEmailControllerTest extends TestCas
             )
         );
 
-        $expectedUser = $this->userRepository->find($this->user->id());
+        $expectedUserWithNewEmail = $this->userRepository->find($this->user->id());
         $expectedUserEmailChangeVerification = $this->userEmailChangeVerificationRepository->find($this->user->id());
 
         $this->assertSame(Response::HTTP_NO_CONTENT, $response->status());
         $this->assertTrue($expectedUserEmailChangeVerification->confirmed());
-        $this->assertTrue($expectedUserEmailChangeVerification->newEmail()->equals($expectedUser->email()));
+        $this->assertTrue($expectedUserEmailChangeVerification->newEmail()->equals($expectedUserWithNewEmail->email()));
     }
 }

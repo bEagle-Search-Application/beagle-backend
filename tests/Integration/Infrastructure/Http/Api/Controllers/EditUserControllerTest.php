@@ -167,7 +167,7 @@ final class EditUserControllerTest extends TestCase
         $user = $this->userRepository->find($this->user->id());
 
         $this->assertSame(Response::HTTP_NO_CONTENT, $response->getStatusCode());
-        $this->assertTrue($user->email()->equals($userEmail));
+        $this->assertFalse($user->email()->equals($userEmail));
         $this->assertSame($user->name(), $name);
         $this->assertSame($user->surname(), $surname);
         $this->assertTrue($user->phone()->equals($userPhone));
