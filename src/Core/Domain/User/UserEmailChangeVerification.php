@@ -4,7 +4,6 @@ namespace Beagle\Core\Domain\User;
 
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
-use Beagle\Shared\Domain\ValueObjects\Token;
 
 final class UserEmailChangeVerification
 {
@@ -12,7 +11,6 @@ final class UserEmailChangeVerification
         private UserId $userId,
         private UserEmail $oldEmail,
         private UserEmail $newEmail,
-        private Token $token,
         private bool $confirmed
     ) {
     }
@@ -21,13 +19,11 @@ final class UserEmailChangeVerification
         UserId $userId,
         UserEmail $oldEmail,
         UserEmail $newEmail,
-        Token $token
     ):self {
         return new self(
             $userId,
             $oldEmail,
             $newEmail,
-            $token,
             false
         );
     }
@@ -45,11 +41,6 @@ final class UserEmailChangeVerification
     public function newEmail():UserEmail
     {
         return $this->newEmail;
-    }
-
-    public function token():Token
-    {
-        return $this->token;
     }
 
     public function confirmed():bool

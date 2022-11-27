@@ -15,7 +15,6 @@ final class EloquentUserEmailChangeVerificationRepository implements UserEmailCh
             [
                 UserEmailChangeVerificationDao::OLD_EMAIL => $userChangeEmailVerification->oldEmail()->value(),
                 UserEmailChangeVerificationDao::NEW_EMAIL => $userChangeEmailVerification->newEmail()->value(),
-                UserEmailChangeVerificationDao::TOKEN => $userChangeEmailVerification->token()->value(),
                 UserEmailChangeVerificationDao::CONFIRMED => $userChangeEmailVerification->confirmed(),
             ]
         );

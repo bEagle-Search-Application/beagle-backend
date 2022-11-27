@@ -49,13 +49,12 @@ final class SendEmailChangeVerificationEmail extends CommandHandler
             $userId,
             $oldUserEmail,
             $newUserEmail,
-            $token
         );
 
         $this->userChangeEmailVerificationRepository->save($userVerification);
 
         $this->userEmailChangeVerificationSender->execute(
-            $userVerification->token(),
+            $token,
             $newUserEmail
         );
     }
