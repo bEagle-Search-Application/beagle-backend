@@ -8,19 +8,18 @@ use Beagle\Shared\Domain\Errors\InvalidValueObject;
 use Beagle\Shared\Domain\ValueObjects\Guid;
 use Beagle\Shared\Infrastructure\Http\Api\Controllers\BaseController;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 final class LoginController extends BaseController
 {
-    public function execute(Request $request):JsonResponse
+    public function execute():JsonResponse
     {
         try {
             $response = $this->queryBus->dispatch(
                 new LoginQuery(
                     Guid::v4()->toBase58(),
                     Guid::v4()->toBase58(),
-                    $request->get('email'),
-                    \md5($request->get('password')),
+                    $this->request->get('email'),
+                    \md5($this->request->get('password')),
                 )
             );
 

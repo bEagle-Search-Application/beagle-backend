@@ -3,6 +3,7 @@
 namespace Beagle\Core\Domain\User;
 
 use Beagle\Core\Domain\User\Event\UserCreated;
+use Beagle\Core\Domain\User\Event\UserEmailEdited;
 use Beagle\Core\Domain\User\ValueObjects\UserEmail;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
 use Beagle\Core\Domain\User\ValueObjects\UserPassword;
@@ -120,5 +121,56 @@ final class User extends Entity
     public function verify():void
     {
         $this->isVerified = true;
+    }
+
+    public function askForEmailChangeValidation(UserEmail $userEmail):void
+    {
+        $this->recordThat(
+            new UserEmailEdited(
+                $this->id,
+                $this->email,
+                $userEmail
+            )
+        );
+    }
+
+    public function updateEmailAfterVerify(UserEmail $userEmail):void
+    {
+        $this->email = $userEmail;
+    }
+
+    public function updateName(string $userName):void
+    {
+        $this->name = $userName;
+    }
+
+    public function updateSurname(string $userSurname):void
+    {
+        $this->surname = $userSurname;
+    }
+
+    public function updatePhone(UserPhone $userPhone):void
+    {
+        $this->phone = $userPhone;
+    }
+
+    public function updateLocation(string $userLocation):void
+    {
+        $this->location = $userLocation;
+    }
+
+    public function updateBio(string $userBio):void
+    {
+        $this->bio = $userBio;
+    }
+
+    public function disableReviews():void
+    {
+        $this->showReviews = false;
+    }
+
+    public function activeReviews():void
+    {
+        $this->showReviews = true;
     }
 }

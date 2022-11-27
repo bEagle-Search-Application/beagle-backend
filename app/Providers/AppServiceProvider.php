@@ -1,5 +1,7 @@
 <?php
 
+// phpcs:disable
+
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
@@ -29,8 +31,13 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
-            \Beagle\Core\Domain\User\UserVerificationTokenRepository::class,
-            \Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserVerificationTokenRepository::class
+            \Beagle\Core\Domain\User\UserEmailVerificationRepository::class,
+            \Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserEmailVerificationRepository::class
+        );
+
+        $this->app->bind(
+            \Beagle\Core\Domain\User\UserEmailChangeVerificationRepository::class,
+            \Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserEmailChangeVerificationRepository::class
         );
 
         $this->app->bind(
@@ -45,7 +52,12 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(
             \Beagle\Core\Infrastructure\Email\Verification\UserVerificationEmailSender::class,
-            \Beagle\Core\Infrastructure\Email\Verification\LaravelUserUserVerificationEmailSender::class
+            \Beagle\Core\Infrastructure\Email\Verification\LaravelUserVerificationEmailSender::class
+        );
+
+        $this->app->bind(
+            \Beagle\Core\Infrastructure\Email\Verification\UserEmailChangeVerificationSender::class,
+            \Beagle\Core\Infrastructure\Email\Verification\LaravelUserEmailChangeVerificationSender::class
         );
 
         $this->app->bind(

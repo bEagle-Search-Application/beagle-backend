@@ -5,22 +5,22 @@ namespace Tests\Unit\Application\Command\User\SendEmailVerificationEmail;
 use Beagle\Core\Application\Command\User\SendEmailVerificationEmail\SendEmailVerificationEmail;
 use Beagle\Core\Application\Command\User\SendEmailVerificationEmail\SendEmailVerificationEmailCommand;
 use Beagle\Core\Domain\User\Errors\UserNotFound;
-use Beagle\Core\Domain\User\UserVerificationTokenRepository;
+use Beagle\Core\Domain\User\UserEmailVerificationRepository;
 use Beagle\Core\Infrastructure\Persistence\InMemory\Repository\InMemoryUserRepository;
-use Beagle\Core\Infrastructure\Persistence\InMemory\Repository\InMemoryUserVerificationTokenRepository;
+use Beagle\Core\Infrastructure\Persistence\InMemory\Repository\InMemoryUserEmailVerificationRepository;
 use Beagle\Shared\Domain\Errors\InvalidEmail;
 use Beagle\Shared\Infrastructure\Token\JwtTokenService;
 use PHPUnit\Framework\TestCase;
 use Tests\MotherObjects\IdMotherObject;
 use Tests\MotherObjects\User\UserMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserEmailMotherObject;
-use Tests\MotherObjects\User\ValueObjects\UserVerificationTokenIdMotherObject;
+use Tests\MotherObjects\User\ValueObjects\UserEmailVerificationIdMotherObject;
 use Tests\TestDoubles\Infrastructure\Email\Verification\SpyUserVerificationEmailSender;
 
 final class SendEmailVerificationEmailTest extends TestCase
 {
     private SendEmailVerificationEmail $sut;
-    private UserVerificationTokenRepository $userVerificationRepository;
+    private UserEmailVerificationRepository $userVerificationRepository;
     private SpyUserVerificationEmailSender $spyUserVerificationEmailSender;
     private InMemoryUserRepository $userRepository;
 
@@ -30,7 +30,7 @@ final class SendEmailVerificationEmailTest extends TestCase
 
         $this->userRepository = new InMemoryUserRepository();
         $tokenService = new JwtTokenService();
-        $this->userVerificationRepository = new InMemoryUserVerificationTokenRepository();
+        $this->userVerificationRepository = new InMemoryUserEmailVerificationRepository();
         $this->spyUserVerificationEmailSender = new SpyUserVerificationEmailSender();
 
         $this->sut = new SendEmailVerificationEmail(
@@ -70,7 +70,7 @@ final class SendEmailVerificationEmailTest extends TestCase
         $user = UserMotherObject::create();
         $this->userRepository->save($user);
 
-        $userVerificationId = UserVerificationTokenIdMotherObject::create();
+        $userVerificationId = UserEmailVerificationIdMotherObject::create();
 
         $this->sut->__invoke(
             new SendEmailVerificationEmailCommand(

@@ -3,7 +3,7 @@
 namespace Beagle\Core\Domain\User\Errors;
 
 use Beagle\Core\Domain\User\ValueObjects\UserId;
-use Beagle\Core\Domain\User\ValueObjects\UserVerificationTokenId;
+use Beagle\Core\Domain\User\ValueObjects\UserEmailVerificationId;
 
 final class UserVerificationNotFound extends \Exception
 {
@@ -15,7 +15,7 @@ final class UserVerificationNotFound extends \Exception
         return new self(\sprintf(self::INVALID_USER_ID, $userId->value()));
     }
 
-    public static function byId(UserVerificationTokenId $userVerificationTokenId):self
+    public static function byId(UserEmailVerificationId $userVerificationTokenId):self
     {
         return new self(\sprintf(self::INVALID_ID, $userVerificationTokenId->value()));
     }

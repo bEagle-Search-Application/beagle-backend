@@ -2,38 +2,38 @@
 
 namespace Tests\MotherObjects\User;
 
-use Beagle\Core\Domain\User\UserVerificationToken;
+use Beagle\Core\Domain\User\UserEmailVerification;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
-use Beagle\Core\Domain\User\ValueObjects\UserVerificationTokenId;
+use Beagle\Core\Domain\User\ValueObjects\UserEmailVerificationId;
 use Beagle\Shared\Domain\ValueObjects\Token;
 use Tests\MotherObjects\TokenMotherObject;
 use Tests\MotherObjects\User\ValueObjects\UserIdMotherObject;
-use Tests\MotherObjects\User\ValueObjects\UserVerificationTokenIdMotherObject;
+use Tests\MotherObjects\User\ValueObjects\UserEmailVerificationIdMotherObject;
 
-final class UserVerificationTokenMotherObject
+final class UserEmailVerificationMotherObject
 {
     public static function create(
-        ?UserVerificationTokenId $id = null,
+        ?UserEmailVerificationId $id = null,
         ?UserId $userId = null,
         ?Token $token = null,
-    ):UserVerificationToken {
+    ):UserEmailVerification {
         $userId = $userId ?? UserIdMotherObject::create();
 
-        return new UserVerificationToken(
-            $id ?? UserVerificationTokenIdMotherObject::create(),
+        return new UserEmailVerification(
+            $id ?? UserEmailVerificationIdMotherObject::create(),
             $userId,
             $token ?? TokenMotherObject::createAccessToken($userId)
         );
     }
 
     public static function createExpiredAccessToken(
-        ?UserVerificationTokenId $id = null,
+        ?UserEmailVerificationId $id = null,
         ?UserId $userId = null
-    ):UserVerificationToken {
+    ):UserEmailVerification {
         $userId = $userId ?? UserIdMotherObject::create();
 
-        return new UserVerificationToken(
-            $id ?? UserVerificationTokenIdMotherObject::create(),
+        return new UserEmailVerification(
+            $id ?? UserEmailVerificationIdMotherObject::create(),
             $userId,
             $token ?? TokenMotherObject::createExpiredAccessToken($userId)
         );

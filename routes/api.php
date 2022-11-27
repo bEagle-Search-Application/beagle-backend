@@ -16,12 +16,19 @@ use Illuminate\Support\Facades\Route;
 */
 Route::middleware(['api'])->group(function(){
     Route::prefix('users')->group(function () {
-        Route::post('/verify/{token}',
+        Route::post('{userId}/verify/{token}',
             [
                 \Beagle\Core\Infrastructure\Http\Api\Controllers\User\AcceptUserVerificationEmailController::class,
                 'execute'
             ]
         )->name('api.users-verify');
+
+        Route::post('{userId}/verify-email-change/{token}',
+            [
+                \Beagle\Core\Infrastructure\Http\Api\Controllers\User\AcceptUserEmailChangeVerificationEmailController::class,
+                'execute'
+            ]
+        )->name('api.users-verify-email-change');
 
         Route::get(
             '/{userId}', [
@@ -29,6 +36,13 @@ Route::middleware(['api'])->group(function(){
                 'execute',
             ]
         )->name('api.get-user')->middleware(['verify.access.token']);
+
+        Route::put(
+            '/{userId}', [
+                \Beagle\Core\Infrastructure\Http\Api\Controllers\User\EditUserController::class,
+                'execute',
+            ]
+        )->name('api.edit-user')->middleware(['verify.access.token']);
     });
 
     Route::prefix('auth')->group(function () {

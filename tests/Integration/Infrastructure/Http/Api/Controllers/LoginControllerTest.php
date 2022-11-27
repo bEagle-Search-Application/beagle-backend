@@ -57,7 +57,7 @@ final class LoginControllerTest extends TestCase
             ]
         );
 
-        $decodedResponse = $this->decodeResponse($response->getContent());
+        $decodedResponse = $response->decodeResponseJson();
 
         $this->assertSame(Response::HTTP_BAD_REQUEST, $response->status());
         $this->assertSame(
@@ -76,7 +76,6 @@ final class LoginControllerTest extends TestCase
             ]
         );
 
-        $decodedResponse = $this->decodeResponse($response->getContent());
         $userLogged = $this->userRepository->findByEmailAndPassword(
             $this->user->email(),
             $this->user->password()
@@ -86,7 +85,7 @@ final class LoginControllerTest extends TestCase
         $personalRefreshToken = $this->personalRefreshTokenRepository->findByUserId($userLogged->id());
 
         $this->assertSame(Response::HTTP_OK, $response->status());
-        $this->assertSame(
+        $response->assertExactJson(
             [
                 "response" => [
                     "user" => [
@@ -109,8 +108,7 @@ final class LoginControllerTest extends TestCase
                     ],
                 ],
                 "status" => Response::HTTP_OK
-            ],
-            $decodedResponse
+            ]
         );
     }
 }

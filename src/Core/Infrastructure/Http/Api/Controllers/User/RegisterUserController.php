@@ -7,16 +7,15 @@ use Beagle\Core\Domain\User\Errors\CannotSaveUser;
 use Beagle\Shared\Domain\Errors\InvalidValueObject;
 use Beagle\Shared\Infrastructure\Http\Api\Controllers\BaseController;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\Uid\Uuid;
 
 final class RegisterUserController extends BaseController
 {
-    public function execute(Request $request):JsonResponse
+    public function execute():JsonResponse
     {
         try {
-            $request->validate([
+            $this->request->validate([
                 "email" => 'required|email',
                 "password" => 'required|min:8',
                 "name" => 'required',
@@ -28,12 +27,12 @@ final class RegisterUserController extends BaseController
             $this->commandBus->dispatch(
                 new RegisterUserCommand(
                     Uuid::v4()->toBase58(),
-                    $request->get('email'),
-                    \md5($request->get('password')),
-                    $request->get('name'),
-                    $request->get('surname'),
-                    $request->get('phone_prefix'),
-                    $request->get('phone'),
+                    $this->request->get('email'),
+                    \md5($this->request->get('password')),
+                    $this->request->get('name'),
+                    $this->request->get('surname'),
+                    $this->request->get('phone_prefix'),
+                    $this->request->get('phone'),
                 )
             );
 

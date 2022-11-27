@@ -3,30 +3,30 @@
 namespace Beagle\Core\Infrastructure\Persistence\InMemory\Repository;
 
 use Beagle\Core\Domain\User\Errors\UserVerificationNotFound;
-use Beagle\Core\Domain\User\UserVerificationToken;
-use Beagle\Core\Domain\User\UserVerificationTokenRepository;
+use Beagle\Core\Domain\User\UserEmailVerification;
+use Beagle\Core\Domain\User\UserEmailVerificationRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
-use Beagle\Core\Domain\User\ValueObjects\UserVerificationTokenId;
+use Beagle\Core\Domain\User\ValueObjects\UserEmailVerificationId;
 
-final class InMemoryUserVerificationTokenRepository implements UserVerificationTokenRepository
+final class InMemoryUserEmailVerificationRepository implements UserEmailVerificationRepository
 {
-    /** @var UserVerificationToken[]  */
+    /** @var UserEmailVerification[]  */
     private array $userVerifications = [];
 
-    public function save(UserVerificationToken $userVerificationToken):void
+    public function save(UserEmailVerification $userEmailVerification):void
     {
         foreach ($this->userVerifications as $key => $userVerification) {
-            if ($userVerification->userId()->equals($userVerificationToken->userId())) {
-                $this->userVerifications[$key] = $userVerificationToken;
+            if ($userVerification->userId()->equals($userEmailVerification->userId())) {
+                $this->userVerifications[$key] = $userEmailVerification;
                 return;
             }
         }
 
-        $this->userVerifications[] = $userVerificationToken;
+        $this->userVerifications[] = $userEmailVerification;
     }
 
     /** @throws UserVerificationNotFound */
-    public function findByUserId(UserId $userId):UserVerificationToken
+    public function findByUserId(UserId $userId):UserEmailVerification
     {
         foreach ($this->userVerifications as $userVerification) {
             if ($userVerification->userId()->equals($userId)) {
@@ -37,7 +37,7 @@ final class InMemoryUserVerificationTokenRepository implements UserVerificationT
         throw UserVerificationNotFound::byUserId($userId);
     }
 
-    public function find(UserVerificationTokenId $userVerificationTokenId):UserVerificationToken
+    public function find(UserEmailVerificationId $userVerificationTokenId):UserEmailVerification
     {
         foreach ($this->userVerifications as $userVerification) {
             if ($userVerification->id()->equals($userVerificationTokenId)) {

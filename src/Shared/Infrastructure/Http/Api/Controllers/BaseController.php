@@ -5,14 +5,19 @@ namespace Beagle\Shared\Infrastructure\Http\Api\Controllers;
 use App\Http\Controllers\Controller;
 use Beagle\Shared\Bus\CommandBus;
 use Beagle\Shared\Bus\QueryBus;
+use Beagle\Shared\Domain\ValueObjects\Token;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class BaseController extends Controller
 {
+    private const AUTHORIZATION_HEADER_KEY = 'authorization';
+
     public function __construct(
         protected CommandBus $commandBus,
-        protected QueryBus $queryBus
+        protected QueryBus $queryBus,
+        protected Request $request
     ) {
     }
 
@@ -70,5 +75,14 @@ class BaseController extends Controller
             ],
             $code
         );
+    }
+
+    protected function getUserIdFromToken():string
+    {
+        $payload = Token::getPayload(
+            \explode(" ", $this->request->header(self::AUTHORIZATION_HEADER_KEY))[1]
+        );
+
+        return $payload['uid'];
     }
 }

@@ -59,7 +59,7 @@ final class LogoutControllerTest extends TestCase
             ]
         );
 
-        $decodedResponse = $this->decodeResponse($response->getContent());
+        $decodedResponse = $response->decodeResponseJson();
 
         $this->assertSame(Response::HTTP_UNAUTHORIZED, $response->status());
         $this->assertSame("El token ha caducado", $decodedResponse["response"]);
@@ -79,7 +79,7 @@ final class LogoutControllerTest extends TestCase
             ]
         );
 
-        $decodedResponse = $this->decodeResponse($response->getContent());
+        $decodedResponse = $response->decodeResponseJson();
 
         $this->assertSame(Response::HTTP_FORBIDDEN, $response->status());
         $this->assertSame(

@@ -4,28 +4,29 @@ namespace Tests\Integration\Infrastructure\Http\Api\Controllers;
 
 use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
-use Beagle\Core\Domain\User\UserVerificationToken;
-use Beagle\Core\Domain\User\UserVerificationTokenRepository;
+use Beagle\Core\Domain\User\UserEmailVerification;
+use Beagle\Core\Domain\User\UserEmailVerificationRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserRepository;
-use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserVerificationTokenRepository;
+use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserEmailVerificationRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\MotherObjects\User\UserMotherObject;
-use Tests\MotherObjects\User\UserVerificationTokenMotherObject;
+use Tests\MotherObjects\User\UserEmailVerificationMotherObject;
+use Tests\MotherObjects\User\ValueObjects\UserIdMotherObject;
 use Tests\TestCase;
 
 final class AcceptUserVerificationEmailControllerTest extends TestCase
 {
     private UserRepository $userRepository;
-    private UserVerificationTokenRepository $userVerificationRepository;
+    private UserEmailVerificationRepository $userVerificationRepository;
     private User $user;
-    private UserVerificationToken $userVerification;
+    private UserEmailVerification $userVerification;
 
     protected function setUp():void
     {
         parent::setUp();
 
         $this->userRepository = $this->app->make(EloquentUserRepository::class);
-        $this->userVerificationRepository = $this->app->make(EloquentUserVerificationTokenRepository::class);
+        $this->userVerificationRepository = $this->app->make(EloquentUserEmailVerificationRepository::class);
 
         $this->user = UserMotherObject::create();
         $this->userRepository->save($this->user);
@@ -37,24 +38,52 @@ final class AcceptUserVerificationEmailControllerTest extends TestCase
     {
         $userId = $this->user->id();
 
-        $this->userVerification = UserVerificationTokenMotherObject::create(userId: $userId);
+        $this->userVerification = UserEmailVerificationMotherObject::create(userId: $userId);
         $this->userVerificationRepository->save($this->userVerification);
     }
 
-    public function testItReturnsForbiddenResponseIfUserVerificationDoesNotExists():void
+    public function testItReturnsForbiddenResponseIfAuthorAndUserAreNotTheSame():void
     {
-        $userVerificationToken = UserVerificationTokenMotherObject::create();
+        $userVerificationToken = UserEmailVerificationMotherObject::create();
+        $userId = UserIdMotherObject::create();
 
         $response = $this->post(
             \route(
                 'api.users-verify',
                 [
+                    "userId" => $userId->value(),
                     "token" => $userVerificationToken->token()->value(),
                 ]
             )
         );
 
-        $decodedResponse = $this->decodeResponse($response->getContent());
+        $decodedResponse = $response->decodeResponseJson();
+
+        $this->assertSame(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertSame(
+            \sprintf(
+                "El usuario %s no puede validar este email",
+                $userId->value()
+            ),
+            $decodedResponse["response"]
+        );
+    }
+
+    public function testItReturnsForbiddenResponseIfUserVerificationDoesNotExists():void
+    {
+        $userVerificationToken = UserEmailVerificationMotherObject::create();
+
+        $response = $this->post(
+            \route(
+                'api.users-verify',
+                [
+                    "userId" => $userVerificationToken->userId()->value(),
+                    "token" => $userVerificationToken->token()->value(),
+                ]
+            )
+        );
+
+        $decodedResponse = $response->decodeResponseJson();
 
         $this->assertSame(Response::HTTP_FORBIDDEN, $response->status());
         $this->assertSame(
@@ -72,6 +101,7 @@ final class AcceptUserVerificationEmailControllerTest extends TestCase
             \route(
                 'api.users-verify',
                 [
+                    "userId" => UserIdMotherObject::create()->value(),
                     "token" => "ehfoiregierg48743034htkjfnj",
                 ]
             )
@@ -82,7 +112,7 @@ final class AcceptUserVerificationEmailControllerTest extends TestCase
 
     public function testItReturnsUnauthorizedResponseIfUserVerificationExpired():void
     {
-        $expiredUserVerification = UserVerificationTokenMotherObject::createExpiredAccessToken(
+        $expiredUserVerification = UserEmailVerificationMotherObject::createExpiredAccessToken(
             userId: $this->user->id()
         );
         $this->userVerificationRepository->save($expiredUserVerification);
@@ -91,12 +121,13 @@ final class AcceptUserVerificationEmailControllerTest extends TestCase
             \route(
                 'api.users-verify',
                 [
+                    "userId" => UserIdMotherObject::create()->value(),
                     "token" => $expiredUserVerification->token()->value(),
                 ]
             )
         );
 
-        $decodedResponse = $this->decodeResponse($response->getContent());
+        $decodedResponse = $response->decodeResponseJson();
 
         $this->assertSame(Response::HTTP_UNAUTHORIZED, $response->status());
         $this->assertSame("El token ha caducado", $decodedResponse["response"]);
@@ -108,6 +139,7 @@ final class AcceptUserVerificationEmailControllerTest extends TestCase
             \route(
                 'api.users-verify',
                 [
+                    "userId" => $this->user->id()->value(),
                     "token" => $this->userVerification->token()->value(),
                 ]
             )

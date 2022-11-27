@@ -16,42 +16,39 @@ use Beagle\Shared\Domain\ValueObjects\Guid;
 use Beagle\Shared\Infrastructure\Http\Api\Controllers\BaseController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use ReallySimpleJWT\Token;
 
 final class RefreshTokenController extends BaseController
 {
     public function __construct(
         protected CommandBus $commandBus,
         protected QueryBus $queryBus,
+        Request $request,
         private PersonalAccessTokenRepository $personalAccessTokenRepository
     ) {
-        parent::__construct($this->commandBus, $this->queryBus);
+        parent::__construct($this->commandBus, $this->queryBus, $request);
     }
 
     /**
-     * @param Request $request
-     *
-     * @return JsonResponse
      * @throws InvalidTokenSignature
      * @throws TokenExpired
      * @throws InvalidPersonalAccessToken
      * @throws PersonalAccessTokenNotFound
      */
-    public function execute(Request $request):JsonResponse
+    public function execute():JsonResponse
     {
         try {
-            $token = $this->tokenFromHeaderAsString($request->header('authorization'));
-            $userIdAsString = Token::getPayload($token)['uid'];
-            $userId = UserId::fromString($userIdAsString);
+            $userId = $this->getUserIdFromToken();
 
             $this->commandBus->dispatch(
                 new RefreshTokenCommand(
-                    $userId->value(),
+                    $userId,
                     Guid::v4()->toBase58()
                 )
             );
 
-            $personalAccessToken = $this->personalAccessTokenRepository->findByUserId($userId);
+            $personalAccessToken = $this->personalAccessTokenRepository->findByUserId(
+                UserId::fromString($userId)
+            );
 
             return $this->generateSuccessfulResponse(
                 [
@@ -61,10 +58,5 @@ final class RefreshTokenController extends BaseController
         } catch (UserNotFound $notFound) {
             return $this->generateForbiddenResponse($notFound->getMessage());
         }
-    }
-
-    private function tokenFromHeaderAsString(string $header):string
-    {
-        return \explode(" ", $header)[1];
     }
 }

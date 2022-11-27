@@ -4,9 +4,9 @@ namespace Tests\Integration\Infrastructure\Http\Api\Controllers;
 
 use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
-use Beagle\Core\Domain\User\UserVerificationTokenRepository;
+use Beagle\Core\Domain\User\UserEmailVerificationRepository;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserRepository;
-use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserVerificationTokenRepository;
+use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserEmailVerificationRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\MotherObjects\StringMotherObject;
 use Tests\MotherObjects\User\UserMotherObject;
@@ -19,7 +19,7 @@ final class RegisterUserControllerTest extends TestCase
 {
     private User $user;
     private UserRepository $userRepository;
-    private UserVerificationTokenRepository $userVerificationRepository;
+    private UserEmailVerificationRepository $userVerificationRepository;
     private string $userPasswordWithoutHash;
 
     protected function setUp():void
@@ -27,7 +27,7 @@ final class RegisterUserControllerTest extends TestCase
         parent::setUp();
 
         $this->userRepository = $this->app->make(EloquentUserRepository::class);
-        $this->userVerificationRepository = $this->app->make(EloquentUserVerificationTokenRepository::class);
+        $this->userVerificationRepository = $this->app->make(EloquentUserEmailVerificationRepository::class);
 
         $this->prepareUserForRegister();
     }
@@ -66,7 +66,7 @@ final class RegisterUserControllerTest extends TestCase
             ]
         );
 
-        $decodedResponse = $this->decodeResponse($response->getContent());
+        $decodedResponse = $response->decodeResponseJson();
 
         $this->assertSame(Response::HTTP_BAD_REQUEST, $response->status());
         $this->assertSame(
@@ -170,7 +170,7 @@ final class RegisterUserControllerTest extends TestCase
             ]
         );
 
-        $decodedResponse = $this->decodeResponse($response->getContent());
+        $decodedResponse = $response->decodeResponseJson();
 
         $this->assertSame(Response::HTTP_BAD_REQUEST, $response->status());
         $this->assertSame(

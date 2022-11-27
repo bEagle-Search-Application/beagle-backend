@@ -11,14 +11,12 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up():void
+    public function up()
     {
-        Schema::create('user_email_changes', function (Blueprint $table) {
-            $table->string('user_id')->primary();
-            $table->string('old_email');
-            $table->string('new_email');
-            $table->string('token', 300)->unique();
-            $table->boolean('confirmed');
+        Schema::create('user_email_verifications', function (Blueprint $table) {
+            $table->string('id')->primary();
+            $table->string("user_id");
+            $table->string("token", 300)->unique();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
@@ -30,8 +28,8 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down():void
+    public function down()
     {
-        Schema::dropIfExists('user_email_changes');
+        Schema::dropIfExists('user_email_verifications');
     }
 };

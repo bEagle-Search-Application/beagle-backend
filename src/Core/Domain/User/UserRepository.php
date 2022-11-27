@@ -30,5 +30,5 @@ interface UserRepository
      * @throws UserNotFound
      * @throws InvalidValueObject
      */
-    public function find(UserId $userId);
+    public function find(UserId $userId):User;
 }

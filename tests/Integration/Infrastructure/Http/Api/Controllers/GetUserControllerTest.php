@@ -64,10 +64,8 @@ final class GetUserControllerTest extends TestCase
             ]
         );
 
-        $decodedResponse = $this->decodeResponse($response->getContent());
-
         $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
-        $this->assertSame(
+        $response->assertExactJson(
             [
                 "response" => [
                     "id" => $this->user->id()->value(),
@@ -84,8 +82,7 @@ final class GetUserControllerTest extends TestCase
                     "is_verified" => $this->user->isVerified(),
                 ],
                 "status" => Response::HTTP_OK,
-            ],
-            $decodedResponse
+            ]
         );
     }
 }
