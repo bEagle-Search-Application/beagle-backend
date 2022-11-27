@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 Route::middleware(['api'])->group(function(){
     Route::prefix('users')->group(function () {
-        Route::post('/verify/{token}',
+        Route::post('{userId}/verify/{token}',
             [
                 \Beagle\Core\Infrastructure\Http\Api\Controllers\User\AcceptUserVerificationEmailController::class,
                 'execute'

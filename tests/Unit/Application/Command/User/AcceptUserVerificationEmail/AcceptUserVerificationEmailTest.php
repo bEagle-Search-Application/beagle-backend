@@ -4,6 +4,7 @@ namespace Tests\Unit\Application\Command\User\AcceptUserVerificationEmail;
 
 use Beagle\Core\Application\Command\User\AcceptUserVerificationEmail\AcceptUserVerificationEmail;
 use Beagle\Core\Application\Command\User\AcceptUserVerificationEmail\AcceptUserVerificationEmailCommand;
+use Beagle\Core\Domain\User\Errors\UserCannotBeValidated;
 use Beagle\Core\Domain\User\Errors\UserVerificationNotFound;
 use Beagle\Core\Domain\User\User;
 use Beagle\Core\Domain\User\UserRepository;
@@ -44,13 +45,28 @@ final class AcceptUserVerificationEmailTest extends TestCase
         );
     }
 
+    public function testItThrowsUserCannotBeValidatedExceptionIfAuthorAndUSerAreNotTheSame():void
+    {
+        $this->expectException(UserCannotBeValidated::class);
+
+        $this->sut->__invoke(
+            new AcceptUserVerificationEmailCommand(
+                UserIdMotherObject::create()->value(),
+                UserIdMotherObject::create()->value(),
+            )
+        );
+    }
+
     public function testItThrowsUserVerificationNotFoundException():void
     {
         $this->expectException(UserVerificationNotFound::class);
 
+        $userId = UserIdMotherObject::create();
+
         $this->sut->__invoke(
             new AcceptUserVerificationEmailCommand(
-                UserIdMotherObject::create()->value()
+                $userId->value(),
+                $userId->value(),
             )
         );
     }
@@ -59,6 +75,7 @@ final class AcceptUserVerificationEmailTest extends TestCase
     {
         $this->sut->__invoke(
             new AcceptUserVerificationEmailCommand(
+                $this->user->id()->value(),
                 $this->user->id()->value()
             )
         );

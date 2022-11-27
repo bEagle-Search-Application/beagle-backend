@@ -3,6 +3,7 @@
 namespace Beagle\Core\Application\Command\User\AcceptUserVerificationEmail;
 
 use Beagle\Core\Domain\User\Errors\CannotSaveUser;
+use Beagle\Core\Domain\User\Errors\UserCannotBeValidated;
 use Beagle\Core\Domain\User\Errors\UserNotFound;
 use Beagle\Core\Domain\User\Errors\UserVerificationNotFound;
 use Beagle\Core\Domain\User\UserRepository;
@@ -24,6 +25,7 @@ final class AcceptUserVerificationEmail extends CommandHandler
     /**
      * @param AcceptUserVerificationEmailCommand $command
      *
+     * @throws UserCannotBeValidated
      * @throws TokenExpired
      * @throws InvalidValueObject
      * @throws UserVerificationNotFound
@@ -32,11 +34,23 @@ final class AcceptUserVerificationEmail extends CommandHandler
      */
     protected function handle(Command $command):void
     {
+        $authorId = UserId::fromString($command->authorId());
         $userId = UserId::fromString($command->userId());
+
+        $this->ensureIfAuthorIsTheSameThatUserToValidate($authorId, $userId);
+
         $this->userEmailVerificationRepository->findByUserId($userId);
 
         $user = $this->userRepository->find($userId);
         $user->verify();
         $this->userRepository->save($user);
+    }
+
+    /** @throws UserCannotBeValidated */
+    private function ensureIfAuthorIsTheSameThatUserToValidate(UserId $authorId, UserId $userId)
+    {
+        if (!$authorId->equals($userId)) {
+            throw UserCannotBeValidated::byUser($authorId);
+        }
     }
 }

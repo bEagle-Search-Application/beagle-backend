@@ -51,7 +51,7 @@ final class SendEmailVerificationEmail extends CommandHandler
 
         $this->verificationEmailSender->execute(
             $userVerification->token(),
-            $user->email()
+            $user
         );
     }
 }

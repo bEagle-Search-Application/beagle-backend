@@ -10,12 +10,18 @@ security:
   - bearerAuth: []
 
 paths:
-  /users/verify/{token}:
+  /users/{userId}/verify/{token}:
     post:
       tags:
         - User
       description: Verify user email
       parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+            example: "TDQJK8vX8ec6FMq49g6EoN"
         - in: path
           name: token
           required: true

@@ -11,6 +11,7 @@ use Beagle\Core\Infrastructure\Persistence\Eloquent\Repository\EloquentUserEmail
 use Symfony\Component\HttpFoundation\Response;
 use Tests\MotherObjects\User\UserMotherObject;
 use Tests\MotherObjects\User\UserEmailVerificationMotherObject;
+use Tests\MotherObjects\User\ValueObjects\UserIdMotherObject;
 use Tests\TestCase;
 
 final class AcceptUserVerificationEmailControllerTest extends TestCase
@@ -41,6 +42,33 @@ final class AcceptUserVerificationEmailControllerTest extends TestCase
         $this->userVerificationRepository->save($this->userVerification);
     }
 
+    public function testItReturnsForbiddenResponseIfAuthorAndUserAreNotTheSame():void
+    {
+        $userVerificationToken = UserEmailVerificationMotherObject::create();
+        $userId = UserIdMotherObject::create();
+
+        $response = $this->post(
+            \route(
+                'api.users-verify',
+                [
+                    "userId" => $userId->value(),
+                    "token" => $userVerificationToken->token()->value(),
+                ]
+            )
+        );
+
+        $decodedResponse = $response->decodeResponseJson();
+
+        $this->assertSame(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertSame(
+            \sprintf(
+                "El usuario %s no puede validar este email",
+                $userId->value()
+            ),
+            $decodedResponse["response"]
+        );
+    }
+
     public function testItReturnsForbiddenResponseIfUserVerificationDoesNotExists():void
     {
         $userVerificationToken = UserEmailVerificationMotherObject::create();
@@ -49,6 +77,7 @@ final class AcceptUserVerificationEmailControllerTest extends TestCase
             \route(
                 'api.users-verify',
                 [
+                    "userId" => $userVerificationToken->userId()->value(),
                     "token" => $userVerificationToken->token()->value(),
                 ]
             )
@@ -72,6 +101,7 @@ final class AcceptUserVerificationEmailControllerTest extends TestCase
             \route(
                 'api.users-verify',
                 [
+                    "userId" => UserIdMotherObject::create()->value(),
                     "token" => "ehfoiregierg48743034htkjfnj",
                 ]
             )
@@ -91,6 +121,7 @@ final class AcceptUserVerificationEmailControllerTest extends TestCase
             \route(
                 'api.users-verify',
                 [
+                    "userId" => UserIdMotherObject::create()->value(),
                     "token" => $expiredUserVerification->token()->value(),
                 ]
             )
@@ -108,6 +139,7 @@ final class AcceptUserVerificationEmailControllerTest extends TestCase
             \route(
                 'api.users-verify',
                 [
+                    "userId" => $this->user->id()->value(),
                     "token" => $this->userVerification->token()->value(),
                 ]
             )
