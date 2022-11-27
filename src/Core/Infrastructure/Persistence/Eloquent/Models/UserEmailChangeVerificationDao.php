@@ -19,6 +19,7 @@ class UserEmailChangeVerificationDao extends Model
         'new_email',
         'confirmed'
     ];
+    protected $primaryKey = self::USER_ID;
 
     public $incrementing = false;
 }

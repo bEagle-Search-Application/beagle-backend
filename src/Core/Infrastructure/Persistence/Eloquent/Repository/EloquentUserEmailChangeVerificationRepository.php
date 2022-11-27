@@ -2,13 +2,21 @@
 
 namespace Beagle\Core\Infrastructure\Persistence\Eloquent\Repository;
 
+use Beagle\Core\Domain\User\Errors\UserEmailChangeVerificationNotFound;
 use Beagle\Core\Domain\User\UserEmailChangeVerification;
 use Beagle\Core\Domain\User\UserEmailChangeVerificationRepository;
 use Beagle\Core\Domain\User\ValueObjects\UserId;
+use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\DataTransformers\UserEmailChangeVerificationDataTransformer;
 use Beagle\Core\Infrastructure\Persistence\Eloquent\Models\UserEmailChangeVerificationDao;
+use Beagle\Shared\Domain\Errors\InvalidEmail;
 
 final class EloquentUserEmailChangeVerificationRepository implements UserEmailChangeVerificationRepository
 {
+    public function __construct(
+        private UserEmailChangeVerificationDataTransformer $userEmailChangeVerificationDataTransformer
+    ) {
+    }
+
     public function save(UserEmailChangeVerification $userChangeEmailVerification):void
     {
         UserEmailChangeVerificationDao::updateOrCreate(
@@ -21,8 +29,21 @@ final class EloquentUserEmailChangeVerificationRepository implements UserEmailCh
         );
     }
 
+    /**
+     * @throws InvalidEmail
+     * @throws UserEmailChangeVerificationNotFound
+     */
     public function find(UserId $userId):UserEmailChangeVerification
     {
-        throw new \Exception("Not implemented yet");
+        $userEmailChangeVerificationDao = UserEmailChangeVerificationDao::where(
+            UserEmailChangeVerificationDao::USER_ID,
+            $userId->value()
+        )->first();
+
+        if ($userEmailChangeVerificationDao === null) {
+            throw UserEmailChangeVerificationNotFound::byUserId($userId);
+        }
+
+        return $this->userEmailChangeVerificationDataTransformer->fromDao($userEmailChangeVerificationDao);
     }
 }

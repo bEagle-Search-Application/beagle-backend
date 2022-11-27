@@ -23,6 +23,13 @@ Route::middleware(['api'])->group(function(){
             ]
         )->name('api.users-verify');
 
+        Route::post('{userId}/verify-email-change/{token}',
+            [
+                \Beagle\Core\Infrastructure\Http\Api\Controllers\User\AcceptUserEmailChangeVerificationEmailController::class,
+                'execute'
+            ]
+        )->name('api.users-verify-email-change');
+
         Route::get(
             '/{userId}', [
                 \Beagle\Core\Infrastructure\Http\Api\Controllers\User\GetUserController::class,

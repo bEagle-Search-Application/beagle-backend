@@ -6,8 +6,8 @@ use Beagle\Core\Domain\User\ValueObjects\UserId;
 
 final class UserEmailChangeCannotBeValidated extends \Exception
 {
-    private const USER_EMAIL_CHANGE_CANNOT_BE_VALIDATE = "El usuario %s no puede
-                                                          validar esta confirmación de cambio de email";
+    private const USER_EMAIL_CHANGE_CANNOT_BE_VALIDATE =
+        "El usuario %s no puede validar esta confirmación de cambio de email";
 
     public static function byUser(UserId $authorId):self
     {

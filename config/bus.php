@@ -13,6 +13,7 @@ return [
                 \Beagle\Core\Application\Command\User\Logout\LogoutCommand::class => \Beagle\Core\Application\Command\User\Logout\Logout::class,
                 \Beagle\Core\Application\Command\User\EditUser\EditUserCommand::class => \Beagle\Core\Application\Command\User\EditUser\EditUser::class,
                 \Beagle\Core\Application\Command\User\SendEmailChangeVerificationEmail\SendEmailChangeVerificationEmailCommand::class => \Beagle\Core\Application\Command\User\SendEmailChangeVerificationEmail\SendEmailChangeVerificationEmail::class,
+                \Beagle\Core\Application\Command\User\AcceptUserEmailChangeVerificationEmail\AcceptUserEmailChangeVerificationEmailCommand::class => \Beagle\Core\Application\Command\User\AcceptUserEmailChangeVerificationEmail\AcceptUserEmailChangeVerificationEmail::class,
             ],
         ],
     ],
