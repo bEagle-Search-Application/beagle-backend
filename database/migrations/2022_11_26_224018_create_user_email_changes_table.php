@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('user_id')->primary();
             $table->string('old_email');
             $table->string('new_email');
+            $table->string('token', 300)->unique();
             $table->boolean('confirmed');
             $table->timestamps();
 
